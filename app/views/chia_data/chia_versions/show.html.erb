@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @chia_version.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @chia_version.description %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @chia_version.comment %>
+</p>
+
+<%= link_to 'Edit', edit_chia_data_chia_version_path(@chia_version) %> |
+<%= link_to 'Back', chia_data_chia_versions_path %>

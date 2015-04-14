@@ -1,0 +1,25 @@
+<%= simple_form_for([:khajuri_data, @video]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :title %>
+    <%= f.input :description %>
+    <%= f.input :comment %>
+    <%= f.input :source_type %>
+    <%= f.input :source_url %>
+    <%= f.input :quality %>
+    <%= f.input :format %>
+    <%= f.input :length %>
+    <%= f.input :runstatus %>
+    <%= f.input :start_time %>
+    <%= f.input :end_time %>
+    <%= f.input :playback_frame_rate %>
+    <%= f.input :detection_frame_rate %>
+    <%= f.input :width %>
+    <%= f.input :height %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

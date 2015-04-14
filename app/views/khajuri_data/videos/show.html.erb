@@ -1,0 +1,79 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @video.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @video.description %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @video.comment %>
+</p>
+
+<p>
+  <strong>Source type:</strong>
+  <%= @video.source_type %>
+</p>
+
+<p>
+  <strong>Source url:</strong>
+  <%= @video.source_url %>
+</p>
+
+<p>
+  <strong>Quality:</strong>
+  <%= @video.quality %>
+</p>
+
+<p>
+  <strong>Format:</strong>
+  <%= @video.format %>
+</p>
+
+<p>
+  <strong>Length:</strong>
+  <%= @video.length %>
+</p>
+
+<p>
+  <strong>Runstatus:</strong>
+  <%= @video.runstatus %>
+</p>
+
+<p>
+  <strong>Start time:</strong>
+  <%= @video.start_time %>
+</p>
+
+<p>
+  <strong>End time:</strong>
+  <%= @video.end_time %>
+</p>
+
+<p>
+  <strong>Playback frame rate:</strong>
+  <%= @video.playback_frame_rate %>
+</p>
+
+<p>
+  <strong>Detection frame rate:</strong>
+  <%= @video.detection_frame_rate %>
+</p>
+
+<p>
+  <strong>Width:</strong>
+  <%= @video.width %>
+</p>
+
+<p>
+  <strong>Height:</strong>
+  <%= @video.height %>
+</p>
+
+<%= link_to 'Edit', edit_khajuri_data_video_path(@video) %> |
+<%= link_to 'Back', khajuri_data_videos_path %>

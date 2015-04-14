@@ -1,0 +1,31 @@
+<h1>Listing chia_versions</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Comment</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chia_versions.each do |chia_version| %>
+      <tr>
+        <td><%= chia_version.name %></td>
+        <td><%= chia_version.description %></td>
+        <td><%= chia_version.comment %></td>
+        <td><%= link_to 'Show', [:chia_data, chia_version] %></td>
+        <td><%= link_to 'Edit', edit_chia_data_chia_version_path(chia_version) %></td>
+        <td><%= link_to 'Destroy', [:chia_data, chia_version], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chia version', new_chia_data_chia_version_path %>

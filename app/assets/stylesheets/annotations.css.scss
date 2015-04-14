@@ -1,0 +1,77 @@
+@import 'foundation_and_overrides';
+
+$dark-border-color: $oil;
+
+// ------------------------------------
+// media player controls
+#video-controls-player {
+
+  ul { 
+    margin: 10px 20px 0 20px; 
+    li { 
+      div {
+        padding: 0;
+        i { font-size: 36px; }
+      }
+    }
+  }
+}
+
+// annotation list
+#annoattion-list-scroller {
+  overflow-y: auto;
+  max-height: 720px;
+
+  #annotation-list {
+    li { 
+      div {
+        padding: 2px 0 2px 0;
+        font-size: 16px;
+        color: black;
+      }
+    }
+  }  
+}
+
+// ------------------------------------
+// Filter tabs
+.bordered {
+	//border: solid 1px $dark-border-color;
+	//margin: 5px;
+}
+
+.tabs {
+	border: solid 1px $dark-border-color;
+}
+
+.tabs-content {
+	padding: 5px;
+	border: solid 1px $dark-border-color;
+}
+.tab-title {
+	border-right: solid 1px $dark-border-color;
+}
+
+#spinner-overlay {
+  position: absolute;
+  top:0;
+  left:0;
+  min-width:400px;
+  min-height:400px;
+  z-index:998;
+  background-color: $black;
+
+  opacity: .8;
+  display: none;
+
+  border-radius: 10px;
+}
+
+#spinner-popup {
+  position: absolute;
+  min-width:400px;
+  min-height:400px;
+  z-index: 999;
+
+  display: none;
+}

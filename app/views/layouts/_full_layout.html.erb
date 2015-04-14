@@ -1,0 +1,54 @@
+<!-- BEGIN: Overall body grid  -->
+<div class="row full-width">
+
+<!-- BEGIN: Navigation Menu  -->
+<nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">Zigvu | Kheer</a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+  <section class="top-bar-section">
+    <%= render partial: 'layouts/navigation_topbar_right' %>
+    <%= render partial: 'layouts/navigation_topbar_left' %>
+  </section>
+</nav>
+<!-- END: Navigation Menu  -->
+
+
+<!-- BEGIN: Content body -->
+<div class="row">
+  <div class="small-12 columns">
+    <% if user_signed_in? %>
+      <div class="row">
+        <div class="small-12 columns">
+<!-- 
+          <%= breadcrumbs autoroot: false, style: :foundation5 %>
+-->
+        </div>
+      </div>
+    <% end %>
+    <%= render partial: 'layouts/error_notices' %>
+    <!-- Yield for different pages -->
+    <div class="row">
+      <div class="small-12 columns">
+        <div class="main-content">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END: Content body -->
+
+
+<!-- BEGIN: Footer -->
+<footer>
+  <%= render partial: 'layouts/footer' %>
+</footer>
+<!-- END: Footer -->
+
+
+</div>
+<!-- END: Overall body grid  -->

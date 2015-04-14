@@ -1,0 +1,14 @@
+<%= simple_form_for([:chia_data, @detectable]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.input :pretty_name %>
+    <%= f.input :description %>
+    <%= f.association :chia_version %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

@@ -1,0 +1,60 @@
+<!-- BEGIN: Video display -->
+<div class="row">
+  <div class="small-10 columns">
+		<div class="row">
+		  <div class="small-12 columns">
+		  	<div class="centered">
+				  <canvas id="videoFrameCanvas" width="1280" height="720"/>
+		  	</div>
+		  </div>
+		</div>
+		<div class="row">
+		  <div class="small-12 columns">
+			  <%= render 'video_controls' %>
+		  </div>
+		</div>
+  </div>
+  <div class="small-2 columns">
+	  <%= render 'annotation_list' %>
+  </div>
+</div>
+<!-- END: Video display -->
+
+
+<!-- BEGIN: Filter tab navigation -->
+<div class="row">
+  <div class="small-12 columns">
+  	<div class="bordered">
+
+
+<!-- BEGIN: Tab headers -->
+<ul class="tabs" data-tab>
+	<li class="tab-title active"><a href="#detectableSelection">Detectables</a></li>
+	<li class="tab-title"><a href="#localizationScores">Localization Scores</a></li>
+	<li class="tab-title"><a href="#videoAttributes">Video Attributes</a></li>
+	<li class="tab-title"><a href="#runFilter">Run Filter!</a></li>
+</ul>
+<!-- END: Tab headers -->
+
+<!-- BEGIN: Tab content -->
+<div class="tabs-content">
+	<div class="content active" id="detectableSelection">
+		<%= render 'filter_detectable_selection' %>
+	</div>
+	<div class="content" id="localizationScores">
+		<%= render 'filter_localization_scores' %>
+	</div>
+	<div class="content" id="videoAttributes">
+		<%= render 'filter_video_attributes' %>
+	</div>
+	<div class="content" id="runFilter">
+		<%= render 'filter_display_and_run' %>
+	</div>
+</div>
+<!-- END: Tab content -->
+
+	  </div>
+  </div>
+</div>
+<!-- END: Filter tab navigation -->
+

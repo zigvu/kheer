@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  pretty_name: MyString
+  description: MyText
+  chia_versions_id: 
+
+two:
+  name: MyString
+  pretty_name: MyString
+  description: MyText
+  chia_versions_id: 

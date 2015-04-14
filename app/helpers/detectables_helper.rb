@@ -1,0 +1,2 @@
+module DetectablesHelper
+end
