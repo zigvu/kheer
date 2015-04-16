@@ -8,6 +8,9 @@ ZIGVU.Helpers = ZIGVU.Helpers || {};
 ZIGVU.Helpers.TextFormatters = function() {
   var _this = this;
 
+  var ellipsisAnnotationMaxChars = 30;
+  this.ellipsisForAnnotation = function(label){ return this.ellipsis(label, ellipsisAnnotationMaxChars); };
+
   this.ellipsis = function(label, maxChars){
     var retLabel = label.substring(0, maxChars);
     // if truncated, show ellipsis

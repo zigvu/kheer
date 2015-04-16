@@ -2,6 +2,14 @@
 
 $dark-border-color: $oil;
 
+$filter-panel-rounded-corner-radius: $global-radius;
+
+$filter-panel-border-color: $zigvu-footer-background-color;
+$filter-panel-border-color-light: $panel-border-color;
+
+$filter-panel-legend-box-color: scale-color($filter-panel-border-color-light, $lightness: 85%);
+
+
 // ------------------------------------
 // media player controls
 #video-controls-player {
@@ -51,6 +59,47 @@ $dark-border-color: $oil;
 .tab-title {
 	border-right: solid 1px $dark-border-color;
 }
+
+.filter-panel {
+  border: 1px solid $filter-panel-border-color;
+  margin-bottom: 1.25rem;
+
+  -webkit-border-radius: $filter-panel-rounded-corner-radius;
+  -moz-border-radius: $filter-panel-rounded-corner-radius;
+  border-radius: $filter-panel-rounded-corner-radius;
+
+  .filter-title {
+    padding: 1px 3px 1px 1px;
+    border-bottom: 4px solid $filter-panel-border-color-light;
+    -webkit-border-top-left-radius: $filter-panel-rounded-corner-radius;
+    -webkit-border-top-right-radius: $filter-panel-rounded-corner-radius;
+    -moz-border-radius-topleft: $filter-panel-rounded-corner-radius;
+    -moz-border-radius-topright: $filter-panel-rounded-corner-radius;
+    border-top-left-radius: $filter-panel-rounded-corner-radius;
+    border-top-right-radius: $filter-panel-rounded-corner-radius;
+
+    .text {
+      padding: 0.25rem;
+      font-weight: 600;
+      font-variant: small-caps;
+    }
+
+    .help {
+      font-size: rem-calc(16);
+      font-weight: 600;
+
+      .title-button {
+        margin: 0;
+        padding: 0.4rem 1rem 0.4rem 1rem;
+      }
+    }
+  }
+
+  .filter-content {
+    padding: 1.25rem 1.25rem 0 1.25rem;
+  }
+}
+
 
 #spinner-overlay {
   position: absolute;

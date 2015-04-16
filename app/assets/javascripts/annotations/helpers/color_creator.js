@@ -8,7 +8,15 @@ ZIGVU.Helpers = ZIGVU.Helpers || {};
 ZIGVU.Helpers.ColorCreator = function() {
   var _this = this;
   var curColorCounter = 0;
+
+  var buttonTransparency = 0.6,
+    buttonHoverTransparency = 1.0,
+    annotationPolygonTransparency = 0.5;
   
+  this.getColorButton = function(){ return this.getRGBAColor(buttonTransparency); };
+  this.getColorButtonHover = function(){ return this.getRGBAColor(buttonHoverTransparency); };
+  this.getColorAnnotation = function(){ return this.getRGBAColor(annotationPolygonTransparency); };
+
   this.getRGBAColor = function(transparency){
     return this.rgba(allColors[curColorCounter], transparency);
   };
@@ -18,7 +26,7 @@ ZIGVU.Helpers.ColorCreator = function() {
   };
   
   this.rgba = function(rgb, a){
-    return "'rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a + ")'";
+    return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a + ")";
   };
 
   var allColors = [

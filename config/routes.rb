@@ -4,10 +4,12 @@ Kheer::Application.routes.draw do
     namespace :v1 do
       get 'filters/detectables'
       get 'filters/chia_versions'
-      get 'filters/filtered_summary'
-      get 'filters/filtered_data'
-      get 'filters/video_data_map'
+      post 'filters/filtered_summary'
+      post 'filters/filtered_data'
+      post 'filters/video_data_map'
       resources :filters, only: [:new]
+
+      post 'frames/update_annotations'
     end
   end
 

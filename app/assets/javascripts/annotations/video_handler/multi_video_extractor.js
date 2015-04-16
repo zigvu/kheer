@@ -48,22 +48,23 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
 
   // ----------------------------------------------
   // playback of frames
-  var currentVideoId, currentFrameNumber, currentFrameTime;
-  var isCurrentlySeeking = false, videoPaused = false;
+  var currentVideoId, currentFrameNumber, currentFrameTime = 0;
+  var videoPaused = false;
+  var currentlySeekingState = 'playing'; // 'seeking', 'seeked'
 
   this.setVideoPaused = function(vp){ 
     videoPaused = vp;
 
     var vfo = this.videoFrameObjects[currentVideoId];
     if(vfo.vfe.isPlaying() && videoPaused){
-      isCurrentlySeeking = true;
+      currentlySeekingState = 'seeking';
       vfo.vfe.pausePromise()
-        .then(function(){ isCurrentlySeeking = false; })
+        .then(function(){ currentlySeekingState = 'seeked'; })
         .catch(function (errorReason) { _this.err(errorReason); });
     } else if(!vfo.vfe.isPlaying() && !videoPaused){
-      isCurrentlySeeking = true;
+      currentlySeekingState = 'seeking';
       vfo.vfe.playPromise()
-        .then(function(){ isCurrentlySeeking = false; })
+        .then(function(){ currentlySeekingState = 'playing'; })
         .catch(function (errorReason) { _this.err(errorReason); });
     }
   };
@@ -87,7 +88,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
   };
 
   this.playNextFrame = function(){
-    if(isCurrentlySeeking){ return 'seeking'; }
+    if(currentlySeekingState !== 'playing'){ return currentlySeekingState; }
 
     var vfo = this.videoFrameObjects[currentVideoId];
     // if current video has ended
@@ -100,7 +101,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     }
 
     // seeking video
-    if(isCurrentlySeeking){ return 'seeking'; }
+    if(currentlySeekingState !== 'playing'){ return currentlySeekingState; }
     return 'ok';
   };
 
@@ -108,11 +109,11 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     currentVideoId = videoId;
     currentFrameTime = 0;
 
-    isCurrentlySeeking = true;
+    currentlySeekingState = 'seeking';
     var vfe = this.videoFrameObjects[currentVideoId].vfe;
     vfe.seekFramePromise(currentFrameTime)
       .then(function(){ return vfe.playbackRatePromise(playBackSpeed) })
-      .then(function(){ isCurrentlySeeking = false; })
+      .then(function(){ currentlySeekingState = 'seeked'; })
       .catch(function (errorReason) { _this.err(errorReason); });
   };
 
@@ -123,11 +124,11 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     if(currentFrameTime < 0){ currentFrameTime = 0; }
 
     // seek
-    isCurrentlySeeking = true;
+    currentlySeekingState = 'seeking';
     vfo.vfe.seekFramePromise(currentFrameTime)
       .then(function(ct){ 
         currentFrameTime = ct;
-        isCurrentlySeeking = false; 
+        currentlySeekingState = 'seeked';
       })
       .catch(function (errorReason) { _this.err(errorReason); });
   };
@@ -161,13 +162,13 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
   };
 
   this.setPlaybackRate = function(newPlaybackSpeed){
-    isCurrentlySeeking = true;
+    currentlySeekingState = 'seeking';
     var vfe = this.videoFrameObjects[currentVideoId].vfe;
     vfe.playbackRatePromise(newPlaybackSpeed)
       .then(function(pbr){ 
         playBackSpeed = pbr;
         console.log("Playback speed: " + playBackSpeed);
-        isCurrentlySeeking = false; 
+        currentlySeekingState = 'seeked';
       })
       .catch(function (errorReason) { _this.err(errorReason); });
   };

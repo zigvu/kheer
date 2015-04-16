@@ -1,9 +1,9 @@
 
 $(".analysis_annotations.index").ready(function() {
 
-	annotationController = new ZIGVU.AnnotationController();
-	annotationController.register();
-	annotationController.chartManager.reset();
+	// annotationController = new ZIGVU.AnnotationController();
+	// annotationController.register();
+	// annotationController.chartManager.reset();
 
 
   // var dataManager = new ZIGVU.DataManager.DataManager();
@@ -43,18 +43,22 @@ $(".analysis_annotations.index").ready(function() {
   //     console.log(errorReason.toString());
   //   });
 
+  // drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(videoFrameCanvas);
+  // drawingHandler.saveBackground();
+
+  // drawingHandler.setCurrentDetectable('1', 'Adidas', 'rgba(0,155,15,0.1)');
+  // drawingHandler.addPointCoords(20,20,100,50,100,100,50,100, 1);
+
+  // drawingHandler.draw();
+  // drawingHandler.setCurrentDetectable('2','Sony', 'rgba(155,15,0,0.1)');
+
 });
 
 $(".analysis_annotations.temp").ready(function() {
-	var videoFrameCanvas = document.getElementById("videoFrameCanvas");
-  videoFrameCanvasCTX = videoFrameCanvas.getContext("2d");
+	annotationController = new ZIGVU.AnnotationController();
+	annotationController.register();
+	// annotationController.startFilter();
+	annotationController.loadVideos();
+	
 
-  drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(videoFrameCanvas);
-  drawingHandler.saveBackground();
-
-  drawingHandler.setCurrentDetectable('1', 'Adidas', 'rgba(0,155,15,0.1)');
-  drawingHandler.addPointCoords(20,20,100,50,100,100,50,100);
-
-  drawingHandler.draw();
-  drawingHandler.setCurrentDetectable('2','Sony', 'rgba(155,15,0,0.1)');
 });

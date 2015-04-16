@@ -9,19 +9,18 @@ ZIGVU.FrameDisplay.Shapes = ZIGVU.FrameDisplay.Shapes || {};
 
 ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
   var _this = this;
-  var selected = false;
+  var selected = false, polyId;
 
   // default decorations
   var strokeColor = '#000000';
   var strokeColorSelected = '#FF0000';
-  // var fillColor = '#F00FFF';
-  // var fillColorSelected = '#F0F000';
-  // var fillColor = 'rgba(0,155,15,0.1)';
   var fillColorSelected = fillColor;
 
   var points = [];
 
-  this.getDetId = function(){ return detId; };
+  this.setPolyId = function(pid){ polyId = pid; };
+  this.getPolyId = function(){ return polyId; };
+
   this.getPoints = function(){
     if(!this.isClosed()){ return undefined; }
     return {

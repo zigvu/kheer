@@ -10,37 +10,57 @@ ZIGVU.AnnotationController = function() {
   this.videoFrameCanvas = document.getElementById("videoFrameCanvas");
   this.renderCTX = this.videoFrameCanvas.getContext("2d");
 
-
   this.chartManager = new ZIGVU.ChartManager.ChartManager();
   this.dataManager = new ZIGVU.DataManager.DataManager();
-  this.filterHandler = new ZIGVU.FilterHandler.FilterHandler();
 
-  this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer(this.renderCTX);
+  this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer(this.videoFrameCanvas);
   this.videoPlayerControls = new ZIGVU.VideoHandler.VideoPlayerControls(this.videoPlayer);
 
-  this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations(videoFrameCanvas);
-  this.drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(videoFrameCanvas);
+  this.startFilter = function(){
+    this.videoPlayerControls.disable();
 
-  this.loadData = function(){
-    // this.filterHandler.addChiaVersionId(1);
-    // this.filterHandler.addDetectableIds([48, 49]);
-    // this.filterHandler.addLocalizationScores({prob_scores: [0.9, 1.0]});
+    this.dataManager.resetFilters();
+    filterPromises = this.chartManager.startFilter();
+    filterPromises.video_load.then(function(response){ _this.loadVideos(); });
+    filterPromises.filter_reset.then(function(response){ _this.resetFilters(); });
+  };
 
-    this.dataManager.loadLocalizationPromise(this.filterHandler)
-      .then(function(videoIds){ return _this.dataManager.loadVideoDataMapPromise(videoIds); })
-      .then(function(videoDataMap){ return _this.videoPlayer.loadVideosPromise(videoDataMap); })
-      .then(function(){ _this.videoPlayerControls.enable(); })
-      .catch(function (errorReason) {
-        displayJavascriptError('ZIGVU.AnnotationController -> ' + errorReason);
-      });
+  this.loadVideos = function(){
+    // TODO: remove
+    this.dataManager.filterStore.chiaVersionId = 1;
+    this.dataManager.filterStore.detectableIds = [1, 48, 49];
+    this.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: [0]};
+    this.dataManager.ajaxHandler.getChiaVersionsPromise()
+      .then(function(chiaVersions){ return _this.dataManager.ajaxHandler.getDetectablesPromise(); })
+      .then(function(detectables){ return _this.dataManager.ajaxHandler.getLocalizationPromise(); })
+      .then(function(localizations){ return _this.dataManager.ajaxHandler.getDataSummaryPromise(); })
+      .then(function(dataSummary){ 
+        // show annotation list
+        _this.chartManager.showAnnotationList();
+
+        _this.dataManager.ajaxHandler.getFullDataPromise()
+          .then(function(videoDataMap){ return _this.videoPlayer.loadVideosPromise(videoDataMap); })
+          .then(function(){ _this.videoPlayerControls.enable(); })
+          .catch(function (errorReason) { _this.err(errorReason); }); 
+
+        console.log('Loading videos');
+      })
+      .catch(function (errorReason) { _this.err(errorReason); }); 
+  };
+
+  this.resetFilters = function(){
+    console.log('Resetting filters');
   };
 
   this.register = function(){
-    this.chartManager.annotationController(_this);
-    this.videoPlayer.annotationController(_this);
-    this.drawLocalizations.annotationController(_this);
+    this.chartManager.setDataManager(this.dataManager);
 
-    this.videoPlayerControls.disable();
+    this.videoPlayer.setDataManager(this.dataManager);
+  };
+
+  // shorthand for error printing
+  this.err = function(errorReason){
+    displayJavascriptError('ZIGVU.AnnotationController -> ' + errorReason);
   };
 };
 

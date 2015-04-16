@@ -28,10 +28,6 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   $(document).keypress(function(e) {
     if(disabled){ return; }; 
     switch(e.which) {
-      case 97: // 'a'
-        videoPlayer.startAnnotation(); break;
-      case 115: // 's'
-        videoPlayer.saveAnnotation(); break;
       case 8: // 'BACK_SPACE'
         videoPlayer.deleteAnnotation(); break;
       case 32: // 'SPACE'

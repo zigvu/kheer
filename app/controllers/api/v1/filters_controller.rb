@@ -4,10 +4,12 @@ module Api
 
 			before_filter :ensure_json_format
 
+			# unused
 			def new
 				render json: {ack: 'ok'}.to_json
 			end
 
+			# POST api/v1/filters/video_data_map
 			def video_data_map
 				# TODO: 
 				videoDataMap = [
@@ -18,35 +20,46 @@ module Api
 				render json: {video_data_map: videoDataMap}.to_json
 			end
 
+			# POST api/v1/filters/filtered_summary
 			def filtered_summary
-				filter = Filters::FilterParser.new(params[:filter])
-				fql = Filters::FilterQueryLocalization.new(filter).run()
+				filter = Annotators::Parsers::FilterParser.new(params[:filter])
+				fql = Annotators::Queries::FilterQueryLocalization.new(filter).run()
+				fqa = Annotators::Queries::FilterQueryAnnotation.new(filter).run()
 
-				fqlLocalizationCount = fql.count
+				fqlCount = fql.count
+				fqaCount = fqa.count
 				fqlVideoCount = fql.pluck(:video_id).uniq.count
 				fqlFrameCount = fql.pluck(:frame_number).uniq.count
 
 				render json: {
-					:'Localization Count' => fqlLocalizationCount,
+					:'Localization Count' => fqlCount,
+					:'Annotation Count' => fqaCount,
 					:'Video Count' => fqlVideoCount,
 					:'Frame Count' => fqlFrameCount
 				}.to_json
 			end
 
+			# POST api/v1/filters/filtered_data
 			def filtered_data
-				filter = Filters::FilterParser.new(params[:filter])
-				fql = Filters::FilterQueryLocalization.new(filter).run()
-				formatted = Filters::FilterQueryLocalizationFormatter.new(fql).formatted()
+				filter = Annotators::Parsers::FilterParser.new(params[:filter])
+				fql = Annotators::Queries::FilterQueryLocalization.new(filter).run()
+				formattedLocs = Annotators::Formatters::FilterQueryLocalizationFormatter.new(fql).formatted()
 
+				fqa = Annotators::Queries::FilterQueryAnnotation.new(filter).run()
+				formattedAnno = Annotators::Formatters::FilterQueryAnnotationFormatter.new(fqa).formatted()
+
+				formatted = formattedLocs.merge(formattedAnno)
 				render json: formatted.to_json
 			end
 
+			# GET api/v1/filters/detectables
 			def detectables
 				chiaVersionId = filter_params[:chia_version_id]
 				@detectables = ::Detectable.where(chia_version_id: chiaVersionId)
 				render json: @detectables.to_json(:only => [:id, :name, :pretty_name, :chia_detectable_id])
 			end
 
+			# GET api/v1/filters/chia_versions
 			def chia_versions
 				@chiaVersions = ::ChiaVersion.all
 				render json: @chiaVersions.to_json(:only => [:id, :name, :description, :settings])

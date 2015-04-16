@@ -11,7 +11,11 @@ ZIGVU.ChartManager.HtmlGenerator = function() {
   // get a new button
   this.newButton = function(divId, buttonText){
     return '<div class="button small success" id="' + divId +'">' + buttonText + '</div>';
-  }
+  };
+
+  this.newTextInput = function(divId, defaultValue){
+    return '<INPUT type="text" SIZE="5" id="' + divId + '" VALUE="' + defaultValue + '">';
+  };
 
   // get table from a array structured data
   this.table = function(headerArr, bodyArr){
@@ -47,6 +51,19 @@ ZIGVU.ChartManager.HtmlGenerator = function() {
     });
     row += '</tr>';
     return row;
+  };
+
+  this.formatArray = function(arr){
+    var ar = '[';
+    _.each(arr, function(a, idx, list){
+      if (idx == 0){
+        ar = ar + a;
+      } else {
+        ar = ar + ', ' + a;
+      }
+    });
+    ar += ']';
+    return ar;
   };
 
 };

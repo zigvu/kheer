@@ -5,14 +5,14 @@ ZIGVU.VideoHandler = ZIGVU.VideoHandler || {};
   This class handles all video player interactions.
 */
 
-ZIGVU.VideoHandler.VideoPlayer = function(renderCTX) {
+ZIGVU.VideoHandler.VideoPlayer = function(videoFrameCanvas) {
   var _this = this;
-  var videoFrameCanvasId = "videoFrameCanvas";
-  this.annotationController = undefined;
+  this.renderCTX = videoFrameCanvas.getContext("2d");
+
   this.dataManager = undefined;
-  this.drawLocalizations = undefined;
-  this.drawingHandler = undefined;
-  this.multiVideoExtractor = new ZIGVU.VideoHandler.MultiVideoExtractor(renderCTX);
+  this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations(videoFrameCanvas);
+  this.drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(videoFrameCanvas);
+  this.multiVideoExtractor = new ZIGVU.VideoHandler.MultiVideoExtractor(this.renderCTX);
 
   // returns promise that will be resolved once all videos are loaded
   this.loadVideosPromise = function(videoDataMap){ 
@@ -20,22 +20,29 @@ ZIGVU.VideoHandler.VideoPlayer = function(renderCTX) {
   }
 
   this.playContinuous = function(){
-    if(this.multiVideoExtractor.isVideoPaused()){ return; }
+    if(_this.multiVideoExtractor.isVideoPaused()){ return; }
 
     var result = _this.paintFrame();
     if(result.status === 'ended'){ return; }
 
     // schedule to run again in a short time
+    // Note: requestAnimationFrame tends to skip frames where as setTimeout
+    // seems to skip less
+    // requestAnimationFrame(_this.playContinuous);
     setTimeout(function(){ _this.playContinuous(); }, 20);
   };
 
   this.playUntilSeekEnd = function(){
-    if(!this.multiVideoExtractor.isVideoPaused()){ return; }
+    if(!_this.multiVideoExtractor.isVideoPaused()){ return; }
 
     var result = _this.paintFrame();
     if(result.status === 'seeking'){ 
       // schedule to run again in a short time
       setTimeout(function(){ _this.playUntilSeekEnd(); }, 100);
+    } else if(result.status === 'seeked'){
+      _this.drawingHandler.startAnnotation(result.video_id, result.frame_number);
+
+      console.log("Seek ended!");
     }
   };
 
@@ -44,8 +51,7 @@ ZIGVU.VideoHandler.VideoPlayer = function(renderCTX) {
     var result = this.multiVideoExtractor.paintFrame();
 
     if(result.status !== 'ended'){ 
-      var localizations = this.dataManager.getLocalizations(result.video_id, result.frame_number);
-      this.drawLocalizations.drawBboxes(localizations);
+      this.drawLocalizations.drawBboxes(result.video_id, result.frame_number);
       console.log('Frame number: ' + result.frame_number);
     }
     return result;
@@ -62,13 +68,12 @@ ZIGVU.VideoHandler.VideoPlayer = function(renderCTX) {
 
   this.pausePlayback = function(){
     console.log("pausePlayback");
-    this.multiVideoExtractor.setVideoPaused(true);
-    this.drawingHandler.setAnnotationMode(true);
+    this.frameNavigate(0);
   };
 
   this.startPlayback = function(){
     console.log("startPlayback");
-    this.drawingHandler.setAnnotationMode(false);
+    this.drawingHandler.endAnnotation();
     this.multiVideoExtractor.setVideoPaused(false);
     this.playContinuous();
   };
@@ -112,7 +117,9 @@ ZIGVU.VideoHandler.VideoPlayer = function(renderCTX) {
   };
 
   this.frameNavigate = function(numOfFrames){
-    if(!this.multiVideoExtractor.isVideoPaused()){ this.pausePlayback(); }
+    if(!this.multiVideoExtractor.isVideoPaused()){ 
+      this.multiVideoExtractor.setVideoPaused(true);
+    }
     this.multiVideoExtractor.setTimeForNumFrames(numOfFrames);
     this.playUntilSeekEnd();
   };
@@ -134,24 +141,17 @@ ZIGVU.VideoHandler.VideoPlayer = function(renderCTX) {
   };
 
   // annotation
-  this.startAnnotation = function(){
-    console.log("startAnnotation");
-  };
-
-  this.saveAnnotation = function(){
-    console.log("saveAnnotation");
-  };
-
   this.deleteAnnotation = function(){
+    this.drawingHandler.deleteAnnotation();
     console.log("deleteAnnotation");
   };
 
-  this.annotationController = function(annotationController){
-    _this.annotationController = annotationController;
-    _this.dataManager = _this.annotationController.dataManager;
-    _this.drawLocalizations = _this.annotationController.drawLocalizations;
-    _this.drawingHandler = _this.annotationController.drawingHandler;
 
-    return _this;
+  // set relations
+  this.setDataManager = function(dm){
+    this.dataManager = dm;
+    this.drawLocalizations.setDataManager(this.dataManager);
+    this.drawingHandler.setDataManager(this.dataManager);
+    return this;
   };
 };
