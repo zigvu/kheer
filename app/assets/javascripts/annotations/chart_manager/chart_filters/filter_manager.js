@@ -7,122 +7,122 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
-  var _this = this;
+  var self = this;
   this.videoLoadDefer = undefined;
   this.filterResetDefer = undefined;
   this.dataManager = undefined;
   this.htmlGenerator = new ZIGVU.ChartManager.HtmlGenerator();
 
-  this.filterStartButton = new ZIGVU.ChartManager.ChartFilters.FilterStartButton(this.htmlGenerator);
-  this.filterChiaVersions = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersions(this.htmlGenerator);
-  this.filterDetectables = new ZIGVU.ChartManager.ChartFilters.FilterDetectables(this.htmlGenerator);
-  this.filterLocalizations = new ZIGVU.ChartManager.ChartFilters.FilterLocalizations(this.htmlGenerator);
-  this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(this.htmlGenerator);
+  this.filterStartButton = new ZIGVU.ChartManager.ChartFilters.FilterStartButton(self.htmlGenerator);
+  this.filterChiaVersions = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersions(self.htmlGenerator);
+  this.filterDetectables = new ZIGVU.ChartManager.ChartFilters.FilterDetectables(self.htmlGenerator);
+  this.filterLocalizations = new ZIGVU.ChartManager.ChartFilters.FilterLocalizations(self.htmlGenerator);
+  this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(self.htmlGenerator);
 
   this.startFilter = function(){
-    this.filterStartButton.displayInput(undefined)
-      .then(function(data){ _this.getChiaVersions(); })
-      .catch(function (errorReason) { _this.err(errorReason); });
+    self.filterStartButton.displayInput(undefined)
+      .then(function(data){ self.getChiaVersions(); })
+      .catch(function (errorReason) { self.err(errorReason); });
   };
 
   this.getChiaVersions = function(){
-    this.dataManager.ajaxHandler.getChiaVersionsPromise()
+    self.dataManager.ajaxHandler.getChiaVersionsPromise()
       .then(function(chiaVersions){
-        _this.filterStartButton.hide();
-        _this.filterChiaVersions.show();
-        return _this.filterChiaVersions.displayInput(chiaVersions);
+        self.filterStartButton.hide();
+        self.filterChiaVersions.show();
+        return self.filterChiaVersions.displayInput(chiaVersions);
       })
       .then(function(response){
         if(response.status){
-          _this.dataManager.filterStore.chiaVersionId = response.data;
-          var selectedChiaVersion = _this.dataManager.getFilteredChiaVersion();
-          _this.filterChiaVersions.displayInfo(selectedChiaVersion);
-          _this.getDetectables();
+          self.dataManager.filterStore.chiaVersionId = response.data;
+          var selectedChiaVersion = self.dataManager.getFilteredChiaVersion();
+          self.filterChiaVersions.displayInfo(selectedChiaVersion);
+          self.getDetectables();
         } else {
-          _this.reset();
-          _this.startFilter();
+          self.reset();
+          self.startFilter();
         }
       })
-      .catch(function (errorReason) { _this.err(errorReason); });    
+      .catch(function (errorReason) { self.err(errorReason); });    
   };
 
   this.getDetectables = function(){
-    this.dataManager.ajaxHandler.getDetectablesPromise()
+    self.dataManager.ajaxHandler.getDetectablesPromise()
       .then(function(detectables){
-        _this.filterDetectables.show();
-        return _this.filterDetectables.displayInput(detectables);
+        self.filterDetectables.show();
+        return self.filterDetectables.displayInput(detectables);
       })
       .then(function(response){
         if(response.status){
-          _this.dataManager.filterStore.detectableIds = response.data;
-          var selectedDetectables = _this.dataManager.getFilteredDetectables();
-          _this.filterDetectables.displayInfo(selectedDetectables);
-          _this.getLocalizations();
+          self.dataManager.filterStore.detectableIds = response.data;
+          var selectedDetectables = self.dataManager.getFilteredDetectables();
+          self.filterDetectables.displayInfo(selectedDetectables);
+          self.getLocalizations();
         } else {
-          _this.reset();
-          _this.startFilter();
+          self.reset();
+          self.startFilter();
         }
       })
-      .catch(function (errorReason) { _this.err(errorReason); });    
+      .catch(function (errorReason) { self.err(errorReason); });    
   };
 
   this.getLocalizations = function(){
-    this.dataManager.ajaxHandler.getLocalizationPromise()
+    self.dataManager.ajaxHandler.getLocalizationPromise()
       .then(function(localizations){
-        _this.filterLocalizations.show();
-        return _this.filterLocalizations.displayInput(localizations);
+        self.filterLocalizations.show();
+        return self.filterLocalizations.displayInput(localizations);
       })
       .then(function(response){
         if(response.status){
-          _this.dataManager.filterStore.localizations = response.data;
-          var selectedLocalizations = _this.dataManager.getFilteredLocalization();
-          _this.filterLocalizations.displayInfo(selectedLocalizations);
-          _this.getDataLoader();
+          self.dataManager.filterStore.localizations = response.data;
+          var selectedLocalizations = self.dataManager.getFilteredLocalization();
+          self.filterLocalizations.displayInfo(selectedLocalizations);
+          self.getDataLoader();
         } else {
-          _this.reset();
-          _this.startFilter();
+          self.reset();
+          self.startFilter();
         }
       })
-      .catch(function (errorReason) { _this.err(errorReason); }); 
+      .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
   this.getDataLoader = function(){
-    this.dataManager.ajaxHandler.getDataSummaryPromise()
+    self.dataManager.ajaxHandler.getDataSummaryPromise()
       .then(function(dataSummary){
-        _this.filterDataLoader.show();
-        return _this.filterDataLoader.displayInput(dataSummary);
+        self.filterDataLoader.show();
+        return self.filterDataLoader.displayInput(dataSummary);
       })
       .then(function(response){
         if(response.status){
-          var dataSummary = _this.dataManager.dataStore.dataSummary;
-          _this.filterDataLoader.displayInfo(dataSummary, _this.filterResetDefer);
-          _this.videoLoadDefer.resolve(true);
+          var dataSummary = self.dataManager.dataStore.dataSummary;
+          self.filterDataLoader.displayInfo(dataSummary, self.filterResetDefer);
+          self.videoLoadDefer.resolve(true);
         } else {
-          _this.reset();
-          _this.startFilter();
+          self.reset();
+          self.startFilter();
         }
       })
-      .catch(function (errorReason) { _this.err(errorReason); }); 
+      .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
   this.reset = function(){
-    this.filterStartButton.show();
-    this.filterChiaVersions.hide();
-    this.filterDetectables.hide();
-    this.filterLocalizations.hide();
-    this.filterDataLoader.hide();
+    self.filterStartButton.show();
+    self.filterChiaVersions.hide();
+    self.filterDetectables.hide();
+    self.filterLocalizations.hide();
+    self.filterDataLoader.hide();
 
-    this.dataManager.resetFilters();
+    self.dataManager.resetFilters();
   };
 
   this.setDefers = function(vld, frd){
-    this.videoLoadDefer = vld;
-    this.filterResetDefer = frd;
+    self.videoLoadDefer = vld;
+    self.filterResetDefer = frd;
   };
 
   this.setDataManager = function(dm){
-    this.dataManager = dm;
-    return this;
+    self.dataManager = dm;
+    return self;
   };
 
   // shorthand for error printing

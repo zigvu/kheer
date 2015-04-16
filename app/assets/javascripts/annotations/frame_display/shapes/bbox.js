@@ -7,7 +7,7 @@ ZIGVU.FrameDisplay.Shapes = ZIGVU.FrameDisplay.Shapes || {};
 */
 
 ZIGVU.FrameDisplay.Shapes.Bbox = function() {
-  var _this = this;
+  var self = this;
 
   // offset because of border
   var borderOffset = 2;

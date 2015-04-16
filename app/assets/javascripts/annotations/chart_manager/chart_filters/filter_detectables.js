@@ -7,14 +7,14 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterDetectables = function(htmlGenerator) {
-  var _this = this;
+  var self = this;
 
   var divId_filterContainer = "#filter-detectables-container";
   var divId_filterTable = "#filter-detectables-table";
 
 
   this.displayInput = function(detectables){
-    this.empty();
+    self.empty();
     var requestDefer = Q.defer();
 
     var submitButtonId = 'filter-detectables-submit';
@@ -53,7 +53,7 @@ ZIGVU.ChartManager.ChartFilters.FilterDetectables = function(htmlGenerator) {
   };
 
   this.displayInfo = function(detectables){
-    this.empty();
+    self.empty();
     // convert data to a tabular form
     var headerArr = ['Chia DetId', 'Name', 'Pretty Name'];
     var bodyArr = _.map(detectables, function(detectable){

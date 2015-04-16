@@ -6,7 +6,7 @@ ZIGVU.VideoHandler = ZIGVU.VideoHandler || {};
 */
 
 ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
-  var _this = this;
+  var self = this;
 
   // ----------------------------------------------
   // Load/unload videos and construct objects
@@ -17,12 +17,12 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     _.each(videoDataMap, function(videoData){
       var videoId = videoData.video_id;
       if (prevVideoId !== undefined){
-        _this.videoFrameObjects[prevVideoId].next_video_id = videoId;
+        self.videoFrameObjects[prevVideoId].next_video_id = videoId;
       }
 
       var videoFrameExtractor = new ZIGVU.VideoHandler.VideoFrameExtractor(renderCTX);
       var videoLoadPromise = videoFrameExtractor.loadVideoPromise(videoData.video_URL);
-      _this.videoFrameObjects[videoId] = {
+      self.videoFrameObjects[videoId] = {
         vfe: videoFrameExtractor,
         frame_rate: videoData.frame_rate,
         previous_video_id: prevVideoId
@@ -32,8 +32,8 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
       // push promises
       loadPromises.push(videoLoadPromise);
     });
-    _this.videoFrameObjects[prevVideoId].next_video_id = undefined;
-    currentVideoId = Object.keys(this.videoFrameObjects)[0];
+    self.videoFrameObjects[prevVideoId].next_video_id = undefined;
+    currentVideoId = Object.keys(self.videoFrameObjects)[0];
   
     // return a promise that consolidates all load promises
     return Q.all(loadPromises);
@@ -41,7 +41,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
 
   // unload old videos
   this.unloadVideos = function(){
-    this.videoFrameObjects = {};
+    self.videoFrameObjects = {};
   };
   // ----------------------------------------------
 
@@ -55,28 +55,28 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
   this.setVideoPaused = function(vp){ 
     videoPaused = vp;
 
-    var vfo = this.videoFrameObjects[currentVideoId];
+    var vfo = self.videoFrameObjects[currentVideoId];
     if(vfo.vfe.isPlaying() && videoPaused){
       currentlySeekingState = 'seeking';
       vfo.vfe.pausePromise()
         .then(function(){ currentlySeekingState = 'seeked'; })
-        .catch(function (errorReason) { _this.err(errorReason); });
+        .catch(function (errorReason) { self.err(errorReason); });
     } else if(!vfo.vfe.isPlaying() && !videoPaused){
       currentlySeekingState = 'seeking';
       vfo.vfe.playPromise()
         .then(function(){ currentlySeekingState = 'playing'; })
-        .catch(function (errorReason) { _this.err(errorReason); });
+        .catch(function (errorReason) { self.err(errorReason); });
     }
   };
 
   this.isVideoPaused = function(){ return videoPaused; };
 
   this.paintFrame = function(){
-    var result = this.playNextFrame();
+    var result = self.playNextFrame();
     if(result === 'ended'){
       return { status: 'ended' };
     } 
-    var vfo = this.videoFrameObjects[currentVideoId];
+    var vfo = self.videoFrameObjects[currentVideoId];
     currentFrameTime = vfo.vfe.paintFrame();
     currentFrameNumber = Math.round(currentFrameTime * vfo.frame_rate);
     return {
@@ -90,14 +90,14 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
   this.playNextFrame = function(){
     if(currentlySeekingState !== 'playing'){ return currentlySeekingState; }
 
-    var vfo = this.videoFrameObjects[currentVideoId];
+    var vfo = self.videoFrameObjects[currentVideoId];
     // if current video has ended
     if(vfo.vfe.hasEnded()){
       var nextVideoId = vfo.next_video_id
       // if there are no more videos, we are done playing
       if(nextVideoId === undefined){ return 'ended'; }
       // else, we can go to next video
-      this.setVideo(nextVideoId);
+      self.setVideo(nextVideoId);
     }
 
     // seeking video
@@ -110,16 +110,16 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     currentFrameTime = 0;
 
     currentlySeekingState = 'seeking';
-    var vfe = this.videoFrameObjects[currentVideoId].vfe;
+    var vfe = self.videoFrameObjects[currentVideoId].vfe;
     vfe.seekFramePromise(currentFrameTime)
       .then(function(){ return vfe.playbackRatePromise(playBackSpeed) })
       .then(function(){ currentlySeekingState = 'seeked'; })
-      .catch(function (errorReason) { _this.err(errorReason); });
+      .catch(function (errorReason) { self.err(errorReason); });
   };
 
   // numOfFrames is positive for forward play and negative for backwards
   this.setTimeForNumFrames = function(numOfFrames){
-    var vfo = this.videoFrameObjects[currentVideoId];
+    var vfo = self.videoFrameObjects[currentVideoId];
     currentFrameTime += (numOfFrames/vfo.frame_rate);
     if(currentFrameTime < 0){ currentFrameTime = 0; }
 
@@ -130,11 +130,11 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
         currentFrameTime = ct;
         currentlySeekingState = 'seeked';
       })
-      .catch(function (errorReason) { _this.err(errorReason); });
+      .catch(function (errorReason) { self.err(errorReason); });
   };
 
   // this.seekFramePromise = function(videoId, frameNumber){
-  //   var vfo = this.videoFrameObjects[videoId];
+  //   var vfo = self.videoFrameObjects[videoId];
   //   // conversion to frame time
   //   var frameTime = frameNumber / vfo.frame_rate;
   //   var framePromise = vfo.vfe.seekFramePromise(frameTime);
@@ -148,29 +148,29 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
 
   this.setPlaybackNormal = function(){
     playBackSpeed = 1.0;
-    this.setPlaybackRate(playBackSpeed);
+    self.setPlaybackRate(playBackSpeed);
   };
 
   this.reducePlaybackRate = function(){
-    var newPlaybackSpeed = playBackSpeed - this.getPlaybackRateStep();
-    if(newPlaybackSpeed >= playbackRateMin){ this.setPlaybackRate(newPlaybackSpeed); }
+    var newPlaybackSpeed = playBackSpeed - self.getPlaybackRateStep();
+    if(newPlaybackSpeed >= playbackRateMin){ self.setPlaybackRate(newPlaybackSpeed); }
   };
 
   this.increasePlaybackRate = function(){
-    var newPlaybackSpeed = playBackSpeed + this.getPlaybackRateStep();
-    if(newPlaybackSpeed <= playbackRateMax){ this.setPlaybackRate(newPlaybackSpeed); }
+    var newPlaybackSpeed = playBackSpeed + self.getPlaybackRateStep();
+    if(newPlaybackSpeed <= playbackRateMax){ self.setPlaybackRate(newPlaybackSpeed); }
   };
 
   this.setPlaybackRate = function(newPlaybackSpeed){
     currentlySeekingState = 'seeking';
-    var vfe = this.videoFrameObjects[currentVideoId].vfe;
+    var vfe = self.videoFrameObjects[currentVideoId].vfe;
     vfe.playbackRatePromise(newPlaybackSpeed)
       .then(function(pbr){ 
         playBackSpeed = pbr;
         console.log("Playback speed: " + playBackSpeed);
         currentlySeekingState = 'seeked';
       })
-      .catch(function (errorReason) { _this.err(errorReason); });
+      .catch(function (errorReason) { self.err(errorReason); });
   };
 
   this.getPlaybackRateStep = function(){

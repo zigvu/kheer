@@ -7,14 +7,14 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
-  var _this = this;
+  var self = this;
 
   var divId_filterContainer = "#filter-localization-container";
   var divId_filterTable = "#filter-localization-table";
 
 
   this.displayInput = function(localizationInput){
-    this.empty();
+    self.empty();
     var requestDefer = Q.defer();
 
     var submitButtonId = 'filter-localization-submit';
@@ -74,7 +74,7 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
   };
 
   this.displayInfo = function(filteredLocalization){
-    this.empty();
+    self.empty();
     // convert data to a tabular form
     var headerArr = ['Filter type', 'Filter'];
     var bodyArr = [];

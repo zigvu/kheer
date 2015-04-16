@@ -7,14 +7,14 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterChiaVersions = function(htmlGenerator) {
-  var _this = this;
+  var self = this;
 
   var divId_filterContainer = "#filter-chai-versions-container";
   var divId_filterTable = "#filter-chai-versions-table";
 
 
   this.displayInput = function(chiaVersions){
-    this.empty();
+    self.empty();
     var requestDefer = Q.defer();
 
     var submitButtonId = 'filter-chia-versions-submit';
@@ -50,7 +50,7 @@ ZIGVU.ChartManager.ChartFilters.FilterChiaVersions = function(htmlGenerator) {
   };
 
   this.displayInfo = function(chiaVersion){
-    this.empty();
+    self.empty();
     // convert data to a tabular form
     var headerArr = ['Id', 'Name', 'Description'];
     var bodyArr = [[chiaVersion.id, chiaVersion.name, chiaVersion.description]];

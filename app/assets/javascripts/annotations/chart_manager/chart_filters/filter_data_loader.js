@@ -7,14 +7,14 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterDataLoader = function(htmlGenerator) {
-  var _this = this;
+  var self = this;
 
   var divId_filterContainer = "#filter-data-loader-container";
   var divId_filterTable = "#filter-data-loader-table";
 
 
   this.displayInput = function(dataCounts){
-    this.empty();
+    self.empty();
     var requestDefer = Q.defer();
 
     var submitButtonId = 'filter-data-loader-submit';
@@ -44,7 +44,7 @@ ZIGVU.ChartManager.ChartFilters.FilterDataLoader = function(htmlGenerator) {
   };
 
   this.displayInfo = function(dataCounts, deferrer){
-    this.empty();
+    self.empty();
 
     var resetButtonId = 'filter-data-loader-reset';
 

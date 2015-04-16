@@ -7,7 +7,7 @@ ZIGVU.FrameDisplay.Shapes = ZIGVU.FrameDisplay.Shapes || {};
 */
 
 ZIGVU.FrameDisplay.Shapes.Point = function(px, py) {
-  var _this = this;
+  var self = this;
   var selected = false;
   var x = px || 0;
   var y = py || 0;

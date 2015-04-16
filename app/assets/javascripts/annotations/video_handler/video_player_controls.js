@@ -6,7 +6,7 @@ ZIGVU.VideoHandler = ZIGVU.VideoHandler || {};
 */
 
 ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
-  var _this = this;
+  var self = this;
   var disabled = true;
 
   var divId_firstVideo = '#player-first';

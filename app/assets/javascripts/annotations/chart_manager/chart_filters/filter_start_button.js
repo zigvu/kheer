@@ -7,14 +7,14 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterStartButton = function(htmlGenerator) {
-  var _this = this;
+  var self = this;
 
   var divId_filterContainer = "#filter-start-button-container";
   var divId_filterButton = "#filter-start-button";
 
 
   this.displayInput = function(startButtonData){
-    this.empty();
+    self.empty();
     var requestDefer = Q.defer();
     var submitButtonId = 'filter-start-button-submit';
 

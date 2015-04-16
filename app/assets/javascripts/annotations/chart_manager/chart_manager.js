@@ -6,25 +6,25 @@ ZIGVU.ChartManager = ZIGVU.ChartManager || {};
 */
 
 ZIGVU.ChartManager.ChartManager = function() {
-  var _this = this;
+  var self = this;
   this.dataManager = undefined;
 
   this.filterManager = new ZIGVU.ChartManager.ChartFilters.FilterManager();
   this.annotationList = new ZIGVU.ChartManager.AnnotationList();
 
   this.showAnnotationList = function(){
-    this.annotationList.display();
+    self.annotationList.display();
     // set the selected to first item in list
-    this.annotationList.setToFirstButton();
+    self.annotationList.setToFirstButton();
   };
 
   this.startFilter = function(){
     var videoLoadDefer = Q.defer();
     var filterResetDefer = Q.defer();
 
-    this.filterManager.setDefers(videoLoadDefer, filterResetDefer);
-    this.filterManager.reset();
-    this.filterManager.startFilter();
+    self.filterManager.setDefers(videoLoadDefer, filterResetDefer);
+    self.filterManager.reset();
+    self.filterManager.startFilter();
 
     var filterPromises = {
       video_load: videoLoadDefer.promise,
@@ -34,15 +34,15 @@ ZIGVU.ChartManager.ChartManager = function() {
   };
 
   this.reset = function(){
-    this.filterManager.reset();
-    this.annotationList.empty();
+    self.filterManager.reset();
+    self.annotationList.empty();
   };
 
   this.setDataManager = function(dm){
-    this.dataManager = dm;
-    this.filterManager.setDataManager(this.dataManager);
-    this.annotationList.setDataManager(this.dataManager);
-    return this;
+    self.dataManager = dm;
+    self.filterManager.setDataManager(self.dataManager);
+    self.annotationList.setDataManager(self.dataManager);
+    return self;
   };
 
   // shorthand for error printing

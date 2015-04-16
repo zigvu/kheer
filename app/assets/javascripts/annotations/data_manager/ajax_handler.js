@@ -6,7 +6,7 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
 */
 
 ZIGVU.DataManager.AjaxHandler = function() {
-  var _this = this;
+  var self = this;
 
   this.dataStore = undefined;
   this.filterStore = undefined;
@@ -16,13 +16,13 @@ ZIGVU.DataManager.AjaxHandler = function() {
     var dataParam = {};
 
     var requestDefer = Q.defer();
-    if(this.dataStore.chiaVersions !== undefined){
-      requestDefer.resolve(_this.dataStore.chiaVersions);
+    if(self.dataStore.chiaVersions !== undefined){
+      requestDefer.resolve(self.dataStore.chiaVersions);
     } else {
-      this.getGETRequestPromise(dataURL, dataParam)
+      self.getGETRequestPromise(dataURL, dataParam)
         .then(function(data){
-          _this.dataStore.chiaVersions = data;
-          requestDefer.resolve(_this.dataStore.chiaVersions);
+          self.dataStore.chiaVersions = data;
+          requestDefer.resolve(self.dataStore.chiaVersions);
         })
         .catch(function (errorReason) {
           requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
@@ -34,18 +34,18 @@ ZIGVU.DataManager.AjaxHandler = function() {
 
   this.getDetectablesPromise = function(){
     var dataURL = '/api/v1/filters/detectables';
-    var dataParam = {chia_version_id: this.filterStore.chiaVersionId};
+    var dataParam = {chia_version_id: self.filterStore.chiaVersionId};
 
     var requestDefer = Q.defer();
-    if(this.filterStore.chiaVersionId === undefined){
+    if(self.filterStore.chiaVersionId === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> No chia version filter found');
-    } else if(this.dataStore.detectables !== undefined){
-      requestDefer.resolve(_this.dataStore.detectables);
+    } else if(self.dataStore.detectables !== undefined){
+      requestDefer.resolve(self.dataStore.detectables);
     } else {
-      this.getGETRequestPromise(dataURL, dataParam)
+      self.getGETRequestPromise(dataURL, dataParam)
         .then(function(data){
-          _this.dataStore.addDetectablesWithColor(data);
-          requestDefer.resolve(_this.dataStore.detectables);
+          self.dataStore.addDetectablesWithColor(data);
+          requestDefer.resolve(self.dataStore.detectables);
         })
         .catch(function (errorReason) {
           requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
@@ -60,11 +60,11 @@ ZIGVU.DataManager.AjaxHandler = function() {
     // this might change in the future, so need to use promises
     var requestDefer = Q.defer();
 
-    if(this.dataStore.chiaVersions === undefined){
+    if(self.dataStore.chiaVersions === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> No chia versions data found');
     } else {
-      var settings = _.find(this.dataStore.chiaVersions, function(chiaVersion){
-        return chiaVersion.id == _this.filterStore.chiaVersionId; 
+      var settings = _.find(self.dataStore.chiaVersions, function(chiaVersion){
+        return chiaVersion.id == self.filterStore.chiaVersionId; 
       }).settings;
       requestDefer.resolve(settings);
     }
@@ -74,16 +74,16 @@ ZIGVU.DataManager.AjaxHandler = function() {
 
   this.getDataSummaryPromise = function(){
     var dataURL = '/api/v1/filters/filtered_summary';
-    var dataParam = {filter: this.filterStore.getCurrentFilterParams()};
+    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
 
     var requestDefer = Q.defer();
-    if(this.filterStore === undefined){
+    if(self.filterStore === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> Filter could not be constructed');
     } else {
-      this.getPOSTRequestPromise(dataURL, dataParam)
+      self.getPOSTRequestPromise(dataURL, dataParam)
         .then(function(data){
-          _this.dataStore.dataSummary = data;
-          requestDefer.resolve(_this.dataStore.dataSummary);
+          self.dataStore.dataSummary = data;
+          requestDefer.resolve(self.dataStore.dataSummary);
         })
         .catch(function (errorReason) {
           requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
@@ -95,27 +95,27 @@ ZIGVU.DataManager.AjaxHandler = function() {
 
   this.getFullDataPromise = function(){
     var dataURL = '/api/v1/filters/filtered_data';
-    var dataParam = {filter: this.filterStore.getCurrentFilterParams()};
+    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
 
     var requestDefer = Q.defer();
-    if(this.filterStore === undefined){
+    if(self.filterStore === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> Filter could not be constructed');
     } else {
-      this.getPOSTRequestPromise(dataURL, dataParam)
+      self.getPOSTRequestPromise(dataURL, dataParam)
         .then(function(data){
-          _this.dataStore.dataFullLocalizations = data.localizations;
-          _this.dataStore.dataFullAnnotations = data.annotations;
+          self.dataStore.dataFullLocalizations = data.localizations;
+          self.dataStore.dataFullAnnotations = data.annotations;
 
           // also get video data map
           var videoIds = Object.keys(data.localizations);
           dataURL = '/api/v1/filters/video_data_map';
           dataParam = {video_ids: videoIds};
 
-          return _this.getPOSTRequestPromise(dataURL, dataParam)
+          return self.getPOSTRequestPromise(dataURL, dataParam)
         })
         .then(function(data){
-          _this.dataStore.videoDataMap = data.video_data_map;
-          requestDefer.resolve(_this.dataStore.videoDataMap);
+          self.dataStore.videoDataMap = data.video_data_map;
+          requestDefer.resolve(self.dataStore.videoDataMap);
         })
         .catch(function (errorReason) {
           requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
@@ -128,7 +128,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     var dataURL = '/api/v1/frames/update_annotations';
     var dataParam = {annotations: bboxes};
 
-    return this.getPOSTRequestPromise(dataURL, dataParam);
+    return self.getPOSTRequestPromise(dataURL, dataParam);
   };
 
   // note: while jquery ajax return promises, they are deficient
@@ -163,17 +163,17 @@ ZIGVU.DataManager.AjaxHandler = function() {
 
   // set relations
   this.setFilterStore = function(fs){
-    this.filterStore = fs;
-    return this;
+    self.filterStore = fs;
+    return self;
   };
 
   this.setDataStore = function(ds){
-    this.dataStore = ds;
-    return this;
+    self.dataStore = ds;
+    return self;
   };
 
   // shorthand for error printing
   this.err = function(errorReason){
-    displayJavascriptError('ZIGVU.DataManager.DataManager -> ' + errorReason);
+    displayJavascriptError('ZIGVU.DataManager.AjaxHandler -> ' + errorReason);
   };
 };

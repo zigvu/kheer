@@ -2,11 +2,11 @@ var ZIGVU = ZIGVU || {};
 ZIGVU.ChartManager = ZIGVU.ChartManager || {};
 
 /*
-  Container for all charts.
+  Generate commonly used HTML elements.
 */
 
 ZIGVU.ChartManager.HtmlGenerator = function() {
-  var _this = this;
+  var self = this;
 
   // get a new button
   this.newButton = function(divId, buttonText){
@@ -20,8 +20,8 @@ ZIGVU.ChartManager.HtmlGenerator = function() {
   // get table from a array structured data
   this.table = function(headerArr, bodyArr){
     var table = '<table>';
-    table = table + _this.tableHeader(headerArr);
-    table = table + _this.tableBody(bodyArr);
+    table = table + self.tableHeader(headerArr);
+    table = table + self.tableBody(bodyArr);
     table += '</table>';
     return table;
   };
@@ -38,7 +38,7 @@ ZIGVU.ChartManager.HtmlGenerator = function() {
   this.tableBody = function(bodyArr){
     var body = '<tbody>';
     _.each(bodyArr, function(tdArr){
-      body = body + _this.tableRow(tdArr);
+      body = body + self.tableRow(tdArr);
     });
     body += '</tbody>';
     return body;

@@ -6,23 +6,23 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
 */
 
 ZIGVU.DataManager.DataManager = function() {
-  var _this = this;
+  var self = this;
   
   this.dataStore = new ZIGVU.DataManager.DataStore();
   this.filterStore = new ZIGVU.DataManager.FilterStore();
   this.ajaxHandler = new ZIGVU.DataManager.AjaxHandler();
   this.ajaxHandler
-    .setDataStore(this.dataStore)
-    .setFilterStore(this.filterStore);
+    .setDataStore(self.dataStore)
+    .setFilterStore(self.filterStore);
 
   this.getLocalizations = function(videoId, frameNumber){
-    var loc = this.dataStore.dataFullLocalizations;
+    var loc = self.dataStore.dataFullLocalizations;
     if(loc[videoId] === undefined || loc[videoId][frameNumber] === undefined){ return []; }
     return loc[videoId][frameNumber];
   };
 
   this.getAnnotations = function(videoId, frameNumber){
-    var anno = this.dataStore.dataFullAnnotations;
+    var anno = self.dataStore.dataFullAnnotations;
     if(anno[videoId] === undefined || anno[videoId][frameNumber] === undefined){ return []; }
     return anno[videoId][frameNumber];
   };
@@ -33,10 +33,10 @@ ZIGVU.DataManager.DataManager = function() {
     var objDecorations = {
       video_id: videoId,
       frame_number: frameNumber,
-      chia_version_id: this.filterStore.chiaVersionId
+      chia_version_id: self.filterStore.chiaVersionId
     };
 
-    var anno = this.dataStore.dataFullAnnotations;
+    var anno = self.dataStore.dataFullAnnotations;
     if(anno[videoId] === undefined){
       anno[videoId] = {}; 
     }
@@ -51,48 +51,48 @@ ZIGVU.DataManager.DataManager = function() {
       annosToSaveToDb.push(newAnnotation);
     });
     // save to database
-    this.ajaxHandler.getAnnotationSavePromise(annosToSaveToDb)
+    self.ajaxHandler.getAnnotationSavePromise(annosToSaveToDb)
       .then(function(status){ console.log(status); })
-      .catch(function (errorReason) { _this.err(errorReason); }); 
+      .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
   this.getSelectedAnnotationDetails = function(){
-    if(this.filterStore.currentAnnotationDetId === undefined){
+    if(self.filterStore.currentAnnotationDetId === undefined){
       err('No annotation class selected');
     } else {
-      return this.getAnnotationDetails(this.filterStore.currentAnnotationDetId);
+      return self.getAnnotationDetails(self.filterStore.currentAnnotationDetId);
     }
   };
 
   this.getAnnotationDetails = function(detId){
     return {
       id: detId,
-      title: this.dataStore.detectablesMap[detId].pretty_name,
-      color: this.dataStore.detectablesMap[detId].annotation_color
+      title: self.dataStore.detectablesMap[detId].pretty_name,
+      color: self.dataStore.detectablesMap[detId].annotation_color
     };
   }
 
   this.getFilteredChiaVersion = function(){
-    if(this.filterStore.chiaVersionId === undefined){
+    if(self.filterStore.chiaVersionId === undefined){
       err('No chia version filter found');
-    } else if(this.dataStore.chiaVersions === undefined){
+    } else if(self.dataStore.chiaVersions === undefined){
       err('No chia versions data found');
     } else {
-      return _.find(this.dataStore.chiaVersions, function(chiaVersion){
-        return chiaVersion.id == _this.filterStore.chiaVersionId; 
+      return _.find(self.dataStore.chiaVersions, function(chiaVersion){
+        return chiaVersion.id == self.filterStore.chiaVersionId; 
       });
     }
     return undefined;
   };
 
   this.getFilteredDetectables = function(){
-    if(this.filterStore.detectableIds === undefined){
+    if(self.filterStore.detectableIds === undefined){
       err('No detectable ids filter found');
-    } else if(this.dataStore.detectables === undefined){
+    } else if(self.dataStore.detectables === undefined){
       err('No detectables data found');
     } else {
-      return _.filter(_this.dataStore.detectables, function(detectable){
-        return _.contains(_this.filterStore.detectableIds, detectable.id);
+      return _.filter(self.dataStore.detectables, function(detectable){
+        return _.contains(self.filterStore.detectableIds, detectable.id);
       });
     }
     return undefined;
@@ -100,17 +100,17 @@ ZIGVU.DataManager.DataManager = function() {
 
 
   this.getFilteredLocalization = function(){
-    if(this.filterStore.localizations === undefined){
+    if(self.filterStore.localizations === undefined){
       err('No localizations filter found');
     } else {
-      return this.filterStore.localizations;
+      return self.filterStore.localizations;
     }
     return undefined;
   };
 
   this.resetFilters = function(){
-    this.dataStore.reset();
-    this.filterStore.reset();
+    self.dataStore.reset();
+    self.filterStore.reset();
   }
 
   // shorthand for error printing

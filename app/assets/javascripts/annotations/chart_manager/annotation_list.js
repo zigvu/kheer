@@ -6,7 +6,7 @@ ZIGVU.ChartManager = ZIGVU.ChartManager || {};
 */
 
 ZIGVU.ChartManager.AnnotationList = function() {
-  var _this = this;
+  var self = this;
   this.dataManager = undefined;
 
   var divId_annotationList = "#annotation-list";
@@ -14,8 +14,8 @@ ZIGVU.ChartManager.AnnotationList = function() {
   var selectedButtonId, detectableMap = {};
 
   this.display = function(){
-    this.empty();
-    _.each(this.dataManager.dataStore.detectables, function(dl){
+    self.empty();
+    _.each(self.dataManager.dataStore.detectables, function(dl){
       buttonId = buttonIdPrefix + dl.id;
 
       $(divId_annotationList).append(
@@ -25,7 +25,7 @@ ZIGVU.ChartManager.AnnotationList = function() {
       $("#" + buttonId)
         .mouseover(function(){ $(this).css("background-color", detectableMap[$(this).attr('id')].button_hover_color); })
         .mouseout(function(){ $(this).css("background-color", detectableMap[$(this).attr('id')].button_color); })
-        .click(function(){ _this.setButtonSelected($(this).attr('id')); });
+        .click(function(){ self.setButtonSelected($(this).attr('id')); });
 
       detectableMap[buttonId] = dl;
     });
@@ -41,15 +41,15 @@ ZIGVU.ChartManager.AnnotationList = function() {
     $("#" + selectedButtonId).css('border', '5px solid black');
       $("#" + selectedButtonId).css('color', 'red');
 
-    //this.dataManager.setAnnotationDetectableId(detectableMap[selectedButtonId].id);
-    this.dataManager.filterStore.currentAnnotationDetId = detectableMap[selectedButtonId].id;
+    self.dataManager.filterStore.currentAnnotationDetId = detectableMap[selectedButtonId].id;
   };
 
-  this.setToFirstButton = function(){ this.setButtonSelected(Object.keys(detectableMap)[0]); };
+  this.setToFirstButton = function(){ self.setButtonSelected(Object.keys(detectableMap)[0]); };
 
   this.empty = function(){ $(divId_annotationList).empty(); };
 
   this.setDataManager = function(dm){
-    this.dataManager = dm;
+    self.dataManager = dm;
+    return self;
   };
 };

@@ -5,47 +5,47 @@ var ZIGVU = ZIGVU || {};
 */
 
 ZIGVU.AnnotationController = function() {
-  var _this = this;
+  var self = this;
 
   this.videoFrameCanvas = document.getElementById("videoFrameCanvas");
-  this.renderCTX = this.videoFrameCanvas.getContext("2d");
+  this.renderCTX = self.videoFrameCanvas.getContext("2d");
 
   this.chartManager = new ZIGVU.ChartManager.ChartManager();
   this.dataManager = new ZIGVU.DataManager.DataManager();
 
-  this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer(this.videoFrameCanvas);
-  this.videoPlayerControls = new ZIGVU.VideoHandler.VideoPlayerControls(this.videoPlayer);
+  this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer(self.videoFrameCanvas);
+  this.videoPlayerControls = new ZIGVU.VideoHandler.VideoPlayerControls(self.videoPlayer);
 
   this.startFilter = function(){
-    this.videoPlayerControls.disable();
+    self.videoPlayerControls.disable();
 
-    this.dataManager.resetFilters();
-    filterPromises = this.chartManager.startFilter();
-    filterPromises.video_load.then(function(response){ _this.loadVideos(); });
-    filterPromises.filter_reset.then(function(response){ _this.resetFilters(); });
+    self.dataManager.resetFilters();
+    filterPromises = self.chartManager.startFilter();
+    filterPromises.video_load.then(function(response){ self.loadVideos(); });
+    filterPromises.filter_reset.then(function(response){ self.resetFilters(); });
   };
 
   this.loadVideos = function(){
     // TODO: remove
-    this.dataManager.filterStore.chiaVersionId = 1;
-    this.dataManager.filterStore.detectableIds = [1, 48, 49];
-    this.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: [0]};
-    this.dataManager.ajaxHandler.getChiaVersionsPromise()
-      .then(function(chiaVersions){ return _this.dataManager.ajaxHandler.getDetectablesPromise(); })
-      .then(function(detectables){ return _this.dataManager.ajaxHandler.getLocalizationPromise(); })
-      .then(function(localizations){ return _this.dataManager.ajaxHandler.getDataSummaryPromise(); })
+    self.dataManager.filterStore.chiaVersionId = 1;
+    self.dataManager.filterStore.detectableIds = [1, 48, 49];
+    self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: [0]};
+    self.dataManager.ajaxHandler.getChiaVersionsPromise()
+      .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getDetectablesPromise(); })
+      .then(function(detectables){ return self.dataManager.ajaxHandler.getLocalizationPromise(); })
+      .then(function(localizations){ return self.dataManager.ajaxHandler.getDataSummaryPromise(); })
       .then(function(dataSummary){ 
         // show annotation list
-        _this.chartManager.showAnnotationList();
+        self.chartManager.showAnnotationList();
 
-        _this.dataManager.ajaxHandler.getFullDataPromise()
-          .then(function(videoDataMap){ return _this.videoPlayer.loadVideosPromise(videoDataMap); })
-          .then(function(){ _this.videoPlayerControls.enable(); })
-          .catch(function (errorReason) { _this.err(errorReason); }); 
+        self.dataManager.ajaxHandler.getFullDataPromise()
+          .then(function(videoDataMap){ return self.videoPlayer.loadVideosPromise(videoDataMap); })
+          .then(function(){ self.videoPlayerControls.enable(); })
+          .catch(function (errorReason) { self.err(errorReason); }); 
 
         console.log('Loading videos');
       })
-      .catch(function (errorReason) { _this.err(errorReason); }); 
+      .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
   this.resetFilters = function(){
@@ -53,9 +53,9 @@ ZIGVU.AnnotationController = function() {
   };
 
   this.register = function(){
-    this.chartManager.setDataManager(this.dataManager);
+    self.chartManager.setDataManager(self.dataManager);
 
-    this.videoPlayer.setDataManager(this.dataManager);
+    self.videoPlayer.setDataManager(self.dataManager);
   };
 
   // shorthand for error printing

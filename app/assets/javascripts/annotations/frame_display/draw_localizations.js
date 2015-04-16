@@ -6,9 +6,9 @@ ZIGVU.FrameDisplay = ZIGVU.FrameDisplay || {};
 */
 
 ZIGVU.FrameDisplay.DrawLocalizations = function(canvas) {
-  var _this = this;
+  var self = this;
   this.canvas = canvas;
-  this.ctx = this.canvas.getContext("2d");
+  this.ctx = self.canvas.getContext("2d");
 
   this.dataManager = undefined;
 
@@ -16,18 +16,18 @@ ZIGVU.FrameDisplay.DrawLocalizations = function(canvas) {
 
   this.drawBboxes = function(videoId, frameNumber){
     // bb = {"zdist_thresh":4.5,"scale":0.7,"prob_score":0.965,"x":20,"y":20,"w":110,"h":80};
-      var localizations = this.dataManager.getLocalizations(videoId, frameNumber);
+      var localizations = self.dataManager.getLocalizations(videoId, frameNumber);
     _.each(localizations, function(locs, detectableId){
       _.each(locs, function(bb){
-        var annoDetails = _this.dataManager.getAnnotationDetails(detectableId);
-        bbox.draw(_this.ctx, bb, annoDetails.name, annoDetails.color);
+        var annoDetails = self.dataManager.getAnnotationDetails(detectableId);
+        bbox.draw(self.ctx, bb, annoDetails.name, annoDetails.color);
       });
     });
   }
 
   // set relations
   this.setDataManager = function(dm){
-    this.dataManager = dm;
-    return this;
+    self.dataManager = dm;
+    return self;
   };
 };

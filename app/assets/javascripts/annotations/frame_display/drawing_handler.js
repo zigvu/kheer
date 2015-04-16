@@ -6,9 +6,9 @@ ZIGVU.FrameDisplay = ZIGVU.FrameDisplay || {};
 */
 
 ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
-  var _this = this;
+  var self = this;
   this.canvas = canvas;
-  this.ctx = this.canvas.getContext("2d");
+  this.ctx = self.canvas.getContext("2d");
 
   this.dataManager = undefined;
 
@@ -22,20 +22,20 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
 
   this.startAnnotation = function(videoId, frameNumber){
     // if previously was annotating, save that annotation
-    if(this.annotationMode){ this.endAnnotation(); }
+    if(self.annotationMode){ self.endAnnotation(); }
     // new annotation
-    this.annotationMode = true;
-    this.saveBackground();
-    this.drawAnnotation(videoId, frameNumber);
-    this.draw();
+    self.annotationMode = true;
+    self.saveBackground();
+    self.drawAnnotation(videoId, frameNumber);
+    self.draw();
   };
 
   this.endAnnotation = function(){
-    this.annotationMode = false;
-    this.resetBackground();
-    if(this.needsSaving){
-      this.dataManager.saveAnnotations(currentVideoId, currentFrameNumber, this.getAllPolygons());
-      this.needsSaving = false;
+    self.annotationMode = false;
+    self.resetBackground();
+    if(self.needsSaving){
+      self.dataManager.saveAnnotations(currentVideoId, currentFrameNumber, self.getAllPolygons());
+      self.needsSaving = false;
     }
     polygons = [];
     polyIdCounter = 0;
@@ -45,13 +45,13 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
     currentVideoId = videoId;
     currentFrameNumber = frameNumber;
 
-    var annotations = this.dataManager.getAnnotations(currentVideoId, currentFrameNumber);
+    var annotations = self.dataManager.getAnnotations(currentVideoId, currentFrameNumber);
     _.each(annotations, function(anno, detectableId){
       _.each(anno, function(annoCoords){
-        _this.addPointCoords(annoCoords, detectableId);
+        self.addPointCoords(annoCoords, detectableId);
       });
     });
-    this.drawOnce();
+    self.drawOnce();
   };
 
   this.deleteAnnotation = function(){
@@ -64,8 +64,8 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
       if(idx >= 0){
         polygons.splice(idx, 1);
         selectedPolyId = undefined
-        this.needsRepainting = true;
-        this.needsSaving = true;
+        self.needsRepainting = true;
+        self.needsSaving = true;
       }
     }
   };
@@ -90,18 +90,18 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
     var p3 = new ZIGVU.FrameDisplay.Shapes.Point(annoCoords.x2, annoCoords.y2);
     var p4 = new ZIGVU.FrameDisplay.Shapes.Point(annoCoords.x3, annoCoords.y3);
 
-    var annoDetails = this.dataManager.getAnnotationDetails(detId);
+    var annoDetails = self.dataManager.getAnnotationDetails(detId);
     var poly = new ZIGVU.FrameDisplay.Shapes.Polygon(annoDetails.id, annoDetails.title, annoDetails.color);
     poly.addPoint(p1);
     poly.addPoint(p2);
     poly.addPoint(p3);
     poly.addPoint(p4);
 
-    this.addToPolygons(poly);
+    self.addToPolygons(poly);
   };
 
   this.handleLeftClick = function(x, y){
-    if (this.annotationMode){
+    if (self.annotationMode){
       // deselect all
       _.each(polygons, function(poly){ poly.deselect(); });
 
@@ -109,11 +109,11 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
       var poly = _.last(polygons);      
       // start a new polygon if no polygon exists or if last polygon is complete
       if(poly === undefined || poly.isClosed()){
-        var annoDetails = this.dataManager.getSelectedAnnotationDetails();
+        var annoDetails = self.dataManager.getSelectedAnnotationDetails();
         var poly = new ZIGVU.FrameDisplay.Shapes.Polygon(annoDetails.id, annoDetails.title, annoDetails.color);
 
-        this.addToPolygons(poly);
-        this.needsSaving = true;
+        self.addToPolygons(poly);
+        self.needsSaving = true;
       }
       // add new point
       var point = new ZIGVU.FrameDisplay.Shapes.Point(x,y);
@@ -122,7 +122,7 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
   };
 
   this.handleRightClick = function(x, y){
-    if (this.annotationMode){
+    if (self.annotationMode){
       // if was creating new poly, discard
       if((polygons.length > 0) && !(_.last(polygons).isClosed())){ polygons.pop(); }
 
@@ -131,7 +131,7 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
       selectedPolyId = undefined;
 
       // check to see if any polygon got clicked
-      clickedPolygon = this.getClickedPolygon(x, y);
+      clickedPolygon = self.getClickedPolygon(x, y);
       if(clickedPolygon !== undefined){
         selectedPolyId = clickedPolygon.getPolyId();
         clickedPolygon.select();
@@ -148,55 +148,54 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
   };
 
   this.saveBackground = function(){
-    this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    this.needsRepainting = true;
+    self.imageData = self.ctx.getImageData(0, 0, self.canvas.width, self.canvas.height);
+    self.needsRepainting = true;
   };
 
   this.resetBackground = function(){
-    this.imageData = undefined;
-    this.needsRepainting = true;
+    self.imageData = undefined;
+    self.needsRepainting = true;
   };
 
   // draw
-  // NOTE: because of requestAnimationFrame, all references to this should be _this
   this.draw = function(){
     // if not annotating, no need to redraw
-    if (!_this.annotationMode){ return; }
+    if (!self.annotationMode){ return; }
 
-    requestAnimationFrame(_this.draw);
-    if(!_this.needsRepainting){ return; }
+    requestAnimationFrame(self.draw);
+    if(!self.needsRepainting){ return; }
 
-    _this.drawOnce();
-    _this.needsRepainting = false;
+    self.drawOnce();
+    self.needsRepainting = false;
   };
 
   this.drawOnce = function(){
-    if(_this.imageData !== undefined){ 
-      _this.ctx.putImageData(_this.imageData, 0, 0); 
+    if(self.imageData !== undefined){ 
+      self.ctx.putImageData(self.imageData, 0, 0); 
     }
 
-    _.each(polygons, function(poly){ poly.draw(_this.ctx); });
+    _.each(polygons, function(poly){ poly.draw(self.ctx); });
   };
 
   // define mouse handlers
-  this.canvas.addEventListener('mousedown', function(e) {
+  self.canvas.addEventListener('mousedown', function(e) {
     // if not annotating, disable mouse activity
-    if (!_this.annotationMode){ return; }
+    if (!self.annotationMode){ return; }
 
     e = e || window.event;
-    mouse = _this.getMouse(e);
+    mouse = self.getMouse(e);
     if (e.which == 1){
-      _this.handleRightClick(mouse.x, mouse.y);
+      self.handleRightClick(mouse.x, mouse.y);
     } else {
-      _this.handleLeftClick(mouse.x, mouse.y);
+      self.handleLeftClick(mouse.x, mouse.y);
     }
-    _this.needsRepainting = true;
-    _this.draw();
+    self.needsRepainting = true;
+    self.draw();
   }, false);
 
   this.getMouse = function(e){
     // get mouse position relative to canvas
-    var canvasRect = this.canvas.getBoundingClientRect();
+    var canvasRect = self.canvas.getBoundingClientRect();
     var canvasRectX = canvasRect.left;
     var canvasRectY = canvasRect.top;
     return {
@@ -206,13 +205,13 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
   }
 
   // disable context menu on right click in canvas
-  this.canvas.addEventListener("contextmenu", function(e){
+  self.canvas.addEventListener("contextmenu", function(e){
     e.preventDefault();
   }, false);
 
   // set relations
   this.setDataManager = function(dm){
-    this.dataManager = dm;
-    return this;
+    self.dataManager = dm;
+    return self;
   };
 };

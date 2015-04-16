@@ -6,95 +6,95 @@ ZIGVU.VideoHandler = ZIGVU.VideoHandler || {};
 */
 
 ZIGVU.VideoHandler.VideoFrameExtractor = function(renderCTX) {
-  var _this = this;
+  var self = this;
   var seekFrameDefer, playDefer, pauseDefer, playbackRateDefer;
 
   // Load a video
   this.loadVideoPromise = function(videoSrc){
     // load video and immediately pause it
     var videoElement = $('<video src="' + videoSrc + '" autoplay class="hidden"></video>');
-    this.video = videoElement.get(0);
-    this.video.pause();
+    self.video = videoElement.get(0);
+    self.video.pause();
 
     // we return a promise immediately from this function and resolve
     // it based on event firing on load success/failure
     var videoReadDefer = Q.defer();
 
     // if error, reject the promise
-    this.video.addEventListener('error', function(){
+    self.video.addEventListener('error', function(){
       return videoReadDefer.reject("ZIGVU.VideoHandler.VideoFrameExtractor -> " + 
         "Video can't be loaded. Src: " + videoSrc);
     });
 
     // notify caller when video is "loaded" and "seekable" by resolving promise
-    this.video.addEventListener('canplaythrough', function() {
-      _this.width = _this.video.videoWidth;
-      _this.height = _this.video.videoHeight;
+    self.video.addEventListener('canplaythrough', function() {
+      self.width = self.video.videoWidth;
+      self.height = self.video.videoHeight;
 
       return videoReadDefer.resolve(true);
     }, false);
 
     // send caller a frame when seek has ended
-    this.video.addEventListener('seeked', function(){
-      renderCTX.drawImage(_this.video, 0, 0, _this.width, _this.height);
-      seekFrameDefer.resolve(_this.video.currentTime);
+    self.video.addEventListener('seeked', function(){
+      renderCTX.drawImage(self.video, 0, 0, self.width, self.height);
+      seekFrameDefer.resolve(self.video.currentTime);
     });
 
     // notify caller when play has resumed
-    this.video.addEventListener('play', function(){
+    self.video.addEventListener('play', function(){
       if(playDefer === undefined){ return; }
-      playDefer.resolve(_this.video.currentTime);
+      playDefer.resolve(self.video.currentTime);
     });
 
     // notify caller when play has paused
-    this.video.addEventListener('pause', function(){
+    self.video.addEventListener('pause', function(){
       if(pauseDefer === undefined){ return; }
-      pauseDefer.resolve(_this.video.currentTime);
+      pauseDefer.resolve(self.video.currentTime);
     });
 
     // notify caller when playback rate has changed
-    this.video.addEventListener('ratechange', function(){
+    self.video.addEventListener('ratechange', function(){
       if(playbackRateDefer === undefined){ return; }
-      playbackRateDefer.resolve(_this.video.playbackRate);
+      playbackRateDefer.resolve(self.video.playbackRate);
     });
 
     return videoReadDefer.promise;
   };
 
-  this.hasEnded = function(){ return this.video.ended; };
-  this.currentTime = function(){ return this.video.currentTime; };
-  this.isPlaying = function(){ return !this.video.paused; }
+  this.hasEnded = function(){ return self.video.ended; };
+  this.currentTime = function(){ return self.video.currentTime; };
+  this.isPlaying = function(){ return !self.video.paused; }
   
   this.paintFrame = function(){
-    renderCTX.drawImage(this.video, 0, 0, this.width, this.height);
-    return this.video.currentTime;
+    renderCTX.drawImage(self.video, 0, 0, self.width, self.height);
+    return self.video.currentTime;
   };
 
   // get a promise that will resolve when seek ends
   this.seekFramePromise = function(ft){
     seekFrameDefer = Q.defer();
-    this.video.currentTime = ft;
+    self.video.currentTime = ft;
     return seekFrameDefer.promise;
   };
 
   // get a promise that will resolve when play begins
   this.playPromise = function(){
     playDefer = Q.defer();
-    this.video.play();
+    self.video.play();
     return playDefer.promise;
   };
 
   // get a promise that will resolve when pause begins
   this.pausePromise = function(){
     pauseDefer = Q.defer();
-    this.video.pause();
+    self.video.pause();
     return pauseDefer.promise;
   };
 
   // get a promise that will resolve when seek ends
   this.playbackRatePromise = function(rt){
     playbackRateDefer = Q.defer();
-    this.video.playbackRate = rt;
+    self.video.playbackRate = rt;
     return playbackRateDefer.promise;
   };
 

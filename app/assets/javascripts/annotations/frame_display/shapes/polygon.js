@@ -8,7 +8,7 @@ ZIGVU.FrameDisplay.Shapes = ZIGVU.FrameDisplay.Shapes || {};
 */
 
 ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
-  var _this = this;
+  var self = this;
   var selected = false, polyId;
 
   // default decorations
@@ -22,7 +22,7 @@ ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
   this.getPolyId = function(){ return polyId; };
 
   this.getPoints = function(){
-    if(!this.isClosed()){ return undefined; }
+    if(!self.isClosed()){ return undefined; }
     return {
       detectable_id: detId,
       x0: points[0].getX(), y0: points[0].getY(),
@@ -79,7 +79,7 @@ ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
     }
 
     // draw text
-    if(this.isClosed()){
+    if(self.isClosed()){
       ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
       ctx.fillRect(points[0].getX() + 2, points[0].getY() + 2, ctx.measureText(title).width, 20);
 
