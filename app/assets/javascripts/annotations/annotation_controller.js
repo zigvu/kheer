@@ -25,7 +25,8 @@ ZIGVU.AnnotationController = function() {
     filterPromises.filter_reset.then(function(response){ self.resetFilters(); });
   };
 
-  this.loadVideos = function(){
+  this.loadDataTest = function(){
+
     // TODO: remove
     self.dataManager.filterStore.chiaVersionId = 1;
     self.dataManager.filterStore.detectableIds = [1, 48, 49];
@@ -44,6 +45,19 @@ ZIGVU.AnnotationController = function() {
           .catch(function (errorReason) { self.err(errorReason); }); 
 
         console.log('Loading videos');
+      })
+      .catch(function (errorReason) { self.err(errorReason); }); 
+  };
+
+  this.loadVideos = function(){
+    // show annotation list
+    self.chartManager.showAnnotationList();
+
+    self.dataManager.ajaxHandler.getFullDataPromise()
+      .then(function(videoDataMap){ return self.videoPlayer.loadVideosPromise(videoDataMap); })
+      .then(function(){ 
+        self.videoPlayerControls.enable();
+        self.videoPlayer.pausePlayback();
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };

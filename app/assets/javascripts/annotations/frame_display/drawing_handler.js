@@ -153,7 +153,10 @@ ZIGVU.FrameDisplay.DrawingHandler = function(canvas) {
   };
 
   this.resetBackground = function(){
-    self.imageData = undefined;
+    // setting imageData to null results in race condition
+    // if set/unset is called quickly - disabling will result in
+    // few frames being jittery but livable
+    // self.imageData = undefined;
     self.needsRepainting = true;
   };
 

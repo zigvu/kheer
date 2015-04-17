@@ -10,6 +10,7 @@ ZIGVU.DataManager.FilterStore = function() {
   this.chiaVersionId = undefined;
   this.detectableIds = undefined;
   this.localizations = undefined;
+  this.videoIds = undefined;
 
   // for active filtering
   this.currentAnnotationDetId = undefined;
@@ -19,6 +20,7 @@ ZIGVU.DataManager.FilterStore = function() {
     currentFilters['chia_version_id'] = self.chiaVersionId;
     currentFilters['detectable_ids'] = self.detectableIds;
     currentFilters['localization_scores'] = self.localizations;
+    currentFilters['video_ids'] = self.videoIds;
     return currentFilters;
   };
 
@@ -27,5 +29,6 @@ ZIGVU.DataManager.FilterStore = function() {
     self.detectableIds = undefined;
     self.localizations = undefined;
     self.currentAnnotationDetId = undefined;
+    self.videoIds = undefined;
   };
 };

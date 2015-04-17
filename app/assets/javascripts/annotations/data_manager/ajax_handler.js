@@ -124,9 +124,9 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return requestDefer.promise;
   };
 
-  this.getAnnotationSavePromise = function(bboxes){
+  this.getAnnotationSavePromise = function(annotationsData){
     var dataURL = '/api/v1/frames/update_annotations';
-    var dataParam = {annotations: bboxes};
+    var dataParam = {annotations: annotationsData};
 
     return self.getPOSTRequestPromise(dataURL, dataParam);
   };

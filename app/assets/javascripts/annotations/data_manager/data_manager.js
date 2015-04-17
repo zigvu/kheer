@@ -16,9 +16,10 @@ ZIGVU.DataManager.DataManager = function() {
     .setFilterStore(self.filterStore);
 
   this.getLocalizations = function(videoId, frameNumber){
+    var fn = (frameNumber - 1) - ((frameNumber - 1) % 5) + 1;
     var loc = self.dataStore.dataFullLocalizations;
-    if(loc[videoId] === undefined || loc[videoId][frameNumber] === undefined){ return []; }
-    return loc[videoId][frameNumber];
+    if(loc[videoId] === undefined || loc[videoId][fn] === undefined){ return []; }
+    return loc[videoId][fn];
   };
 
   this.getAnnotations = function(videoId, frameNumber){
@@ -37,10 +38,8 @@ ZIGVU.DataManager.DataManager = function() {
     };
 
     var anno = self.dataStore.dataFullAnnotations;
-    if(anno[videoId] === undefined){
-      anno[videoId] = {}; 
-    }
-    // since we get all annotaitons for the frame, reset original
+    if(anno[videoId] === undefined){ anno[videoId] = {}; }
+    // since we get all annotations for the frame, reset original
     anno[videoId][frameNumber] = {}; 
     _.each(annotationObjs, function(annoObj){
       var newAnnotation = _.extend(annoObj, objDecorations);
@@ -51,7 +50,13 @@ ZIGVU.DataManager.DataManager = function() {
       annosToSaveToDb.push(newAnnotation);
     });
     // save to database
-    self.ajaxHandler.getAnnotationSavePromise(annosToSaveToDb)
+    var annoSave = {
+      video_id: videoId,
+      frame_number: frameNumber,
+      chia_version_id: self.filterStore.chiaVersionId,
+      annotations: annosToSaveToDb
+    };
+    self.ajaxHandler.getAnnotationSavePromise(annoSave)
       .then(function(status){ console.log(status); })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };

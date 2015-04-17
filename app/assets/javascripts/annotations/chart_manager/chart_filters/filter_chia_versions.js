@@ -9,8 +9,8 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 ZIGVU.ChartManager.ChartFilters.FilterChiaVersions = function(htmlGenerator) {
   var self = this;
 
-  var divId_filterContainer = "#filter-chai-versions-container";
-  var divId_filterTable = "#filter-chai-versions-table";
+  var divId_filterContainer = "#filter-chia-versions-localization-container";
+  var divId_filterTable = "#filter-chia-versions-localization-table";
 
 
   this.displayInput = function(chiaVersions){

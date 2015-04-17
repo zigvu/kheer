@@ -38,7 +38,7 @@ ZIGVU.VideoHandler.VideoPlayer = function(videoFrameCanvas) {
     var result = self.paintFrame();
     if(result.status === 'seeking'){ 
       // schedule to run again in a short time
-      setTimeout(function(){ self.playUntilSeekEnd(); }, 100);
+      setTimeout(function(){ self.playUntilSeekEnd(); }, 20);
     } else if(result.status === 'seeked'){
       self.drawingHandler.startAnnotation(result.video_id, result.frame_number);
 

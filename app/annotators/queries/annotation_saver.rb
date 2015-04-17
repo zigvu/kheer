@@ -4,11 +4,7 @@ module Annotators
 
 			def initialize(parsedAnnotations)
 				@annotations = parsedAnnotations.annotations
-				@annotationIdentifier = {
-					ci: @annotations[0][:ci], 
-					vi: @annotations[0][:vi], 
-					fn: @annotations[0][:fn]
-				}
+				@annotationIdentifier = parsedAnnotations.annotationIdentifier
 			end
 
 			def save
