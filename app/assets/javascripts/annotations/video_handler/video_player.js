@@ -9,147 +9,150 @@ ZIGVU.VideoHandler.VideoPlayer = function(videoFrameCanvas) {
   var self = this;
   this.renderCTX = videoFrameCanvas.getContext("2d");
 
+  this.eventManager = undefined;
   this.dataManager = undefined;
+  this.timelineChartData = undefined;
   this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations(videoFrameCanvas);
   this.drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(videoFrameCanvas);
   this.multiVideoExtractor = new ZIGVU.VideoHandler.MultiVideoExtractor(self.renderCTX);
+
+  // pause behavior tracker
+  var isVideoPaused = false;
 
   // returns promise that will be resolved once all videos are loaded
   this.loadVideosPromise = function(videoDataMap){ 
     return self.multiVideoExtractor.loadVideosPromise(videoDataMap); 
   }
 
-  this.playContinuous = function(){
-    if(self.multiVideoExtractor.isVideoPaused()){ return; }
+  //------------------------------------------------
+  // painting in different modes
 
-    var result = self.paintFrame();
-    if(result.status === 'ended'){ return; }
+  // frequency of update to timeline chart
+  var updateTimelineChartCounter = 0, maxUpdateTimelineChartCounter = 10;
+
+
+  // paint in continuous play mode
+  this.paintContinuous = function(){
+    if(isVideoPaused){ return; }
+
+    var currentPlayState = self.paintFrameWithLocalization();
+
+    // update timeline chart every so often
+    if(updateTimelineChartCounter >= maxUpdateTimelineChartCounter){
+      self.eventManager.firePaintFrameCallback(currentPlayState);
+      updateTimelineChartCounter = 0;
+    }
+    updateTimelineChartCounter++;
+
+    if(currentPlayState.play_state === 'ended'){ return; }
 
     // schedule to run again in a short time
     // Note: requestAnimationFrame tends to skip frames where as setTimeout
     // seems to skip less
-    // requestAnimationFrame(self.playContinuous);
-    setTimeout(function(){ self.playContinuous(); }, 20);
+    // requestAnimationFrame(self.paintContinuous);
+    setTimeout(function(){ self.paintContinuous(); }, 20);
   };
 
-  this.playUntilSeekEnd = function(){
-    if(!self.multiVideoExtractor.isVideoPaused()){ return; }
+  // paint in continuous pause mode
+  this.paintUntilPaused = function(){
+    if(!isVideoPaused){ return; }
 
-    var result = self.paintFrame();
-    if(result.status === 'seeking'){ 
+    var currentPlayState = self.paintFrameWithLocalization();
+    if(currentPlayState.play_state === 'seeking'){ 
       // schedule to run again in a short time
-      setTimeout(function(){ self.playUntilSeekEnd(); }, 20);
-    } else if(result.status === 'seeked'){
-      self.drawingHandler.startAnnotation(result.video_id, result.frame_number);
+      setTimeout(function(){ self.paintUntilPaused(); }, 20);
+    } else if(currentPlayState.play_state === 'paused'){
+      self.drawingHandler.startAnnotation(currentPlayState.video_id, currentPlayState.frame_number);
+      self.eventManager.firePaintFrameCallback(currentPlayState);
+      updateTimelineChartCounter = 0;
 
       console.log("Seek ended!");
     }
   };
 
-  // returns status of painting from inner class
-  this.paintFrame = function(){
-    var result = self.multiVideoExtractor.paintFrame();
-
-    if(result.status !== 'ended'){ 
-      self.drawLocalizations.drawBboxes(result.video_id, result.frame_number);
-      console.log('Frame number: ' + result.frame_number);
-    }
-    return result;
+  // paint localizations
+  this.paintFrameWithLocalization = function(){
+    var currentPlayState = self.multiVideoExtractor.paintFrame();
+    self.drawLocalizations.drawBboxes(currentPlayState.video_id, currentPlayState.frame_number);
+    return currentPlayState;
   };
 
-  // player button control
-  this.firstVideo = function(){
-    console.log("firstVideo");
-  };
+  //------------------------------------------------
+  // player keys and button control
+  this.previousHit = function(){ self.playHit(false); };
+  this.nextHit = function(){ self.playHit(true); };
 
-  this.fastPlayBackward = function(){
-    self.skipFewFramesBack();
-  };
-
-  this.pausePlayback = function(){
-    console.log("pausePlayback");
-    self.frameNavigate(0);
-  };
+  this.fastPlayBackward = function(){ self.skipFewFramesBack(); };
+  this.fastPlayForward = function(){ self.skipFewFramesForward(); };
 
   this.startPlayback = function(){
-    console.log("startPlayback");
+    isVideoPaused = false;
     self.drawingHandler.endAnnotation();
-    self.multiVideoExtractor.setVideoPaused(false);
-    self.playContinuous();
+    self.multiVideoExtractor.playVideo();
+    self.paintContinuous();
   };
-
-  this.fastPlayForward = function(){
-    self.skipFewFramesForward();
-  };
-
-  this.lastVideo = function(){
-    console.log("lastVideo");
-  };
-
-  // key controls
+  this.pausePlayback = function(){ self.frameNavigate(0); };
   this.togglePlay = function(){
-    console.log("togglePlay");
-    if(self.multiVideoExtractor.isVideoPaused()){ 
-      self.startPlayback();
-    } else {
-      self.pausePlayback();
-    }
+    var toggled = isVideoPaused ? self.startPlayback() : self.pausePlayback();
   };
 
-  this.nextFrame = function(){
-    console.log("nextFrame");
-    self.frameNavigate(1);
-  };
+  this.nextFrame = function(){ self.frameNavigate(1); };
+  this.previousFrame = function(){ self.frameNavigate(-1); };
 
-  this.previousFrame = function(){
-    console.log("previousFrame");
-    self.frameNavigate(-1);
-  };
-
-  this.skipFewFramesForward = function(){
-    console.log("skipFewFramesForward");
-    self.frameNavigate(10);
-  };
-
-  this.skipFewFramesBack = function(){
-    console.log("skipFewFramesBack");
-    self.frameNavigate(-10);
-  };
-
-  this.frameNavigate = function(numOfFrames){
-    if(!self.multiVideoExtractor.isVideoPaused()){ 
-      self.multiVideoExtractor.setVideoPaused(true);
-    }
-    self.multiVideoExtractor.setTimeForNumFrames(numOfFrames);
-    self.playUntilSeekEnd();
-  };
+  this.skipFewFramesForward = function(){ self.frameNavigate(10); };
+  this.skipFewFramesBack = function(){ self.frameNavigate(-10); };
 
   // speed
-  this.playFaster = function(){
-    console.log("playFaster");
-    self.multiVideoExtractor.increasePlaybackRate();
-  };
-
-  this.playSlower = function(){
-    console.log("playSlower");
-    self.multiVideoExtractor.reducePlaybackRate();
-  };
-
-  this.playNormal = function(){
-    console.log("playNormal");
-    self.multiVideoExtractor.setPlaybackNormal();
-  };
+  this.playFaster = function(){ self.multiVideoExtractor.increasePlaybackRate(); };
+  this.playSlower = function(){ self.multiVideoExtractor.reducePlaybackRate(); };
+  this.playNormal = function(){ self.multiVideoExtractor.setPlaybackNormal(); };
 
   // annotation
-  this.deleteAnnotation = function(){
-    self.drawingHandler.deleteAnnotation();
-    console.log("deleteAnnotation");
+  this.deleteAnnotation = function(){ self.drawingHandler.deleteAnnotation(); };
+
+  //------------------------------------------------
+  // navigation helpers
+  this.frameNavigate = function(numOfFrames){
+    if(!isVideoPaused){ isVideoPaused = true; }
+    var currentPlayState = self.multiVideoExtractor.getCurrentState();
+    var newPlayPos = self.timelineChartData.getNewPlayPosition(
+      currentPlayState.video_id, currentPlayState.frame_number, numOfFrames);
+
+    self.multiVideoExtractor.seekToVideoFrameNumber(newPlayPos.video_id, newPlayPos.frame_number);
+    self.paintUntilPaused();
   };
 
+  this.playHit = function(forwardDirection){
+    if(!isVideoPaused){ isVideoPaused = true; }
+    var currentPlayState = self.multiVideoExtractor.getCurrentState();
+    var newPlayPos = self.timelineChartData.getHitPlayPosition(
+      currentPlayState.video_id, currentPlayState.frame_number, forwardDirection);
 
+    self.multiVideoExtractor.seekToVideoFrameNumber(newPlayPos.video_id, newPlayPos.frame_number);
+    self.paintUntilPaused();
+  }
+
+  //------------------------------------------------
+  // Event handling
+  function frameNavigateAfterBrush(args){
+    if(!isVideoPaused){ isVideoPaused = true; }
+
+    self.multiVideoExtractor.seekToVideoFrameNumber(args.video_id, args.frame_number);
+    self.paintUntilPaused();    
+  };
+
+  //------------------------------------------------
   // set relations
+  this.setEventManager = function(em){
+    self.eventManager = em;
+    self.eventManager.addFrameNavigateCallback(frameNavigateAfterBrush);
+    return self;
+  };
+
   this.setDataManager = function(dm){
     self.dataManager = dm;
+    self.timelineChartData = self.dataManager.timelineChartData;
+
     self.drawLocalizations.setDataManager(self.dataManager);
     self.drawingHandler.setDataManager(self.dataManager);
     return self;

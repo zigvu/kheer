@@ -12,11 +12,9 @@ module Api
 			# POST api/v1/filters/video_data_map
 			def video_data_map
 				# TODO: 
-				videoDataMap = [
-					{video_id: 1, video_URL: '/data/2.mp4', frame_rate: 25},
-					{video_id: 2, video_URL: '/data/2.mp4', frame_rate: 25},
-					{video_id: 3, video_URL: '/data/2.mp4', frame_rate: 25}
-				];
+				videoDataMap = {
+					:"1" => {video_URL: '/data/2.mp4', frame_rate: 25, detection_rate: 5, frame_number_start: 1, frame_number_end: 7946}
+				}
 				render json: {video_data_map: videoDataMap}.to_json
 			end
 

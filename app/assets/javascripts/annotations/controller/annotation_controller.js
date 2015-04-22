@@ -1,14 +1,17 @@
 var ZIGVU = ZIGVU || {};
+ZIGVU.Controller = ZIGVU.Controller || {};
 
 /*
   This class coordinates action between all annotation classes.
 */
 
-ZIGVU.AnnotationController = function() {
+ZIGVU.Controller.AnnotationController = function() {
   var self = this;
 
   this.videoFrameCanvas = document.getElementById("videoFrameCanvas");
   this.renderCTX = self.videoFrameCanvas.getContext("2d");
+
+  this.eventManager = new ZIGVU.Controller.EventManager();
 
   this.chartManager = new ZIGVU.ChartManager.ChartManager();
   this.dataManager = new ZIGVU.DataManager.DataManager();
@@ -40,8 +43,16 @@ ZIGVU.AnnotationController = function() {
         self.chartManager.showAnnotationList();
 
         self.dataManager.ajaxHandler.getFullDataPromise()
-          .then(function(videoDataMap){ return self.videoPlayer.loadVideosPromise(videoDataMap); })
-          .then(function(){ self.videoPlayerControls.enable(); })
+          .then(function(videoDataMap){ 
+            var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
+            self.dataManager.createTimelineChartData();
+            return videoLoadPromise;
+          })
+          .then(function(){ 
+            self.videoPlayerControls.enable(); 
+            self.chartManager.drawTimelineChart();
+            self.videoPlayer.pausePlayback();
+          })
           .catch(function (errorReason) { self.err(errorReason); }); 
 
         console.log('Loading videos');
@@ -54,9 +65,14 @@ ZIGVU.AnnotationController = function() {
     self.chartManager.showAnnotationList();
 
     self.dataManager.ajaxHandler.getFullDataPromise()
-      .then(function(videoDataMap){ return self.videoPlayer.loadVideosPromise(videoDataMap); })
+      .then(function(videoDataMap){ 
+        var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
+        self.dataManager.createTimelineChartData();
+        return videoLoadPromise;
+      })
       .then(function(){ 
-        self.videoPlayerControls.enable();
+        self.videoPlayerControls.enable(); 
+        self.chartManager.drawTimelineChart();
         self.videoPlayer.pausePlayback();
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
@@ -67,14 +83,18 @@ ZIGVU.AnnotationController = function() {
   };
 
   this.register = function(){
-    self.chartManager.setDataManager(self.dataManager);
+    self.chartManager
+      .setEventManager(self.eventManager)
+      .setDataManager(self.dataManager);
 
-    self.videoPlayer.setDataManager(self.dataManager);
+    self.videoPlayer
+      .setEventManager(self.eventManager)
+      .setDataManager(self.dataManager);
   };
 
   // shorthand for error printing
   this.err = function(errorReason){
-    displayJavascriptError('ZIGVU.AnnotationController -> ' + errorReason);
+    displayJavascriptError('ZIGVU.Controller.AnnotationController -> ' + errorReason);
   };
 };
 

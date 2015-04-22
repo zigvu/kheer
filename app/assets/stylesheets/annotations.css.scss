@@ -9,6 +9,9 @@ $filter-panel-border-color-light: $panel-border-color;
 
 $filter-panel-legend-box-color: scale-color($filter-panel-border-color-light, $lightness: 85%);
 
+$chart-timeline-background-color: $white;
+$chart-timeline-border-color: $zigvu-footer-background-color;
+$chart-timeline-brush-color: $orange;
 
 // ------------------------------------
 // media player controls
@@ -98,6 +101,50 @@ $filter-panel-legend-box-color: scale-color($filter-panel-border-color-light, $l
   .filter-content {
     padding: 1.25rem 1.25rem 0 1.25rem;
   }
+}
+
+#d3-video-timeline-chart {
+  .timeline-context-chart {
+    background-color: $black;
+  }
+
+  .timeline-focus-chart {
+    background-color: $black;
+  }
+
+  rect.bg-rect {
+    fill: $chart-timeline-background-color;
+    stroke: $chart-timeline-border-color;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+  }
+
+  .contextBrush, .focusBrush {
+    stroke: $chart-timeline-brush-color;
+    stroke-width: 2px;
+
+    fill: $chart-timeline-brush-color;
+    fill-opacity: .25;
+    shape-rendering: crispEdges;
+  }
+
+  .focusBrush {
+    .focusBrushHandlePointer {
+      stroke: red;
+    }
+    .focusBrushHandleRect {
+    }
+  }
+
+  path {
+    pointer-events: none;
+    fill:none;
+    stroke-width: 1.5px;
+  }
+
+  // line {
+  //   shape-rendering: crispedges;
+  // }
 }
 
 

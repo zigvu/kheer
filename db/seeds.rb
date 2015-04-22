@@ -15,6 +15,9 @@ scoreFolder = '/home/evan/Vision/temp/kheerSeed/json_for_kheer'
 
 # Create chia version, detectables and patch map
 firstChiaVersion = ChiaVersion.create(name: "50 Class Seed Model", description: "First train description", comment: "First train comment")
+chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(firstChiaVersion)
+chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
+
 idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
 idl.saveToDb(firstChiaVersion.id)
 

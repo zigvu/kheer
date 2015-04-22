@@ -10,13 +10,16 @@ ZIGVU.DataManager.DataManager = function() {
   
   this.dataStore = new ZIGVU.DataManager.DataStore();
   this.filterStore = new ZIGVU.DataManager.FilterStore();
+  this.timelineChartData = new ZIGVU.DataManager.TimelineChartData();
+
   this.ajaxHandler = new ZIGVU.DataManager.AjaxHandler();
-  this.ajaxHandler
+  self.ajaxHandler
     .setDataStore(self.dataStore)
     .setFilterStore(self.filterStore);
 
   this.getLocalizations = function(videoId, frameNumber){
-    var fn = (frameNumber - 1) - ((frameNumber - 1) % 5) + 1;
+    var detectionRate = self.dataStore.videoDataMap[videoId].detection_rate;
+    var fn = (frameNumber - 1) - ((frameNumber - 1) % detectionRate) + 1;
     var loc = self.dataStore.dataFullLocalizations;
     if(loc[videoId] === undefined || loc[videoId][fn] === undefined){ return []; }
     return loc[videoId][fn];
@@ -59,6 +62,46 @@ ZIGVU.DataManager.DataManager = function() {
     self.ajaxHandler.getAnnotationSavePromise(annoSave)
       .then(function(status){ console.log(status); })
       .catch(function (errorReason) { self.err(errorReason); }); 
+  };
+
+  this.createTimelineChartData = function(){
+    self.timelineChartData.counterDataMap = [];
+    self.timelineChartData.videoIdFrameNumberCounterMap = {};
+    self.timelineChartData.counterVideoIdFrameNumberMap = {};
+    var vfcm = self.timelineChartData.videoIdFrameNumberCounterMap;
+    var cvfm = self.timelineChartData.counterVideoIdFrameNumberMap;
+
+    var sortedVideoIds = _.map(Object.keys(self.dataStore.videoDataMap), function(dId){ 
+      return parseInt(dId); 
+    });
+    sortedVideoIds = _.sortBy(sortedVideoIds, function(dId){ return dId; });
+    
+    _.each(self.filterStore.detectableIds, function(detId){
+      var name = self.dataStore.detectablesMap[detId].pretty_name;
+      var color = self.dataStore.detectablesMap[detId].annotation_color;
+
+      var values = [], counter = 0;
+      var frameNumberStart, frameNumberEnd, detScores, score;
+      _.each(sortedVideoIds, function(videoId){
+        frameNumberStart = self.dataStore.videoDataMap[videoId].frame_number_start;
+        frameNumberEnd = self.dataStore.videoDataMap[videoId].frame_number_end;
+        _.each(_.range(frameNumberStart, frameNumberEnd + 1), function(frameNumber){
+          score = 0;
+          if((self.dataStore.dataFullLocalizations[videoId]) &&
+            (self.dataStore.dataFullLocalizations[videoId][frameNumber]) &&
+            (self.dataStore.dataFullLocalizations[videoId][frameNumber][detId])){
+            detScores = self.dataStore.dataFullLocalizations[videoId][frameNumber][detId];
+            score = _.max(detScores, function(ds){ return ds.prob_score; }).prob_score;
+          }
+          values.push({counter: counter++, score: score});
+          // create maps beteween videoId/frameNumber and counter
+          if(!vfcm[videoId]){ vfcm[videoId] = {}; }
+          if(!vfcm[videoId][frameNumber]){ vfcm[videoId][frameNumber] = counter - 1; }
+          if(!cvfm[counter - 1]){ cvfm[counter - 1] = {video_id: videoId, frame_number: frameNumber}; }
+        });
+      });
+      self.timelineChartData.counterDataMap.push({name: name, color: color, values: values});
+    });
   };
 
   this.getSelectedAnnotationDetails = function(){

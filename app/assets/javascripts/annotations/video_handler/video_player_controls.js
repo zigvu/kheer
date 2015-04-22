@@ -9,20 +9,20 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   var self = this;
   var disabled = true;
 
-  var divId_firstVideo = '#player-first';
+  var divId_previousHit = '#player-previous-hit';
   var divId_fastPlayBackward = '#player-rewind';
   var divId_pausePlayback = '#player-pause';
   var divId_startPlayback = '#player-play';
   var divId_fastPlayForward = '#player-fast-forward';
-  var divId_lastVideo = '#player-last';
+  var divId_nextHit = '#player-next-hit';
 
   // capture clicks
-  $(divId_firstVideo).click(function(){ if(disabled){ return; }; videoPlayer.firstVideo(); });
+  $(divId_previousHit).click(function(){ if(disabled){ return; }; videoPlayer.previousHit(); });
   $(divId_fastPlayBackward).click(function(){ if(disabled){ return; }; videoPlayer.fastPlayBackward(); });
   $(divId_pausePlayback).click(function(){ if(disabled){ return; }; videoPlayer.pausePlayback(); });
   $(divId_startPlayback).click(function(){ if(disabled){ return; }; videoPlayer.startPlayback(); });
   $(divId_fastPlayForward).click(function(){ if(disabled){ return; }; videoPlayer.fastPlayForward(); });
-  $(divId_lastVideo).click(function(){ if(disabled){ return; }; videoPlayer.lastVideo(); });
+  $(divId_nextHit).click(function(){ if(disabled){ return; }; videoPlayer.nextHit(); });
 
   // capture keycodes
   $(document).keypress(function(e) {
@@ -54,22 +54,22 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   });
 
   this.enable = function(){
-    $(divId_firstVideo).removeClass('disabled');
+    $(divId_previousHit).removeClass('disabled');
     $(divId_fastPlayBackward).removeClass('disabled');
     $(divId_pausePlayback).removeClass('disabled');
     $(divId_startPlayback).removeClass('disabled');
     $(divId_fastPlayForward).removeClass('disabled');
-    $(divId_lastVideo).removeClass('disabled');
+    $(divId_nextHit).removeClass('disabled');
     disabled = false;
   };
 
   this.disable = function(){
-    $(divId_firstVideo).addClass('disabled');
+    $(divId_previousHit).addClass('disabled');
     $(divId_fastPlayBackward).addClass('disabled');
     $(divId_pausePlayback).addClass('disabled');
     $(divId_startPlayback).addClass('disabled');
     $(divId_fastPlayForward).addClass('disabled');
-    $(divId_lastVideo).addClass('disabled');
+    $(divId_nextHit).addClass('disabled');
     disabled = true;
   };
 };
