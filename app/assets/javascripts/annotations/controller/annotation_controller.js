@@ -31,7 +31,7 @@ ZIGVU.Controller.AnnotationController = function() {
   this.loadDataTest = function(){
 
     // TODO: remove
-    self.dataManager.filterStore.chiaVersionId = 1;
+    self.dataManager.filterStore.chiaVersionIdLocalization = 1;
     self.dataManager.filterStore.detectableIds = [1, 48, 49];
     self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: [0]};
     self.dataManager.ajaxHandler.getChiaVersionsPromise()

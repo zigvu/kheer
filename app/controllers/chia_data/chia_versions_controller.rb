@@ -11,6 +11,8 @@ module ChiaData
     # GET /chia_versions/1
     # GET /chia_versions/1.json
     def show
+      @chia_versions = ::ChiaVersion.all - [@chia_version]
+      @detectables = @chia_version.detectables
     end
 
     # GET /chia_versions/new
@@ -61,6 +63,30 @@ module ChiaData
         format.json { head :no_content }
       end
     end
+
+    # manage detectables
+
+    # GET /chia_versions/1/list_detectables.js
+    def list_detectables
+      chiaVersionId = params[:chia_version_id]
+      @detectables = ::ChiaVersion.find(chiaVersionId).detectables
+      respond_to do |format|
+        format.js
+      end
+    end
+
+    # GET /chia_versions/1/add_detectables.js
+    def add_detectables
+      @chia_version = ::ChiaVersion.find(params[:id])
+      detectables = params[:detectable_ids].map{ |dId| ::Detectable.find(dId.to_i) }
+      detectables.each do |d|
+        @chia_version.detectables.create(
+          name: d.name, pretty_name: d.pretty_name,
+          description: d.description, chia_detectable_id: d.chia_detectable_id)
+      end
+      redirect_to chia_data_chia_version_url(@chia_version), notice: 'Detectables added'
+    end
+
 
     private
       # Use callbacks to share common setup or constraints between actions.

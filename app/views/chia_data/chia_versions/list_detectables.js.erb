@@ -1,0 +1,15 @@
+$("#detectables_select_table").html("<%=j render(partial: 'detectables_select_table') %>");
+
+$("#detectable-select-table-select-all").click(function(e){
+	e.preventDefault();
+	$("input:checkbox[name='detectable_ids[]']").each(function(){
+		this.checked = true;
+	});
+});
+
+$("#detectable-select-table-select-none").click(function(e){
+	e.preventDefault();
+	$("input:checkbox[name='detectable_ids[]']").each(function(){
+		this.checked = false;
+	});
+});

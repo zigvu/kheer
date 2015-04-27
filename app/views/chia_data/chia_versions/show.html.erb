@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<h3>Chia Version details</h3>
 
 <p>
   <strong>Name:</strong>
@@ -15,5 +15,16 @@
   <%= @chia_version.comment %>
 </p>
 
-<%= link_to 'Edit', edit_chia_data_chia_version_path(@chia_version) %> |
-<%= link_to 'Back', chia_data_chia_versions_path %>
+<p>
+  <strong>Detectables:</strong>
+  <%= render 'detectables_show_table' %>
+  <%= link_to 'Create new detectable', new_chia_data_detectable_path(detectable: {chia_version_id: @chia_version.id}), class: "button" %>
+</p>
+
+<p>
+  <strong>Copy detectables from existing Chia Version:</strong>
+  <%= render 'chia_versions_select_table' %>
+  <div id="detectables_select_table"></div>
+</p>
+
+<%= link_to 'Back', chia_data_chia_versions_path, class: "button" %>

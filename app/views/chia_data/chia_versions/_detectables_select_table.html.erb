@@ -1,0 +1,40 @@
+<%= form_tag(add_detectables_chia_data_chia_version_path, method: "get", class: "simple_form") do %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Chia Id</th>
+      <th>Name</th>
+      <th>Pretty name</th>
+      <th>Description</th>
+      <th>
+        <div>
+          Select [<a href="#" id="detectable-select-table-select-all">All</a> | <a href="#" id="detectable-select-table-select-none" >None</a>]
+        </div>
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @detectables.each do |detectable| %>
+      <tr>
+        <td><%= detectable.id %></td>
+        <td><%= detectable.chia_detectable_id %></td>
+        <td><%= detectable.name %></td>
+        <td><%= detectable.pretty_name %></td>
+        <td><%= detectable.description %></td>
+        <td><%= check_box_tag 'detectable_ids[]', detectable.id %></td>
+      </tr>
+    <% end %>
+    <tr> <td></td> <td></td> <td></td> <td></td> <td></td>
+       <td>
+          <div class="form-actions">
+            <%= submit_tag "Submit", class: "button" %>
+          </div>
+       </td>
+    </tr>
+  </tbody>
+</table>
+
+<% end %>

@@ -4,6 +4,27 @@
   <% if user_signed_in? %>
 
     <li class="has-dropdown">
+      <a href="#">Analysis</a>
+      <ul class="dropdown">
+        <li id="analysis_annotations">
+          <%= link_to "Annotations", analysis_annotations_path %>
+        </li>
+      </ul>
+    </li>
+
+    <li class="has-dropdown">
+      <a href="#">Data</a>
+      <ul class="dropdown">
+        <li id="chia_data_chia_versions">
+          <%= link_to "Chia Models", chia_data_chia_versions_path %>
+        </li>
+        <li id="khajuri_data_video_collections">
+          <%= link_to "Video Collections", khajuri_data_video_collections_path %>
+        </li>
+      </ul>
+    </li>
+
+    <li class="has-dropdown">
       <a href="#">Settings</a>
       <ul class="dropdown">
         <li><%= link_to "Sign out", destroy_user_session_path, :method => :delete %></li>

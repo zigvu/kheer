@@ -1,0 +1,21 @@
+<%= simple_form_for([:khajuri_data, @video_collection]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :title %>
+    <%= f.input :description %>
+    <%= f.input :comment %>
+    <%= f.input :source_type, input_html: {value: f.object.source_type || 'zigvu'} %>
+    <%= f.input :source_url, input_html: {value: f.object.source_url || 'www.zigvu.com/videos'} %>
+    <%= f.input :quality, input_html: {value: f.object.quality || '720p'} %>
+    <%= f.input :format, input_html: {value: f.object.format || 'mp4'} %>
+    <%= f.input :playback_frame_rate, input_html: {value: f.object.playback_frame_rate || 25}  %>
+    <%= f.input :detection_frame_rate, input_html: {value: f.object.detection_frame_rate || 5}  %>
+    <%= f.input :width, input_html: {value: f.object.width || 1280}  %>
+    <%= f.input :height, input_html: {value: f.object.height || 720}  %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

@@ -7,17 +7,18 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
 
 ZIGVU.DataManager.FilterStore = function() {
   var self = this;
-  this.chiaVersionId = undefined;
+  this.chiaVersionIdLocalization = undefined;
   this.detectableIds = undefined;
   this.localizations = undefined;
   this.videoIds = undefined;
+  this.chiaVersionIdAnnotation = undefined;
 
   // for active filtering
   this.currentAnnotationDetId = undefined;
   
   this.getCurrentFilterParams = function(){
     var currentFilters = {};
-    currentFilters['chia_version_id'] = self.chiaVersionId;
+    currentFilters['chia_version_id'] = self.chiaVersionIdLocalization;
     currentFilters['detectable_ids'] = self.detectableIds;
     currentFilters['localization_scores'] = self.localizations;
     currentFilters['video_ids'] = self.videoIds;
@@ -25,10 +26,11 @@ ZIGVU.DataManager.FilterStore = function() {
   };
 
   this.reset = function(){
-    self.chiaVersionId = undefined;
+    self.chiaVersionIdLocalization = undefined;
     self.detectableIds = undefined;
     self.localizations = undefined;
     self.currentAnnotationDetId = undefined;
     self.videoIds = undefined;
+    this.chiaVersionIdAnnotation = undefined;
   };
 };

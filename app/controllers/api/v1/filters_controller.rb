@@ -11,11 +11,11 @@ module Api
 
 			# POST api/v1/filters/video_data_map
 			def video_data_map
-				# TODO: 
-				videoDataMap = {
-					:"1" => {video_URL: '/data/2.mp4', frame_rate: 25, detection_rate: 5, frame_number_start: 1, frame_number_end: 7946}
-				}
-				render json: {video_data_map: videoDataMap}.to_json
+				vdmp = Annotators::Parsers::VideoDataMapParser.new(params[:video_data_map])
+				vdmq = Annotators::Queries::VideoDataMapQuery.new(vdmp).run()
+				formatted = Annotators::Formatters::VideoDataMapQueryFormatter.new(vdmq).formatted()
+
+				render json: formatted.to_json
 			end
 
 			# POST api/v1/filters/filtered_summary

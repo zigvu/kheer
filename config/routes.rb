@@ -2,6 +2,7 @@ Kheer::Application.routes.draw do
 
   namespace :api, :defaults => {:format => :json} do
     namespace :v1 do
+      
       get 'filters/detectables'
       get 'filters/chia_versions'
       post 'filters/filtered_summary'
@@ -14,12 +15,17 @@ Kheer::Application.routes.draw do
   end
 
   namespace :chia_data do
-    resources :detectables
-    resources :chia_versions
+    resources :detectables, only: [:new, :edit, :create, :update, :destroy]
+    resources :chia_versions do
+      member do
+        get 'list_detectables'
+        get 'add_detectables'
+      end
+    end
   end
 
   namespace :khajuri_data do
-    resources :videos
+    resources :video_collections
   end
 
   namespace :analysis do

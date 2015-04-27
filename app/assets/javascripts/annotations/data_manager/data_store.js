@@ -28,7 +28,7 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
     where anno: {x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
 
   videoDataMap: {:video_id => 
-    {video_URL:, frame_rate:, detection_rate:, frame_number_start:, frame_number_end:}
+    {video_url:, playback_frame_rate:, detection_frame_rate:, frame_number_start:, frame_number_end:}
   }
 */
 

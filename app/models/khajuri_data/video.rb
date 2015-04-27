@@ -2,6 +2,8 @@ class Video < ActiveRecord::Base
 
 	before_destroy :destroy_mongo_documents, prepend: true
 
+  belongs_to :video_collection
+
 	# Mock a has_many relationship with Mongoid models
 	def frame_scores
 		FrameScore.where(video_id: self.id).order(frame_number: :asc)

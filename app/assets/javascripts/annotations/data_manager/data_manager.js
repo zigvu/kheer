@@ -18,7 +18,7 @@ ZIGVU.DataManager.DataManager = function() {
     .setFilterStore(self.filterStore);
 
   this.getLocalizations = function(videoId, frameNumber){
-    var detectionRate = self.dataStore.videoDataMap[videoId].detection_rate;
+    var detectionRate = self.dataStore.videoDataMap[videoId].detection_frame_rate;
     var fn = (frameNumber - 1) - ((frameNumber - 1) % detectionRate) + 1;
     var loc = self.dataStore.dataFullLocalizations;
     if(loc[videoId] === undefined || loc[videoId][fn] === undefined){ return []; }
@@ -37,7 +37,7 @@ ZIGVU.DataManager.DataManager = function() {
     var objDecorations = {
       video_id: videoId,
       frame_number: frameNumber,
-      chia_version_id: self.filterStore.chiaVersionId
+      chia_version_id: self.filterStore.chiaVersionIdAnnotation
     };
 
     var anno = self.dataStore.dataFullAnnotations;
@@ -56,7 +56,7 @@ ZIGVU.DataManager.DataManager = function() {
     var annoSave = {
       video_id: videoId,
       frame_number: frameNumber,
-      chia_version_id: self.filterStore.chiaVersionId,
+      chia_version_id: self.filterStore.chiaVersionIdAnnotation,
       annotations: annosToSaveToDb
     };
     self.ajaxHandler.getAnnotationSavePromise(annoSave)
@@ -119,19 +119,6 @@ ZIGVU.DataManager.DataManager = function() {
       color: self.dataStore.detectablesMap[detId].annotation_color
     };
   }
-
-  this.getFilteredChiaVersion = function(){
-    if(self.filterStore.chiaVersionId === undefined){
-      err('No chia version filter found');
-    } else if(self.dataStore.chiaVersions === undefined){
-      err('No chia versions data found');
-    } else {
-      return _.find(self.dataStore.chiaVersions, function(chiaVersion){
-        return chiaVersion.id == self.filterStore.chiaVersionId; 
-      });
-    }
-    return undefined;
-  };
 
   this.getFilteredDetectables = function(){
     if(self.filterStore.detectableIds === undefined){

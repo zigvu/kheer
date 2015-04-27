@@ -4,7 +4,7 @@ module Serializers
 		# First value in a field array row is the name of the field
 		# Second value in a field array row is an array of things it holds
 		@@chiaVersionSettingsFieldValues = [
-			[:settings, [:zdistThresh]]
+			[:settings, [:zdistThresh, :scales]]
 		]
 
 		def initialize(chiaVersion)

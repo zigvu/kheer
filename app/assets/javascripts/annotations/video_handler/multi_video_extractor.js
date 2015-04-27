@@ -25,10 +25,10 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
       }
 
       var videoFrameExtractor = new ZIGVU.VideoHandler.VideoFrameExtractor(renderCTX);
-      var videoLoadPromise = videoFrameExtractor.loadVideoPromise(videoData.video_URL);
+      var videoLoadPromise = videoFrameExtractor.loadVideoPromise(videoData.video_url);
       self.videoFrameObjects[videoId] = {
         vfe: videoFrameExtractor,
-        frame_rate: videoData.frame_rate,
+        playback_frame_rate: videoData.playback_frame_rate,
         previous_video_id: prevVideoId
       };
       prevVideoId = videoId;
@@ -97,7 +97,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
 
   this.getCurrentState = function(){
     var vfo = self.videoFrameObjects[currentVideoId];
-    var currentFrameNumber = Math.round(currentFrameTime * vfo.frame_rate);
+    var currentFrameNumber = Math.round(currentFrameTime * vfo.playback_frame_rate);
 
     return {
       play_state: currentPlayState,
@@ -143,7 +143,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
       // TBD
     } else {
       var vfo = self.videoFrameObjects[currentVideoId];
-      currentFrameTime = frameNumber / vfo.frame_rate;
+      currentFrameTime = frameNumber / vfo.playback_frame_rate;
       if(currentFrameTime < 0){ currentFrameTime = 0; }
 
       currentPlayState = 'seeking';

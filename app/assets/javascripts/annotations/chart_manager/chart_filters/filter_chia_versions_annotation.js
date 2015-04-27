@@ -6,20 +6,20 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
   Chia Ids filter.
 */
 
-ZIGVU.ChartManager.ChartFilters.FilterChiaVersions = function(htmlGenerator) {
+ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsAnnotation = function(htmlGenerator) {
   var self = this;
 
-  var divId_filterContainer = "#filter-chia-versions-localization-container";
-  var divId_filterTable = "#filter-chia-versions-localization-table";
+  var divId_filterContainer = "#filter-chia-versions-annotation-container";
+  var divId_filterTable = "#filter-chia-versions-annotation-table";
 
 
   this.displayInput = function(chiaVersions){
     self.empty();
     var requestDefer = Q.defer();
 
-    var submitButtonId = 'filter-chia-versions-submit';
-    var cancelButtonId = 'filter-chia-versions-cancel';
-    var inputName = "filterChiaVersionIds";
+    var submitButtonId = 'filter-chia-versions-annotation-submit';
+    var cancelButtonId = 'filter-chia-versions-annotation-cancel';
+    var inputName = "filterChiaVersionAnnotationIds";
     // convert data to a tabular form
     var headerArr = ['Id', 'Name', 'Description', 'Select'];
     var bodyArr = _.map(chiaVersions, function(chiaVersion){
@@ -28,7 +28,7 @@ ZIGVU.ChartManager.ChartFilters.FilterChiaVersions = function(htmlGenerator) {
         chiaVersion.name, 
         chiaVersion.description, 
         '<input type="radio" name="' + inputName + '" value="' 
-        + chiaVersion.id + '" id="input-filter-chia-version-ids">'
+        + chiaVersion.id + '" id="input-filter-chia-version-annotation-ids">'
       ];
     });
     var submitButton = htmlGenerator.newButton(submitButtonId, 'Submit');

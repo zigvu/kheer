@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  title: MyText
+  description: MyText
+  comment: MyText
+  source_type: MyString
+  source_url: MyString
+  quality: MyString
+  format: MyString
+  playback_frame_rate: 1.5
+  detection_frame_rate: 1.5
+  width: 1
+  height: 1
+
+two:
+  title: MyText
+  description: MyText
+  comment: MyText
+  source_type: MyString
+  source_url: MyString
+  quality: MyString
+  format: MyString
+  playback_frame_rate: 1.5
+  detection_frame_rate: 1.5
+  width: 1
+  height: 1

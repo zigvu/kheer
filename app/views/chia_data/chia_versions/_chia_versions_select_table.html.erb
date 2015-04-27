@@ -1,0 +1,32 @@
+<%= form_tag(list_detectables_chia_data_chia_version_path, method: "get", remote: true, class: "simple_form") do %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Select</th>
+    </tr>
+  </thead>
+
+  <tbody>
+      <% @chia_versions.each do |chia_version| %>
+        <tr>
+          <td><%= chia_version.id %></td>
+          <td><%= chia_version.name %></td>
+          <td><%= chia_version.description %></td>
+          <td><%= radio_button_tag 'chia_version_id', chia_version.id %></td>
+        </tr>
+      <% end %>
+      <tr> <td></td> <td></td> <td></td>
+         <td>
+            <div class="form-actions">
+              <%= submit_tag "Submit", class: "button" %>
+            </div>
+         </td>
+      </tr>
+  </tbody>
+</table>
+
+<% end %>

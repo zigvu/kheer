@@ -4,19 +4,18 @@ require 'csv'
 module DataImporters
 	class ImportScoreFolder
 
-		def initialize(scoreFolder, videoId, chiaVersionId)
-			@scoreFolder = scoreFolder
-			@videoId = videoId
-			@chiaVersionId = chiaVersionId
+		def initialize(scoreFolderReader, video, chiaVersion)
+			@scoreFolderReader = scoreFolderReader
+			@videoId = video.id
+			@chiaVersionId = chiaVersion.id
 		end
 
-		def saveToDb()
+		def saveToDb
 			# skip log creation
 			oldLogger = Moped.logger
 			Moped.logger = Logger.new(StringIO.new)
 
-			fnHash = getOrderedFiles(@scoreFolder)
-			saveToDb_vfData(fnHash)
+			saveToDb_vfData()
 
 			# create indexes if not there yet
 			Rails.logger.debug { "ImportScoreFolder : Creating indexes" }
@@ -26,10 +25,13 @@ module DataImporters
 			# reset old logger
 			Moped.logger = oldLogger
 
+			@scoreFolderReader.delete()
 			return true
 		end
 
-		def saveToDb_vfData(fnHash)
+		def saveToDb_vfData
+			fnHash = @scoreFolderReader.orderedFiles
+
 			# error out if chia version data is already there
 			# TODO: make more robust - if expiring scores, then this will have to change
 			# if scoresExist()
@@ -76,20 +78,6 @@ module DataImporters
 
 			frameScoreDumper.finalize()
 			localizationDumper.finalize()
-		end
-
-		def getOrderedFiles(scoreFolder)
-			fnHash = {}
-			# while technically the order doesn't matter in the database, it makes for easy debugging
-			Rails.logger.debug { "ImportScoreFolder : Sorting files prior to import" }
-			Dir.glob("#{scoreFolder}/*.json") do |jsonFile|
-				jsonFileHash = JSON.load(File.open(jsonFile))
-				frameNumber = jsonFileHash['frame_number'].to_i
-				fnHash[frameNumber] = jsonFile
-			end
-			fnHash = Hash[fnHash.sort]
-			Rails.logger.debug { "ImportScoreFolder : Done sorting files. Ready for import" }
-			return fnHash
 		end
 
 		def scoresExist()

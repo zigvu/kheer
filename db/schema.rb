@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150413192203) do
+ActiveRecord::Schema.define(version: 20150423173555) do
 
   create_table "chia_versions", force: true do |t|
     t.string   "name"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20150413192203) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  create_table "videos", force: true do |t|
+  create_table "video_collections", force: true do |t|
     t.text     "title"
     t.text     "description"
     t.text     "comment"
@@ -62,10 +62,6 @@ ActiveRecord::Schema.define(version: 20150413192203) do
     t.string   "source_url"
     t.string   "quality"
     t.string   "format"
-    t.integer  "length"
-    t.string   "runstatus"
-    t.datetime "start_time"
-    t.datetime "end_time"
     t.float    "playback_frame_rate"
     t.float    "detection_frame_rate"
     t.integer  "width"
@@ -73,5 +69,17 @@ ActiveRecord::Schema.define(version: 20150413192203) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "videos", force: true do |t|
+    t.integer  "length"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "video_collection_id"
+    t.string   "video_url"
+    t.integer  "frame_number_start"
+    t.integer  "frame_number_end"
+  end
+
+  add_index "videos", ["video_collection_id"], name: "index_videos_on_video_collection_id", using: :btree
 
 end

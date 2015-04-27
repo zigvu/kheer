@@ -14,29 +14,33 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   this.htmlGenerator = new ZIGVU.ChartManager.HtmlGenerator();
 
   this.filterStartButton = new ZIGVU.ChartManager.ChartFilters.FilterStartButton(self.htmlGenerator);
-  this.filterChiaVersions = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersions(self.htmlGenerator);
+  this.filterChiaVersionsLocalization = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsLocalization(self.htmlGenerator);
   this.filterDetectables = new ZIGVU.ChartManager.ChartFilters.FilterDetectables(self.htmlGenerator);
   this.filterLocalizations = new ZIGVU.ChartManager.ChartFilters.FilterLocalizations(self.htmlGenerator);
+  this.filterChiaVersionsAnnotation = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsAnnotation(self.htmlGenerator);
   this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(self.htmlGenerator);
 
   this.startFilter = function(){
     self.filterStartButton.displayInput(undefined)
-      .then(function(data){ self.getChiaVersions(); })
+      .then(function(data){ self.getChiaVersionsLocalization(); })
       .catch(function (errorReason) { self.err(errorReason); });
   };
 
-  this.getChiaVersions = function(){
+  this.getChiaVersionsLocalization = function(){
     self.dataManager.ajaxHandler.getChiaVersionsPromise()
       .then(function(chiaVersions){
         self.filterStartButton.hide();
-        self.filterChiaVersions.show();
-        return self.filterChiaVersions.displayInput(chiaVersions);
+        self.filterChiaVersionsLocalization.show();
+        return self.filterChiaVersionsLocalization.displayInput(chiaVersions);
       })
       .then(function(response){
         if(response.status){
-          self.dataManager.filterStore.chiaVersionId = response.data;
-          var selectedChiaVersion = self.dataManager.getFilteredChiaVersion();
-          self.filterChiaVersions.displayInfo(selectedChiaVersion);
+          self.dataManager.filterStore.chiaVersionIdLocalization = response.data;
+          var selectedChiaVersion = _.find(self.dataManager.dataStore.chiaVersions, function(cv){
+            return cv.id == self.dataManager.filterStore.chiaVersionIdLocalization; 
+          });
+
+          self.filterChiaVersionsLocalization.displayInfo(selectedChiaVersion);
           self.getDetectables();
         } else {
           self.reset();
@@ -77,13 +81,34 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           self.dataManager.filterStore.localizations = response.data;
           var selectedLocalizations = self.dataManager.getFilteredLocalization();
           self.filterLocalizations.displayInfo(selectedLocalizations);
-          self.getDataLoader();
+          self.getChiaVersionsAnnotation();
         } else {
           self.reset();
           self.startFilter();
         }
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
+  };
+
+  this.getChiaVersionsAnnotation = function(){
+    var chiaVersions = self.dataManager.dataStore.chiaVersions;
+    self.filterChiaVersionsAnnotation.show();
+    self.filterChiaVersionsAnnotation.displayInput(chiaVersions)
+      .then(function(response){
+        if(response.status){
+          self.dataManager.filterStore.chiaVersionIdAnnotation = response.data;
+          var selectedChiaVersion = _.find(self.dataManager.dataStore.chiaVersions, function(cv){
+            return cv.id == self.dataManager.filterStore.chiaVersionIdAnnotation; 
+          });
+
+          self.filterChiaVersionsAnnotation.displayInfo(selectedChiaVersion);
+          self.getDataLoader();
+        } else {
+          self.reset();
+          self.startFilter();
+        }
+      })
+      .catch(function (errorReason) { self.err(errorReason); });    
   };
 
   this.getDataLoader = function(){
@@ -107,9 +132,10 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
 
   this.reset = function(){
     self.filterStartButton.show();
-    self.filterChiaVersions.hide();
+    self.filterChiaVersionsLocalization.hide();
     self.filterDetectables.hide();
     self.filterLocalizations.hide();
+    self.filterChiaVersionsAnnotation.hide();
     self.filterDataLoader.hide();
 
     self.dataManager.resetFilters();

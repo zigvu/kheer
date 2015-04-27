@@ -1,0 +1,28 @@
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Chia Id</th>
+      <th>Name</th>
+      <th>Pretty name</th>
+      <th>Description</th>
+      <th>Edit/Destroy</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @detectables.each do |detectable| %>
+      <tr>
+        <td><%= detectable.id %></td>
+        <td><%= detectable.chia_detectable_id %></td>
+        <td><%= detectable.name %></td>
+        <td><%= detectable.pretty_name %></td>
+        <td><%= detectable.description %></td>
+        <td>
+          <%= link_to 'Edit', edit_chia_data_detectable_path(detectable) %> | 
+          <%= link_to 'Destroy', [:chia_data, detectable], method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
