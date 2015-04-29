@@ -20,7 +20,7 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
     var submitButtonId = 'filter-localization-submit';
     var cancelButtonId = 'filter-localization-cancel';
 
-    // create table for prob scores
+    // PROB:
     var probHeaderArr = ['Min Value', 'Max Value'];
     var probMinValueId = 'filter-localization-prob-score-min';
     var probMaxValueId = 'filter-localization-prob-score-max';
@@ -28,13 +28,25 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
     var probMaxValueInput = htmlGenerator.newTextInput(probMaxValueId, 1.0);
     var probBodyArr = [[probMinValueInput, probMaxValueInput]];
 
-    var zdistInputName = "zdistValues";
+    // ZDIST:
+    var zdistInputName = "zdistValue";
     var zdistHeaderArr = ['ZDist value', 'Select'];
     var zdistBodyArr = _.map(localizationInput.zdistThresh, function(zdist){
       return [
         zdist, 
-        '<input type="checkbox" name="' + zdistInputName + '" value="' 
+        '<input type="radio" name="' + zdistInputName + '" value="' 
         + zdist + '" id="input-zdist-values">'
+      ];
+    });
+
+    // SCALES:
+    var scaleInputName = "scaleValues";
+    var scaleHeaderArr = ['Scale value', 'Select'];
+    var scaleBodyArr = _.map(localizationInput.scales, function(scale){
+      return [
+        scale, 
+        '<input type="checkbox" name="' + scaleInputName + '" value="' 
+        + scale + '" id="input-scale-values">'
       ];
     });
 
@@ -43,6 +55,7 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
     var bodyArr = [];
     bodyArr.push(['Prob Scores', htmlGenerator.table(probHeaderArr, probBodyArr)]);
     bodyArr.push(['ZDist Threshold', htmlGenerator.table(zdistHeaderArr, zdistBodyArr)]);
+    bodyArr.push(['Scales', htmlGenerator.table(scaleHeaderArr, scaleBodyArr)]);
 
     var submitButton = htmlGenerator.newButton(submitButtonId, 'Submit');
     var cancelButton = htmlGenerator.newButton(cancelButtonId, 'Cancel');
@@ -52,16 +65,20 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
 
     // resolve promise on button clicks
     $('#' + submitButtonId).click(function(){
-      var zDistValues = $('input[name="' + zdistInputName + '"]:checked', divId_filterTable)
-        .map(function() { return parseFloat(this.value); }).get();
-
       var probMinValue = parseFloat($('#' + probMinValueId).val());
       var probMaxValue = parseFloat($('#' + probMaxValueId).val());
 
-      if((zDistValues.length > 0) && (probMaxValue > probMinValue)){
+      var zDistValue = $('input[name="' + zdistInputName + '"]:checked', divId_filterTable).val();
+
+      var scaleValues = $('input[name="' + scaleInputName + '"]:checked', divId_filterTable)
+        .map(function() { return parseFloat(this.value); }).get();
+
+
+      if((probMaxValue > probMinValue) && (zDistValue !== undefined) && (scaleValues.length > 0)){
         var localizationScores = {
           prob_scores: [_.max([0, probMinValue]), _.min([probMaxValue, 1.0])],
-          zdist_thresh: zDistValues
+          zdist_thresh: zDistValue,
+          scales: scaleValues
         };
         requestDefer.resolve({ status: true, data: localizationScores });
       }
@@ -80,6 +97,7 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
     var bodyArr = [];
     bodyArr.push(['Prob Scores', htmlGenerator.formatArray(filteredLocalization.prob_scores)]);
     bodyArr.push(['ZDist Threshold', htmlGenerator.formatArray(filteredLocalization.zdist_thresh)]);
+    bodyArr.push(['Scales', htmlGenerator.formatArray(filteredLocalization.scales)]);
 
     $(divId_filterTable).append(htmlGenerator.table(headerArr, bodyArr));
   };

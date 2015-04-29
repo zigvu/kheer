@@ -10,7 +10,9 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
   [Note: Ruby style hash (:keyname => value) implies that raw id are used as keys of objects.
   JS style hash implies that (keyname: value) text are used as keys of objects.]
 
-  chiaVersions: [{id:, name:, description:, settings: {zdistThresh: [zdistValues, ]}}, ]
+  chiaVersions: [
+    {id:, name:, description:, settings: {zdistThresh: [zdistValues, ], scales: [scale, ]}},
+  ]
 
   detectables: [
       { id:, name:, pretty_name:, chia_detectable_id:, 

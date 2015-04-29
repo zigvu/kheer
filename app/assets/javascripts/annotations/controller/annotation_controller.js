@@ -8,19 +8,14 @@ ZIGVU.Controller = ZIGVU.Controller || {};
 ZIGVU.Controller.AnnotationController = function() {
   var self = this;
 
-  this.videoFrameCanvas = document.getElementById("videoFrameCanvas");
-  this.renderCTX = self.videoFrameCanvas.getContext("2d");
-
   this.eventManager = new ZIGVU.Controller.EventManager();
 
   this.chartManager = new ZIGVU.ChartManager.ChartManager();
   this.dataManager = new ZIGVU.DataManager.DataManager();
-
-  this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer(self.videoFrameCanvas);
-  this.videoPlayerControls = new ZIGVU.VideoHandler.VideoPlayerControls(self.videoPlayer);
+  this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer();
 
   this.startFilter = function(){
-    self.videoPlayerControls.disable();
+    self.videoPlayer.enableControls(false);
 
     self.dataManager.resetFilters();
     filterPromises = self.chartManager.startFilter();
@@ -33,7 +28,7 @@ ZIGVU.Controller.AnnotationController = function() {
     // TODO: remove
     self.dataManager.filterStore.chiaVersionIdLocalization = 1;
     self.dataManager.filterStore.detectableIds = [1, 48, 49];
-    self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: [0]};
+    self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: 0, scales: [0.7, 1.0]};
     self.dataManager.ajaxHandler.getChiaVersionsPromise()
       .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getDetectablesPromise(); })
       .then(function(detectables){ return self.dataManager.ajaxHandler.getLocalizationPromise(); })
@@ -49,7 +44,7 @@ ZIGVU.Controller.AnnotationController = function() {
             return videoLoadPromise;
           })
           .then(function(){ 
-            self.videoPlayerControls.enable(); 
+            self.videoPlayer.enableControls(true);
             self.chartManager.drawTimelineChart();
             self.videoPlayer.pausePlayback();
           })
@@ -71,7 +66,7 @@ ZIGVU.Controller.AnnotationController = function() {
         return videoLoadPromise;
       })
       .then(function(){ 
-        self.videoPlayerControls.enable(); 
+        self.videoPlayer.enableControls(true);
         self.chartManager.drawTimelineChart();
         self.videoPlayer.pausePlayback();
       })

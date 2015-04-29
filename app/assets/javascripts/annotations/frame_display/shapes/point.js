@@ -13,10 +13,10 @@ ZIGVU.FrameDisplay.Shapes.Point = function(px, py) {
   var y = py || 0;
   
   // default decorations
-  var strokeColor = '#000000';
-  var strokeColorSelected = '#FF0000';
-  var fillColor = '#FFFFFF';
-  var fillColorSelected = '#F0F000';
+  var strokeColor = "rgb(0, 0, 0)";
+  var strokeColorSelected = "rgb(255, 0, 0)";
+  var fillColor = "rgb(255, 255, 255)";
+  var fillColorSelected = "rgb(255, 255, 0)";
   var pointSquareWH = 6;
 
   this.draw = function(ctx){
@@ -29,12 +29,17 @@ ZIGVU.FrameDisplay.Shapes.Point = function(px, py) {
       sColor = strokeColor;
       fColor = fillColor;
     }
-    ctx.strokeStyle = sColor;
-    ctx.fillStyle = fColor;
 
-    // fill and stroke
-    ctx.fillRect(x - pointSquareWH/2, y - pointSquareWH/2, pointSquareWH, pointSquareWH);
-    ctx.strokeRect(x - pointSquareWH/2, y - pointSquareWH/2, pointSquareWH, pointSquareWH);
+    // fill first
+    ctx.fillStyle = fColor;
+    ctx.crispFillRect(x - pointSquareWH/2 - 2, y - pointSquareWH/2 - 2, pointSquareWH + 4, pointSquareWH + 4);
+
+    // double stroke
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = sColor;
+    ctx.crispStrokeRect(x - pointSquareWH/2, y - pointSquareWH/2, pointSquareWH, pointSquareWH);
+    ctx.strokeStyle = strokeColorSelected;
+    ctx.crispStrokeRect(x - pointSquareWH/2 - 2, y - pointSquareWH/2 - 2, pointSquareWH + 4, pointSquareWH + 4);
   };
 
   this.select = function(){
@@ -44,11 +49,6 @@ ZIGVU.FrameDisplay.Shapes.Point = function(px, py) {
   this.deselect = function(){
     selected = false;
   };
-
-  this.toggleSelect = function(){
-    selected = !selected;
-  };
-
 
   // return true if mouse is within this rect
   this.contains = function(mouseX, mouseY){

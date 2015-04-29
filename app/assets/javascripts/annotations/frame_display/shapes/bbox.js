@@ -31,40 +31,40 @@ ZIGVU.FrameDisplay.Shapes.Bbox = function() {
     var scaleZDist = bbox.scale + ' : ' + bbox.zdist_thresh;
 
     // area rendering
-    ctx.fillStyle = fillColor;
-    ctx.fillRect(x, y, w, h);
+    // ctx.fillStyle = fillColor;
+    // ctx.crispFillRect(x, y, w, h);
 
     // all text hang from x,y
     ctx.textBaseline = "hanging";
 
     // text rendering : name
     ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-    ctx.fillRect(x + borderOffset, y + borderOffset, w - 2 * borderOffset, nameHeight);
+    ctx.crispFillRect(x + borderOffset, y + borderOffset, w - 2 * borderOffset, nameHeight);
     ctx.font = "20px serif";
     ctx.fillStyle = "rgb(0, 0, 0)";
     ctx.fillText(name, x + borderOffset + textLeftOffset, y + borderOffset + textTopOffset);
 
     // text rendering : score
     ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-    ctx.fillRect(x + borderOffset, y + borderOffset + nameHeight + 1, scoreWidth, scoreHeight);
+    ctx.crispFillRect(x + borderOffset, y + borderOffset + nameHeight + 1, scoreWidth, scoreHeight);
     ctx.font = "12px serif";
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillText(score, x + borderOffset + textLeftOffset + 2, y + borderOffset + textTopOffset + nameHeight);
 
     // text rendering : scale
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    ctx.fillRect(x + borderOffset, y + borderOffset + nameHeight + scoreHeight + 2, scaleWidth, scaleHeight);
+    ctx.crispFillRect(x + borderOffset, y + borderOffset + nameHeight + scoreHeight + 2, scaleWidth, scaleHeight);
     ctx.font = "10px serif";
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillText(scaleZDist, x + borderOffset + textLeftOffset + 2, y + borderOffset + textTopOffset + nameHeight + scoreHeight);
 
     // border rendering
     ctx.strokeStyle = "rgb(255, 0, 0)";
-    ctx.strokeRect(x, y, w, h);
+    ctx.crispStrokeRect(x, y, w, h);
     ctx.strokeStyle = "rgb(255, 255, 255)";
-    ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+    ctx.crispStrokeRect(x + 1, y + 1, w - 2, h - 2);
     ctx.strokeStyle = "rgb(255, 0, 0)";
-    ctx.strokeRect(x + 2, y + 2, w - 4, h - 4);
+    ctx.crispStrokeRect(x + 2, y + 2, w - 4, h - 4);
   };
 };
 

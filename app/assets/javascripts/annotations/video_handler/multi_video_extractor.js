@@ -133,7 +133,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     currentPlayState = 'seeking';
     var vfe = self.videoFrameObjects[currentVideoId].vfe;
     var sfp = vfe.seekFramePromise(currentFrameTime)
-      .then(function(){ return vfe.playbackRatePromise(playBackSpeed) });;
+      .then(function(){ return vfe.playbackRatePromise(playbackSpeed); });
 
     return sfp;
   };
@@ -162,50 +162,45 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
 
   // ----------------------------------------------
   // playback rate settings
-  var playBackSpeed = 1.0;
-  var playbackRateMax = 4.0, playbackRateMin = 0.0;
+  var playbackSpeed = 1.0;
+  var playbackRatesArr = [0.25,0.33,0.5,0.67, 1.0, 1.5,2.0,3.0,4.0];
+  var playbackRatesArrIdx = 4, playbackRatesArrIdx_normal = 4;
 
-  this.setPlaybackNormal = function(){
-    playBackSpeed = 1.0;
-    self.setPlaybackRate(playBackSpeed);
+  this.setPlaybackNormalPromise = function(){
+    playbackRatesArrIdx = playbackRatesArrIdx_normal;
+    return self.setPlaybackPromise(playbackRatesArrIdx);
   };
 
-  this.reducePlaybackRate = function(){
-    var newPlaybackSpeed = playBackSpeed - self.getPlaybackRateStep();
-    if(newPlaybackSpeed >= playbackRateMin){ self.setPlaybackRate(newPlaybackSpeed); }
+  this.reducePlaybackRatePromise = function(){
+    playbackRatesArrIdx--;
+    if(playbackRatesArrIdx < 0){ playbackRatesArrIdx = 0; }
+    return self.setPlaybackPromise(playbackRatesArrIdx);
   };
 
-  this.increasePlaybackRate = function(){
-    var newPlaybackSpeed = playBackSpeed + self.getPlaybackRateStep();
-    if(newPlaybackSpeed <= playbackRateMax){ self.setPlaybackRate(newPlaybackSpeed); }
+  this.increasePlaybackRatePromise = function(){
+    playbackRatesArrIdx++;
+    if(playbackRatesArrIdx >= playbackRatesArr.length){ 
+      playbackRatesArrIdx = playbackRatesArr.length - 1; 
+    }
+    return self.setPlaybackPromise(playbackRatesArrIdx);
   };
 
-  this.setPlaybackRate = function(newPlaybackSpeed){
-    // currentPlayState = 'seeking';
+  this.setPlaybackPromise = function(newPlaybackRatesArrIdx){
+    var speedChangeDefer = Q.defer();
+
+    var newPlaybackSpeed = playbackRatesArr[newPlaybackRatesArrIdx];
+    // note - sometimes, needs consecutive calls to have
+    // normal playback speed - so no protection with checking
+    // current speed
     var vfe = self.videoFrameObjects[currentVideoId].vfe;
     vfe.playbackRatePromise(newPlaybackSpeed)
       .then(function(pbr){ 
-        playBackSpeed = pbr;
-        console.log("Playback speed: " + playBackSpeed);
-        // currentPlayState = 'seeked';
+        playbackSpeed = pbr;
+        speedChangeDefer.resolve(playbackSpeed);
       })
-      .catch(function (errorReason) { self.err(errorReason); });
+      .catch(function (errorReason) { self.err(errorReason); });      
+    return speedChangeDefer.promise;
   };
-
-  this.getPlaybackRateStep = function(){
-    var playbackRateStep = 0.2;
-    if (playBackSpeed >= 2){
-      playbackRateStep = 0.4;
-    } else if (playBackSpeed >= 1 && playBackSpeed < 2){
-      playbackRateStep = 0.2;
-    } else if (playBackSpeed >= 0.4 && playBackSpeed < 1.0){
-      playbackRateStep = 0.1;
-    } else {
-      playbackRateStep = 0.05;
-    }
-    return playbackRateStep;
-  };
-
 
   // shorthand for error printing
   this.err = function(errorReason){

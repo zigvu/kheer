@@ -15,16 +15,18 @@ $chart-timeline-brush-color: $orange;
 
 // ------------------------------------
 // media player controls
-#video-controls-player {
+.video-controls {
 
-  ul { 
-    margin: 10px 20px 0 20px; 
-    li { 
-      div {
-        padding: 0;
-        i { font-size: 36px; }
-      }
-    }
+  button.tiny, .button.tiny { 
+    padding: 5px; 
+    margin: 0; 
+    font-size: 20px;
+  }
+
+  // make same height as timeline chart
+  #video-controls-player-container {
+    height: 77px;
+    display: none;
   }
 }
 

@@ -12,18 +12,21 @@ module Annotators
 				applyDetectableIds()
 				applyLocalizationProbScores()
 				applyLocalizationZdistThresh()
+				applyLocalizationScales()
 				return @query
 			end
 
 			def applyChiaVersionId()
-				if @parsedFilter.chiaVersionId != nil
-					@query = @query.where(chia_version_id: @parsedFilter.chiaVersionId)
+				chiaVersionId = @parsedFilter.chiaVersionId
+				if chiaVersionId != nil
+					@query = @query.where(chia_version_id: chiaVersionId)
 				end
 			end
 
 			def applyDetectableIds()
-				if @parsedFilter.detectableIds != nil and @parsedFilter.detectableIds.count > 0
-					@query = @query.in(detectable_id: @parsedFilter.detectableIds)
+				detectableIds = @parsedFilter.detectableIds
+				if detectableIds != nil and detectableIds.count > 0
+					@query = @query.in(detectable_id: detectableIds)
 				end
 			end
 
@@ -36,8 +39,15 @@ module Annotators
 
 			def applyLocalizationZdistThresh()
 				zdistThresh = @parsedFilter.localizationZdistThresh
-				if zdistThresh != nil and zdistThresh.count > 0
-					@query = @query.in(zdist_thresh: zdistThresh)
+				if zdistThresh != nil
+					@query = @query.where(zdist_thresh: zdistThresh)
+				end
+			end
+
+			def applyLocalizationScales()
+				scales = @parsedFilter.localizationScales
+				if scales != nil and scales.count > 0
+					@query = @query.in(scale: scales)
 				end
 			end
 

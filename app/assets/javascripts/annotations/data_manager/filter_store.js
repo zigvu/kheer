@@ -5,13 +5,31 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
   This class stores all data.
 */
 
+/*
+  Data structure:
+  [Note: Ruby style hash (:keyname => value) implies that raw id are used as keys of objects.
+  JS style hash implies that (keyname: value) text are used as keys of objects.]
+
+  chiaVersionIdLocalization: integer
+
+  chiaVersionIdAnnotation: integer
+
+  detectableIds: [integers]
+
+  localizations: [{prob_scores: [float, float], zdist_thresh: float, scales: [floats]}]
+
+  videoIds: [integers]
+
+  currentAnnotationDetId: integer
+*/
+
 ZIGVU.DataManager.FilterStore = function() {
   var self = this;
   this.chiaVersionIdLocalization = undefined;
+  this.chiaVersionIdAnnotation = undefined;
   this.detectableIds = undefined;
   this.localizations = undefined;
   this.videoIds = undefined;
-  this.chiaVersionIdAnnotation = undefined;
 
   // for active filtering
   this.currentAnnotationDetId = undefined;
@@ -27,10 +45,10 @@ ZIGVU.DataManager.FilterStore = function() {
 
   this.reset = function(){
     self.chiaVersionIdLocalization = undefined;
+    this.chiaVersionIdAnnotation = undefined;
     self.detectableIds = undefined;
     self.localizations = undefined;
     self.currentAnnotationDetId = undefined;
     self.videoIds = undefined;
-    this.chiaVersionIdAnnotation = undefined;
   };
 };

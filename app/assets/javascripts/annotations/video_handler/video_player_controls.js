@@ -28,29 +28,75 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   $(document).keypress(function(e) {
     if(disabled){ return; }; 
     switch(e.which) {
-      case 8: // 'BACK_SPACE'
-        videoPlayer.deleteAnnotation(); break;
+      case 100: // 'd'
+        videoPlayer.deleteAnnotation();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       case 32: // 'SPACE'
-        videoPlayer.togglePlay(); break;
+        videoPlayer.togglePlay();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       case 101: // 'e'
-        videoPlayer.nextFrame(); break;
-      case 112: // 'p'
-        videoPlayer.previousFrame(); break;
-      case 60: // '<'
-        videoPlayer.skipFewFramesBack(); break;
-      case 62: // '>'
-        videoPlayer.skipFewFramesForward(); break;
+        videoPlayer.nextFrame();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 119: // 'w'
+        videoPlayer.previousFrame()
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 113: // 'q'
+        videoPlayer.skipFewFramesBack();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 118: // 'v'
+        videoPlayer.skipFewFramesForward();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 102: // 'f'
+        videoPlayer.nextHit();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 114: // 'r'
+        videoPlayer.previousHit();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       case 43: // '+'
-        videoPlayer.playFaster(); break;
+        videoPlayer.playFaster();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       case 45: // '-'
-        videoPlayer.playSlower(); break;
+        videoPlayer.playSlower();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       case 61: // '='
-        videoPlayer.playNormal(); break;
+        videoPlayer.playNormal();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       default:
         //console.log("Unknown key " + e.which);
     }
-    e.preventDefault();
-    e.stopPropagation();
   });
 
   this.enable = function(){

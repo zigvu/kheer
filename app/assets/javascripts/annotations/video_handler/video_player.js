@@ -5,16 +5,22 @@ ZIGVU.VideoHandler = ZIGVU.VideoHandler || {};
   This class handles all video player interactions.
 */
 
-ZIGVU.VideoHandler.VideoPlayer = function(videoFrameCanvas) {
+ZIGVU.VideoHandler.VideoPlayer = function() {
   var self = this;
-  this.renderCTX = videoFrameCanvas.getContext("2d");
+
+  this.videoFrameCanvas = document.getElementById("videoFrameCanvas");
+  new ZIGVU.FrameDisplay.CanvasExtender(self.videoFrameCanvas);
+  this.renderCTX = self.videoFrameCanvas.getContext("2d");
 
   this.eventManager = undefined;
   this.dataManager = undefined;
   this.timelineChartData = undefined;
-  this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations(videoFrameCanvas);
-  this.drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(videoFrameCanvas);
+  this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations(self.videoFrameCanvas);
+  this.drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(self.videoFrameCanvas);
   this.multiVideoExtractor = new ZIGVU.VideoHandler.MultiVideoExtractor(self.renderCTX);
+
+  this.videoPlayerControls = new ZIGVU.VideoHandler.VideoPlayerControls(self);
+  this.videoControlsContainer = new ZIGVU.VideoHandler.VideoControlsContainer(self);
 
   // pause behavior tracker
   var isVideoPaused = false;
@@ -23,6 +29,14 @@ ZIGVU.VideoHandler.VideoPlayer = function(videoFrameCanvas) {
   this.loadVideosPromise = function(videoDataMap){ 
     return self.multiVideoExtractor.loadVideosPromise(videoDataMap); 
   }
+
+  this.enableControls = function(bool){
+    var x = bool ? self.videoPlayerControls.enable() : self.videoPlayerControls.disable();
+  };
+
+  var heatmapEnabled = false;
+  this.enableHeatmap = function(bool){ heatmapEnabled = bool; }
+  this.isHeatmapEnabled = function(){ return heatmapEnabled; }
 
   //------------------------------------------------
   // painting in different modes
@@ -103,9 +117,24 @@ ZIGVU.VideoHandler.VideoPlayer = function(videoFrameCanvas) {
   this.skipFewFramesBack = function(){ self.frameNavigate(-10); };
 
   // speed
-  this.playFaster = function(){ self.multiVideoExtractor.increasePlaybackRate(); };
-  this.playSlower = function(){ self.multiVideoExtractor.reducePlaybackRate(); };
-  this.playNormal = function(){ self.multiVideoExtractor.setPlaybackNormal(); };
+  this.playFaster = function(){ 
+    self.multiVideoExtractor.increasePlaybackRatePromise()
+      .then(function(newSpeed){
+        self.videoControlsContainer.setVideoPlaybackSpeed(newSpeed);
+      });
+  };
+  this.playSlower = function(){ 
+    self.multiVideoExtractor.reducePlaybackRatePromise()
+      .then(function(newSpeed){
+        self.videoControlsContainer.setVideoPlaybackSpeed(newSpeed);
+      });
+  };
+  this.playNormal = function(){ 
+    self.multiVideoExtractor.setPlaybackNormalPromise()
+      .then(function(newSpeed){
+        self.videoControlsContainer.setVideoPlaybackSpeed(newSpeed);
+      });
+  };
 
   // annotation
   this.deleteAnnotation = function(){ self.drawingHandler.deleteAnnotation(); };

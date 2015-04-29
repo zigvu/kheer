@@ -1,46 +1,91 @@
 <!-- BEGIN: Video Controls -->
-<div class="row">
-	<div class="small-12 columns">
-		<div id="video-controls-player">
+<div class="row video-controls">
+	<div class="small-10 columns">
 
-			<ul class="button-group round even-6">
-				<li>
-					<div class="button tiny" id="player-previous-hit" title="Jump to previous hit">
-						<i class="fi-previous"></i>
+
+		<!-- BEGIN: Video Controls Container -->
+		<div id="video-controls-player-container">
+			<div class="row">
+				<div class="small-10 columns">
+					<div id="video-controls-player">
+
+						<ul class="button-group even-6">
+							<li>
+								<div class="button tiny" id="player-previous-hit" title="Jump to previous hit">
+									<i class="fi-previous"></i>
+								</div>
+							</li>
+							<li>
+								<div class="button tiny" id="player-rewind" title="Skip few seconds backward">
+									<i class="fi-rewind"></i>
+								</div>
+							</li>
+							<li>
+								<div class="button tiny" id="player-pause" title="Pause playback">
+									<i class="fi-pause"></i>
+								</div>
+							</li>
+							<li>
+								<div class="button tiny" id="player-play" title="Start playback">
+									<i class="fi-play"></i>
+								</div>
+							</li>
+							<li>
+								<div class="button tiny" id="player-fast-forward" title="Skip few seconds forward">
+									<i class="fi-fast-forward"></i>
+								</div>
+							</li>
+							<li>
+								<div class="button tiny" id="player-next-hit" title="Jump to next hit">
+									<i class="fi-next"></i>
+								</div>
+							</li>
+						</ul>
 					</div>
-				</li>
-				<li>
-					<div class="button tiny" id="player-rewind" title="Skip few seconds backward">
-						<i class="fi-rewind"></i>
-					</div>
-				</li>
-				<li>
-					<div class="button tiny" id="player-pause" title="Pause playback">
-						<i class="fi-pause"></i>
-					</div>
-				</li>
-				<li>
-					<div class="button tiny" id="player-play" title="Start playback">
-						<i class="fi-play"></i>
-					</div>
-				</li>
-				<li>
-					<div class="button tiny" id="player-fast-forward" title="Skip few seconds forward">
-						<i class="fi-fast-forward"></i>
-					</div>
-				</li>
-				<li>
-					<div class="button tiny" id="player-next-hit" title="Jump to next hit">
-						<i class="fi-next"></i>
-					</div>
-				</li>
-			</ul>
+				</div>
+				<div class="small-2 columns">
+					<ul class="button-group even-2">
+						<li>
+							<div class="button tiny" id="toggle-heatmap" title="Heatmap on/off">
+								<i class="fi-power"></i>
+							</div>
+						</li>
+						<li>
+							<div class="button tiny" id="unused-button" title="Unused button">
+								u
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
-<div class="row">
-  <div class="small-12 columns">
-    <div id="d3-video-timeline-chart"></div>
+		<!-- END: Video Controls Container -->
+
+
+		<!-- BEGIN: Video Timeline Container -->
+		<div id="video-controls-timeline-container">
+			<div class="row">
+			  <div class="small-12 columns">
+			    <div id="d3-video-timeline-chart"></div>
+			  </div>
+			</div>
+		</div>
+		<!-- END: Video Timeline Container -->
+
+  </div>
+	<div class="small-2 columns">
+		<ul class="button-group even-2">
+			<li>
+				<div class="button tiny" id="toggle-video-controls-container" title="Toggle video controls">
+					<i class="fi-shuffle"></i>
+				</div>
+			</li>
+			<li>
+				<div class="button tiny disabled secondary" id="video-playback-speed" title="Video playback speed">
+					1.0
+				</div>
+			</li>
+		</ul>
   </div>
 </div>
 <!-- END: Video Controls -->

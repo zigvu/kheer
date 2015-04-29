@@ -12,6 +12,7 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   this.eventManager = undefined;
   this.dataManager = undefined;
   this.timelineChartData = undefined;
+  this.seekDisabled = true;
 
   var brushNumOfCounters = 500;
   var numPixelsForFocusPointer = 20;
@@ -22,7 +23,7 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
 
   //------------------------------------------------
   // set up gemoetry
-  var focusMargin = {top: 10, right: 5, bottom: 5, left: 5},
+  var focusMargin = {top: 5, right: 5, bottom: 5, left: 5},
     contextMargin = {top: 0, right: 5, bottom: 5, left: 5},
     focusWidth = divWidth - focusMargin.left - focusMargin.right,
     focusHeight = divHeight/2 - focusMargin.top - focusMargin.bottom,
@@ -49,16 +50,22 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
       .on("brush", contextBrushed);
 
   function contextBrushedStart(){
+    if(self.seekDisabled){ return; }
+
     focusBrush.clear();
     focusBrush(d3.select(".focusBrush"));
   };
 
   function contextBrushed(){
+    if(self.seekDisabled){ return; }
+
     focusX.domain(contextBrush.empty() ? contextX.domain() : contextBrush.extent());
     focusChart.selectAll("path").attr("d", function(d) { return focusLine(d.values); });
   };
 
   function contextBrushedEnd(){
+    if(self.seekDisabled){ return; }
+
     var brushExtent = contextBrush.extent();
     brushExtent[1] = brushExtent[0] + brushNumOfCounters;
     if(brushExtent[1] > contextX.domain()[1]){
@@ -89,6 +96,8 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
       .on("brushend", focusBrushedEnd);
 
   function focusBrushed(){
+    if(self.seekDisabled){ return; }
+
     var focusBrushMid = focusBrush.extent()[0];
 
     if(d3.event && d3.event.sourceEvent) { // not a programmatic event
@@ -99,6 +108,8 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   };
 
   function focusBrushedEnd(){
+    if(self.seekDisabled){ return; }
+
     if(d3.event && d3.event.sourceEvent) { // not a programmatic event
       updateVideoPlayerAfterBrush(Math.round(focusBrush.extent()[0]));
       console.log("Focus brush ended: " + Math.round(focusBrush.extent()[0]));
@@ -106,6 +117,8 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   };
 
   this.brushToCounter = function(counter){
+    if(self.seekDisabled){ return; }
+
     var brushExtent = contextBrush.extent();
     // if the focus chart doesn't have the counter then move context chart
     if(counter > brushExtent[1]){
@@ -237,17 +250,23 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
 
     contextChartLines.exit().remove();
     focusChartLines.exit().remove();
+
+    self.seekDisabled = false;
   };
 
   //------------------------------------------------
   // Event handling
   function updateVideoPlayerAfterBrush(counter){
+    if(self.seekDisabled){ return; }
+
     var videoIdFrameNumber = self.timelineChartData.getVideoIdFrameNumber(counter);
     self.eventManager.fireFrameNavigateCallback(videoIdFrameNumber);
   };
 
   // this is triggered from video player
   function updateChartFromVideoPlayer(args){
+    if(self.seekDisabled){ return; }
+
     var counter = self.timelineChartData.getCounter(args.video_id, args.frame_number);
     self.brushToCounter(counter);
 
