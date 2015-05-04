@@ -13,6 +13,8 @@ load 'app/data_importers/import_score_folder.rb'
 kheerSeed = Rails.root.join('public','data','kheerSeed').to_s
 logoListFile =  "#{kheerSeed}/logo_list.csv"
 patchMapFile = "#{kheerSeed}/patch_map.json"
+cellMapFile = "#{kheerSeed}/cell_map.json"
+colorMapFile = "#{kheerSeed}/color_map.json"
 scoreFolder = "#{kheerSeed}/json_for_kheer"
 videoURL = "#{kheerSeed}/stitched_video_localized.mp4"
 
@@ -34,7 +36,7 @@ chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
 idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
 idl.saveToDb(firstChiaVersion.id)
 
-pmf = DataImporters::CreatePatchMaps.new(patchMapFile)
+pmf = DataImporters::CreateMaps.new(patchMapFile, cellMapFile, colorMapFile)
 pmf.saveToDb(firstChiaVersion.id)
 
 # Create users
@@ -56,6 +58,6 @@ chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
 idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
 idl.saveToDb(secondChiaVersion.id)
 
-pmf = DataImporters::CreatePatchMaps.new(patchMapFile)
+pmf = DataImporters::CreateMaps.new(patchMapFile, cellMapFile, colorMapFile)
 pmf.saveToDb(secondChiaVersion.id)
 

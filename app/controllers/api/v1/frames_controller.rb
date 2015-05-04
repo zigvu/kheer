@@ -12,11 +12,20 @@ module Api
 				render json: saveResults.to_json
 			end
 
+			# GET api/v1/frames/heatmap_data
+			def heatmap_data
+				p = Jsonifiers::Heatmap::HeatmapParamsParser.new(params[:heatmap])
+				hde = Jsonifiers::Heatmap::HeatmapDataExtractor.new(
+					p.chiaVersionId, p.videoId, p.frameNumber, p.scale, p.detectableId)
+				render json: hde.formatted().to_json
+			end
+
 			private
 
 				# Only allow a trusted parameter "white list" through.
 				def frames_params
-					params.permit(:annotations)
+					# TBD: Not used currently
+					params.permit(:annotations, :heatmap)
 				end
 
 		end

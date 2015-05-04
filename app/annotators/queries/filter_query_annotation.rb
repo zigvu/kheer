@@ -7,8 +7,8 @@ module Annotators
 			end
 
 			def run
-				@query = Annotation
-				applyChiaVersionId()
+				@query = Annotation.where(active: true)
+				# applyChiaVersionId()
 				return @query
 			end
 

@@ -7,6 +7,8 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
 
 ZIGVU.DataManager.DataManager = function() {
   var self = this;
+
+  this.eventManager = undefined;
   
   this.dataStore = new ZIGVU.DataManager.DataStore();
   this.filterStore = new ZIGVU.DataManager.FilterStore();
@@ -17,9 +19,19 @@ ZIGVU.DataManager.DataManager = function() {
     .setDataStore(self.dataStore)
     .setFilterStore(self.filterStore);
 
-  this.getLocalizations = function(videoId, frameNumber){
+  this.getModifiedFrameNumber = function(videoId, frameNumber){
     var detectionRate = self.dataStore.videoDataMap[videoId].detection_frame_rate;
     var fn = (frameNumber - 1) - ((frameNumber - 1) % detectionRate) + 1;
+    return fn;
+  };
+
+  this.getHeatmapDataPromise = function(videoId, frameNumber){
+    var fn = self.getModifiedFrameNumber(videoId, frameNumber);
+    return self.ajaxHandler.getHeatmapDataPromise(videoId, fn);
+  };
+
+  this.getLocalizations = function(videoId, frameNumber){
+    var fn = self.getModifiedFrameNumber(videoId, frameNumber);
     var loc = self.dataStore.dataFullLocalizations;
     if(loc[videoId] === undefined || loc[videoId][fn] === undefined){ return []; }
     return loc[videoId][fn];
@@ -32,34 +44,32 @@ ZIGVU.DataManager.DataManager = function() {
   };
 
   this.saveAnnotations = function(videoId, frameNumber, annotationObjs){
-    var annosToSaveToDb = [];
-
-    var objDecorations = {
-      video_id: videoId,
-      frame_number: frameNumber,
-      chia_version_id: self.filterStore.chiaVersionIdAnnotation
-    };
-
+    // update internal data structure
     var anno = self.dataStore.dataFullAnnotations;
     if(anno[videoId] === undefined){ anno[videoId] = {}; }
-    // since we get all annotations for the frame, reset original
-    anno[videoId][frameNumber] = {}; 
-    _.each(annotationObjs, function(annoObj){
-      var newAnnotation = _.extend(annoObj, objDecorations);
-      if (anno[videoId][frameNumber][annoObj.detectable_id] === undefined){ 
-        anno[videoId][frameNumber][annoObj.detectable_id] = [];
-      }
-      anno[videoId][frameNumber][annoObj.detectable_id].push(newAnnotation);
-      annosToSaveToDb.push(newAnnotation);
+    if(anno[videoId][frameNumber] === undefined){ anno[videoId][frameNumber] = {}; }
+
+    // update - deleted annotations
+    _.each(annotationObjs.deleted_polys, function(ao){
+      var idx = -1;
+      _.find(anno[videoId][frameNumber][ao.detectable_id], function(a, i, l){
+        if((a.x0 == ao.x0) && (a.y0 == ao.y0) && (a.x1 == ao.x1) && 
+          (a.x2 == ao.x2) && (a.x3 == ao.x3)) { idx = i; return true; }
+        return false;
+      });
+      if(idx != -1){ anno[videoId][frameNumber][ao.detectable_id].splice(idx, 1); }
     });
+
+    // update - deleted annotations
+    _.each(annotationObjs.new_polys, function(ao){
+      if(anno[videoId][frameNumber][ao.detectable_id] === undefined){
+        anno[videoId][frameNumber][ao.detectable_id] = []; 
+      }
+      anno[videoId][frameNumber][ao.detectable_id].push(ao);
+    });
+
     // save to database
-    var annoSave = {
-      video_id: videoId,
-      frame_number: frameNumber,
-      chia_version_id: self.filterStore.chiaVersionIdAnnotation,
-      annotations: annosToSaveToDb
-    };
-    self.ajaxHandler.getAnnotationSavePromise(annoSave)
+    self.ajaxHandler.getAnnotationSavePromise(annotationObjs)
       .then(function(status){ console.log(status); })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };
@@ -148,8 +158,25 @@ ZIGVU.DataManager.DataManager = function() {
     self.filterStore.reset();
   }
 
+  function updateAnnoListSelected(detectableId){
+    self.filterStore.currentAnnotationDetId = detectableId;
+    self.filterStore.heatmap.detectable_id = detectableId;
+  };
+  function updateScaleSelected(scale){
+    self.filterStore.heatmap.scale = scale;
+  };
+
   // shorthand for error printing
   this.err = function(errorReason){
     displayJavascriptError('ZIGVU.DataManager.DataManager -> ' + errorReason);
+  };
+
+  //------------------------------------------------
+  // set relations
+  this.setEventManager = function(em){
+    self.eventManager = em;
+    self.eventManager.addAnnoListSelectedCallback(updateAnnoListSelected);
+    self.eventManager.addScaleSelectedCallback(updateScaleSelected);
+    return self;
   };
 };

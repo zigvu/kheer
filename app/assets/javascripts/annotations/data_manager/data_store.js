@@ -27,11 +27,16 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
     where loclz: {zdist_thresh:, prob_score:, scale: , x:, y:, w:, h:}
 
   dataFullAnnotations: {:video_id => {:frame_number => {:detectable_id => [anno]}}}
-    where anno: {x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
+    where anno: {chia_version_id:, x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
 
   videoDataMap: {:video_id => 
     {video_url:, playback_frame_rate:, detection_frame_rate:, frame_number_start:, frame_number_end:}
   }
+
+  colorMap: {:integer => 'rgba', }
+
+  cellMap: {cell_idx: {x:, y:, w:, h:}, }
+
 */
 
 ZIGVU.DataManager.DataStore = function() {
@@ -46,6 +51,8 @@ ZIGVU.DataManager.DataStore = function() {
   this.dataFullLocalizations = undefined;
   this.dataFullAnnotations = undefined;
   this.videoDataMap = undefined;
+  this.colorMap = undefined;
+  this.cellMap = undefined;
 
   // add color information to detectable list
   this.addDetectablesWithColor = function(dets){
@@ -70,5 +77,7 @@ ZIGVU.DataManager.DataStore = function() {
     self.dataFullLocalizations = undefined;
     self.dataFullAnnotations = undefined;
     self.videoDataMap = undefined;
+    this.colorMap = undefined;
+    this.cellMap = undefined;
   };
 };

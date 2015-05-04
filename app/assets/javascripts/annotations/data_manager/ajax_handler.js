@@ -94,30 +94,47 @@ ZIGVU.DataManager.AjaxHandler = function() {
   };
 
   this.getFullDataPromise = function(){
-    var dataURL = '/api/v1/filters/filtered_data';
-    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
-
+    // make multiple requests and only return when all fulfilled
     var requestDefer = Q.defer();
+
     if(self.filterStore === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> Filter could not be constructed');
     } else {
+      var dataURL = '/api/v1/filters/filtered_data';
+      var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
       self.getPOSTRequestPromise(dataURL, dataParam)
         .then(function(data){
           self.dataStore.dataFullLocalizations = data.localizations;
           self.dataStore.dataFullAnnotations = data.annotations;
 
-          // also get video data map
+          // get video data map
           var videoIds = Object.keys(data.localizations);
           self.filterStore.videoIds = videoIds;
 
           dataURL = '/api/v1/filters/video_data_map';
           dataParam = {video_data_map: {video_ids: videoIds}};
-
-          return self.getPOSTRequestPromise(dataURL, dataParam)
+          return self.getGETRequestPromise(dataURL, dataParam)
         })
         .then(function(data){
           self.dataStore.videoDataMap = data.video_data_map;
-          requestDefer.resolve(self.dataStore.videoDataMap);
+
+          // get color map
+          dataURL = '/api/v1/filters/color_map';
+          dataParam = {chia_version_id: self.filterStore.chiaVersionIdLocalization};
+          return self.getGETRequestPromise(dataURL, dataParam)
+        })
+        .then(function(data){
+          self.dataStore.colorMap = data.color_map;
+
+          // get cell map
+          dataURL = '/api/v1/filters/cell_map';
+          dataParam = {chia_version_id: self.filterStore.chiaVersionIdLocalization};
+          return self.getGETRequestPromise(dataURL, dataParam)
+        })
+        .then(function(data){
+          self.dataStore.cellMap = data.cell_map;
+
+          requestDefer.resolve();
         })
         .catch(function (errorReason) {
           requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
@@ -131,6 +148,25 @@ ZIGVU.DataManager.AjaxHandler = function() {
     var dataParam = {annotations: annotationsData};
 
     return self.getPOSTRequestPromise(dataURL, dataParam);
+  };
+
+  this.getHeatmapDataPromise = function(videoId, frameNumber){
+    var chiaVersionId = self.filterStore.chiaVersionIdLocalization;
+    var detectableId = self.filterStore.heatmap.detectable_id;
+    var scale = self.filterStore.heatmap.scale;
+
+    var dataURL = '/api/v1/frames/heatmap_data';
+    var dataParam = {
+      heatmap: {
+        chia_version_id: chiaVersionId,
+        video_id: videoId,
+        frame_number: frameNumber,
+        detectable_id: detectableId,
+        scale: scale
+      }
+    };
+
+    return self.getGETRequestPromise(dataURL, dataParam);
   };
 
   // note: while jquery ajax return promises, they are deficient

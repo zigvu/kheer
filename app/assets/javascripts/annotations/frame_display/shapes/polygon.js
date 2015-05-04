@@ -7,10 +7,11 @@ ZIGVU.FrameDisplay.Shapes = ZIGVU.FrameDisplay.Shapes || {};
   annotations.
 */
 
-ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
+ZIGVU.FrameDisplay.Shapes.Polygon = function(chiaVersionId, detId, title, fillColor) {
   var self = this;
   var selected = false, polyId;
   var snrPercent;
+  this.state = 'existing'; // 'deleted', 'new'
 
   // default decorations
   var strokeColor = "rgb(255, 255, 0)";
@@ -25,16 +26,23 @@ ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
 
   // text rendering : snr
   var snrHeight = 12;
-  var snrWidth = 30;
+  var snrWidth = 50;
 
   var points = [];
 
   this.setPolyId = function(pid){ polyId = pid; };
   this.getPolyId = function(){ return polyId; };
 
+  this.isDeleted = function(){ return self.state === 'deleted'; }
+  this.setDeleted = function(){ self.state = 'deleted'; }
+
+  this.isNew = function(){ return self.state === 'new'; }
+  this.setNew = function(){ self.state = 'new'; }
+
   this.getPoints = function(){
     if(!self.isClosed()){ return undefined; }
     return {
+      chia_version_id: chiaVersionId,
       detectable_id: detId,
       x0: points[0].getX(), y0: points[0].getY(),
       x1: points[1].getX(), y1: points[1].getY(),
@@ -51,6 +59,8 @@ ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
   };
 
   this.draw = function(ctx){
+    if(self.isDeleted()){ return; }
+
     // decoration settings
     var sColor, fColor;
     if(selected){
@@ -101,10 +111,10 @@ ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
       ctx.fillStyle = "rgb(0, 0, 0)";
       ctx.fillText(title, points[0].getX() + borderOffset, points[0].getY() + borderOffset);
 
-      // text rendering: snr
+      // text rendering: chiaVersionId and snr
       ctx.font = "10px serif";
       ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-      var snr = self.getSNR();
+      var snr = chiaVersionId + " : " + self.getSNR();
       ctx.fillRect(points[0].getX() + borderOffset, points[0].getY() + borderOffset + nameHeight, snrWidth, snrHeight);
       ctx.fillStyle = "rgb(0, 0, 0)";
       ctx.fillText(snr, points[0].getX() + borderOffset, points[0].getY() + borderOffset + nameHeight);
@@ -124,6 +134,8 @@ ZIGVU.FrameDisplay.Shapes.Polygon = function(detId, title, fillColor) {
   this.isClosed = function(){ return points.length == 4; }
 
   this.contains = function(mouseX, mouseY){
+    if(self.isDeleted()){ return false; }
+
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
     var x = mouseX, y = mouseY;

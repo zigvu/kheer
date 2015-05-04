@@ -14,6 +14,25 @@ $chart-timeline-border-color: $zigvu-footer-background-color;
 $chart-timeline-brush-color: $orange;
 
 // ------------------------------------
+// canvas layering
+#canvases {
+  position: relative;
+  height: 730px; // 720px + 10px;
+  width: 1280px;
+
+  canvas { 
+    position: absolute; 
+    left: 0px;
+    top: 0px;
+  }
+
+  #videoFrameCanvas{ z-index: 0; }
+  #heatmapCanvas{ z-index: 1; opacity: 0.5; }
+  #localizationCanvas{ z-index: 2; }
+  #annotationCanvas{ z-index: 3; }
+}
+
+// ------------------------------------
 // media player controls
 .video-controls {
 

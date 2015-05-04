@@ -16,6 +16,14 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   var divId_fastPlayForward = '#player-fast-forward';
   var divId_nextHit = '#player-next-hit';
 
+  var divId_videoTimelineContainer = '#video-controls-timeline-container';
+  var divId_videoControlsPlayerContainer = '#video-controls-player-container';
+  var divId_toggleVideoControlsContainer = '#toggle-video-controls-container';
+
+  var divId_drawHeatmap = '#draw-heatmap';
+  var divId_videoPlaybackSpeed = '#video-playback-speed';
+
+
   // capture clicks
   $(divId_previousHit).click(function(){ if(disabled){ return; }; videoPlayer.previousHit(); });
   $(divId_fastPlayBackward).click(function(){ if(disabled){ return; }; videoPlayer.fastPlayBackward(); });
@@ -23,6 +31,15 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   $(divId_startPlayback).click(function(){ if(disabled){ return; }; videoPlayer.startPlayback(); });
   $(divId_fastPlayForward).click(function(){ if(disabled){ return; }; videoPlayer.fastPlayForward(); });
   $(divId_nextHit).click(function(){ if(disabled){ return; }; videoPlayer.nextHit(); });
+
+  $(divId_toggleVideoControlsContainer).click(function(){ toggleVideoControlsContainer(); });
+  $(divId_drawHeatmap).click(function(){ videoPlayer.paintHeatmap(); });
+
+  this.setVideoPlaybackSpeed = function(speed){
+    var s = Math.round(speed * 10)/10;
+    $(divId_videoPlaybackSpeed).text(s);
+  };
+  
 
   // capture keycodes
   $(document).keypress(function(e) {
@@ -94,6 +111,18 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
         e.stopPropagation();
         break;
 
+      case 116: // 't'
+        toggleVideoControlsContainer();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 104: // 'h'
+        videoPlayer.paintHeatmap();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
       default:
         //console.log("Unknown key " + e.which);
     }
@@ -106,6 +135,7 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
     $(divId_startPlayback).removeClass('disabled');
     $(divId_fastPlayForward).removeClass('disabled');
     $(divId_nextHit).removeClass('disabled');
+    $(divId_drawHeatmap).removeClass('disabled');
     disabled = false;
   };
 
@@ -116,6 +146,17 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
     $(divId_startPlayback).addClass('disabled');
     $(divId_fastPlayForward).addClass('disabled');
     $(divId_nextHit).addClass('disabled');
+    $(divId_drawHeatmap).addClass('disabled');
     disabled = true;
+  };
+
+  function toggleVideoControlsContainer(){
+    if($(divId_videoControlsPlayerContainer).is(":visible")){
+      $(divId_videoTimelineContainer).show();
+      $(divId_videoControlsPlayerContainer).hide();
+    } else {
+      $(divId_videoTimelineContainer).hide();
+      $(divId_videoControlsPlayerContainer).show();      
+    }
   };
 };

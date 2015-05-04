@@ -31,7 +31,23 @@ module ChiaData
 
       respond_to do |format|
         if @chia_version.save
-          format.html { redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully created.' }
+          # TODO: REMOVE
+          format.html { 
+            kheerSeed = Rails.root.join('public','data','kheerSeed').to_s
+            patchMapFile = "#{kheerSeed}/patch_map.json"
+            cellMapFile = "#{kheerSeed}/cell_map.json"
+            colorMapFile = "#{kheerSeed}/color_map.json"
+            chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
+            chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
+            chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+
+            pmf = DataImporters::CreateMaps.new(patchMapFile, cellMapFile, colorMapFile)
+            pmf.saveToDb(@chia_version.id)
+
+            redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully created.' 
+          }
+          # END TODO
+          # format.html { redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully created.' }
           format.json { render action: 'show', status: :created, location: @chia_version }
         else
           format.html { render action: 'new' }

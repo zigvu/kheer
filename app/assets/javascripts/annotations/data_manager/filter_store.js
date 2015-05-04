@@ -21,6 +21,9 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
   videoIds: [integers]
 
   currentAnnotationDetId: integer
+
+  heatmap: {scale:, :detectable_id: }
+
 */
 
 ZIGVU.DataManager.FilterStore = function() {
@@ -33,7 +36,8 @@ ZIGVU.DataManager.FilterStore = function() {
 
   // for active filtering
   this.currentAnnotationDetId = undefined;
-  
+  this.heatmap = {};
+
   this.getCurrentFilterParams = function(){
     var currentFilters = {};
     currentFilters['chia_version_id'] = self.chiaVersionIdLocalization;
@@ -48,7 +52,9 @@ ZIGVU.DataManager.FilterStore = function() {
     this.chiaVersionIdAnnotation = undefined;
     self.detectableIds = undefined;
     self.localizations = undefined;
-    self.currentAnnotationDetId = undefined;
     self.videoIds = undefined;
+
+    self.currentAnnotationDetId = undefined;
+    this.heatmap = {};
   };
 };

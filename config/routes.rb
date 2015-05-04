@@ -5,12 +5,15 @@ Kheer::Application.routes.draw do
       
       get 'filters/detectables'
       get 'filters/chia_versions'
+      get 'filters/color_map'
+      get 'filters/cell_map'
       post 'filters/filtered_summary'
       post 'filters/filtered_data'
-      post 'filters/video_data_map'
+      get 'filters/video_data_map'
       resources :filters, only: [:new]
 
       post 'frames/update_annotations'
+      get 'frames/heatmap_data'
     end
   end
 

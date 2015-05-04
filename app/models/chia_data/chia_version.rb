@@ -11,9 +11,14 @@ class ChiaVersion < ActiveRecord::Base
 		return PatchMap.where(chia_version_id: self.id).first
 	end
 
+	def cell_map
+		return CellMap.where(chia_version_id: self.id).first
+	end
+
 	private
     def destroy_mongo_documents
       PatchMap.destroy_all(chia_version_id: self.id)
+      CellMap.destroy_all(chia_version_id: self.id)
     end
 
     def initialize_settings

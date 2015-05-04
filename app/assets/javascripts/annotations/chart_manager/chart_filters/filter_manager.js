@@ -20,6 +20,8 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   this.filterChiaVersionsAnnotation = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsAnnotation(self.htmlGenerator);
   this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(self.htmlGenerator);
 
+  this.filterScales = new ZIGVU.ChartManager.ChartFilters.FilterScales(self.htmlGenerator);
+
   this.startFilter = function(){
     self.filterStartButton.displayInput(undefined)
       .then(function(data){ self.getChiaVersionsLocalization(); })
@@ -41,6 +43,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           });
 
           self.filterChiaVersionsLocalization.displayInfo(selectedChiaVersion);
+          self.filterScales.displayInput(selectedChiaVersion.settings.scales);
           self.getDetectables();
         } else {
           self.reset();

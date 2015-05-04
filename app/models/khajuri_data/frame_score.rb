@@ -10,7 +10,10 @@ class FrameScore
 	field :ft, as: :frame_time, type: Integer
 
 	# NOTE: this field is stored as unstructured JSON as formatted
-	# by class <TBD> - it is accessed outside of mongoid
+	# by khajuri with original chia ids for class ids (vs. detectable Ids)
+	# khajuri format:
+	# scores = {chiaId: {prob: [floats, ], fc8: [floats, ]}, }
+	# To access the scores, use getScores function below
 	#field :scores
 
 	# index for faster traversal during ordering
@@ -30,7 +33,11 @@ class FrameScore
 	end
 
 	def getScores
-		return self[:scores]
+		# we need to use moped instead of mongoid to get to the raw BSON
+		db = Mongoid::Sessions.default
+		collection = db[:frame_scores]
+		rawBSON = collection.where(ci: self.ci, vi: self.vi, fn: self.fn).first
+		return rawBSON['scores']
 	end
 
 end

@@ -8,19 +8,18 @@ ZIGVU.VideoHandler = ZIGVU.VideoHandler || {};
 ZIGVU.VideoHandler.VideoPlayer = function() {
   var self = this;
 
-  this.videoFrameCanvas = document.getElementById("videoFrameCanvas");
-  new ZIGVU.FrameDisplay.CanvasExtender(self.videoFrameCanvas);
-  this.renderCTX = self.videoFrameCanvas.getContext("2d");
+  this.canvas = document.getElementById("videoFrameCanvas");
+  this.renderCTX = self.canvas.getContext("2d");
 
   this.eventManager = undefined;
   this.dataManager = undefined;
   this.timelineChartData = undefined;
-  this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations(self.videoFrameCanvas);
-  this.drawingHandler = new ZIGVU.FrameDisplay.DrawingHandler(self.videoFrameCanvas);
+  this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations();
+  this.drawAnnotations = new ZIGVU.FrameDisplay.DrawAnnotations();
+  this.drawHeatmap = new ZIGVU.FrameDisplay.DrawHeatmap();
   this.multiVideoExtractor = new ZIGVU.VideoHandler.MultiVideoExtractor(self.renderCTX);
 
   this.videoPlayerControls = new ZIGVU.VideoHandler.VideoPlayerControls(self);
-  this.videoControlsContainer = new ZIGVU.VideoHandler.VideoControlsContainer(self);
 
   // pause behavior tracker
   var isVideoPaused = false;
@@ -33,10 +32,6 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.enableControls = function(bool){
     var x = bool ? self.videoPlayerControls.enable() : self.videoPlayerControls.disable();
   };
-
-  var heatmapEnabled = false;
-  this.enableHeatmap = function(bool){ heatmapEnabled = bool; }
-  this.isHeatmapEnabled = function(){ return heatmapEnabled; }
 
   //------------------------------------------------
   // painting in different modes
@@ -76,7 +71,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
       // schedule to run again in a short time
       setTimeout(function(){ self.paintUntilPaused(); }, 20);
     } else if(currentPlayState.play_state === 'paused'){
-      self.drawingHandler.startAnnotation(currentPlayState.video_id, currentPlayState.frame_number);
+      self.drawAnnotations.startAnnotation(currentPlayState.video_id, currentPlayState.frame_number);
       self.eventManager.firePaintFrameCallback(currentPlayState);
       updateTimelineChartCounter = 0;
 
@@ -88,8 +83,18 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.paintFrameWithLocalization = function(){
     var currentPlayState = self.multiVideoExtractor.paintFrame();
     self.drawLocalizations.drawBboxes(currentPlayState.video_id, currentPlayState.frame_number);
+    // TODO: not working right now
+    // self.drawAnnotations.drawAnnotations(currentPlayState.video_id, currentPlayState.frame_number);
+    // only clear heatmap here - paint in another function
+    self.drawHeatmap.clear();
     return currentPlayState;
   };
+
+  this.paintHeatmap = function(){
+    if(!isVideoPaused){ return; }
+    var currentPlayState = self.multiVideoExtractor.getCurrentState();
+    self.drawHeatmap.drawHeatmap(currentPlayState.video_id, currentPlayState.frame_number);
+  }
 
   //------------------------------------------------
   // player keys and button control
@@ -101,7 +106,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
 
   this.startPlayback = function(){
     isVideoPaused = false;
-    self.drawingHandler.endAnnotation();
+    self.drawAnnotations.endAnnotation();
     self.multiVideoExtractor.playVideo();
     self.paintContinuous();
   };
@@ -120,24 +125,24 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.playFaster = function(){ 
     self.multiVideoExtractor.increasePlaybackRatePromise()
       .then(function(newSpeed){
-        self.videoControlsContainer.setVideoPlaybackSpeed(newSpeed);
+        self.videoPlayerControls.setVideoPlaybackSpeed(newSpeed);
       });
   };
   this.playSlower = function(){ 
     self.multiVideoExtractor.reducePlaybackRatePromise()
       .then(function(newSpeed){
-        self.videoControlsContainer.setVideoPlaybackSpeed(newSpeed);
+        self.videoPlayerControls.setVideoPlaybackSpeed(newSpeed);
       });
   };
   this.playNormal = function(){ 
     self.multiVideoExtractor.setPlaybackNormalPromise()
       .then(function(newSpeed){
-        self.videoControlsContainer.setVideoPlaybackSpeed(newSpeed);
+        self.videoPlayerControls.setVideoPlaybackSpeed(newSpeed);
       });
   };
 
   // annotation
-  this.deleteAnnotation = function(){ self.drawingHandler.deleteAnnotation(); };
+  this.deleteAnnotation = function(){ self.drawAnnotations.deleteAnnotation(); };
 
   //------------------------------------------------
   // navigation helpers
@@ -183,7 +188,9 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
     self.timelineChartData = self.dataManager.timelineChartData;
 
     self.drawLocalizations.setDataManager(self.dataManager);
-    self.drawingHandler.setDataManager(self.dataManager);
+    self.drawAnnotations.setDataManager(self.dataManager);
+    self.drawHeatmap.setDataManager(self.dataManager);
+
     return self;
   };
 };

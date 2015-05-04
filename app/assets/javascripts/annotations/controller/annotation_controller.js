@@ -23,12 +23,17 @@ ZIGVU.Controller.AnnotationController = function() {
     filterPromises.filter_reset.then(function(response){ self.resetFilters(); });
   };
 
+  // TODO: remove
   this.loadDataTest = function(){
-
-    // TODO: remove
     self.dataManager.filterStore.chiaVersionIdLocalization = 1;
+    self.dataManager.filterStore.chiaVersionIdAnnotation = 1;
     self.dataManager.filterStore.detectableIds = [1, 48, 49];
     self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: 0, scales: [0.7, 1.0]};
+    self.dataManager.filterStore.heatmap.detectable_id = 48;
+    self.dataManager.filterStore.heatmap.scale = 1.3;
+
+    self.chartManager.filterManager.filterScales.displayInput([0.4,0.7,1.0,1.3,1.6]);
+
     self.dataManager.ajaxHandler.getChiaVersionsPromise()
       .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getDetectablesPromise(); })
       .then(function(detectables){ return self.dataManager.ajaxHandler.getLocalizationPromise(); })
@@ -38,7 +43,8 @@ ZIGVU.Controller.AnnotationController = function() {
         self.chartManager.showAnnotationList();
 
         self.dataManager.ajaxHandler.getFullDataPromise()
-          .then(function(videoDataMap){ 
+          .then(function(){ 
+            var videoDataMap = self.dataManager.dataStore.videoDataMap;
             var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
             self.dataManager.createTimelineChartData();
             return videoLoadPromise;
@@ -60,7 +66,8 @@ ZIGVU.Controller.AnnotationController = function() {
     self.chartManager.showAnnotationList();
 
     self.dataManager.ajaxHandler.getFullDataPromise()
-      .then(function(videoDataMap){ 
+      .then(function(){ 
+        var videoDataMap = self.dataManager.dataStore.videoDataMap;
         var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
         self.dataManager.createTimelineChartData();
         return videoLoadPromise;
@@ -78,6 +85,9 @@ ZIGVU.Controller.AnnotationController = function() {
   };
 
   this.register = function(){
+    self.dataManager
+      .setEventManager(self.eventManager);
+
     self.chartManager
       .setEventManager(self.eventManager)
       .setDataManager(self.dataManager);

@@ -48,6 +48,8 @@ ZIGVU.ChartManager.ChartManager = function() {
   this.setEventManager = function(em){
     self.eventManager = em;
     self.timelineChart.setEventManager(self.eventManager);
+    self.annotationList.setEventManager(self.eventManager);
+    self.filterManager.filterScales.setEventManager(self.eventManager);
     return self;
   };
 

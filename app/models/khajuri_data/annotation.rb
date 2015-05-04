@@ -9,6 +9,8 @@ class Annotation
 	field :fn, as: :frame_number, type: Integer
 	field :ft, as: :frame_time, type: Integer
 
+	field :at, as: :active, type: Boolean, default: true
+
 	# annotation data
 	# -------------------------------------------
 	field :di, as: :detectable_id, type: Integer
