@@ -11,6 +11,7 @@ ZIGVU.DataManager.Accessors.AnnotationDataAccessor = function() {
 
   this.filterStore = undefined;
   this.dataStore = undefined;
+  this.ajaxHandler = undefined;
 
   // ----------------------------------------------
   // chia data
@@ -81,6 +82,11 @@ ZIGVU.DataManager.Accessors.AnnotationDataAccessor = function() {
 
   this.setDataStore = function(ds){
     self.dataStore = ds;
+    return self;
+  };
+
+  this.setAjaxHandler = function(ah){
+    self.ajaxHandler = ah;
     return self;
   };
 };

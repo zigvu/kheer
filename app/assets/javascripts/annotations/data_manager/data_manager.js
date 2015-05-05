@@ -15,6 +15,11 @@ ZIGVU.DataManager.DataManager = function() {
   this.filterStore = new ZIGVU.DataManager.Stores.FilterStore();
   this.dataStore = new ZIGVU.DataManager.Stores.DataStore();
 
+  this.ajaxHandler = new ZIGVU.DataManager.AjaxHandler();
+  self.ajaxHandler
+    .setFilterStore(self.filterStore)
+    .setDataStore(self.dataStore);
+
   // ----------------------------------------------
   // accessors
   this.filterAccessor = new ZIGVU.DataManager.Accessors.FilterAccessor();
@@ -25,7 +30,8 @@ ZIGVU.DataManager.DataManager = function() {
   this.annotationDataAccessor = new ZIGVU.DataManager.Accessors.AnnotationDataAccessor();
   self.annotationDataAccessor
     .setFilterStore(self.filterStore)
-    .setDataStore(self.dataStore);
+    .setDataStore(self.dataStore)
+    .setAjaxHandler(self.ajaxHandler);
   
   this.localizationDataAccessor = new ZIGVU.DataManager.Accessors.LocalizationDataAccessor();
   self.localizationDataAccessor
@@ -37,10 +43,6 @@ ZIGVU.DataManager.DataManager = function() {
     .setFilterStore(self.filterStore)
     .setDataStore(self.dataStore);
 
-  this.ajaxHandler = new ZIGVU.DataManager.AjaxHandler();
-  self.ajaxHandler
-    .setFilterStore(self.filterStore)
-    .setDataStore(self.dataStore);
 
   // ----------------------------------------------
   // Annotation data
