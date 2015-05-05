@@ -44,9 +44,9 @@ ZIGVU.Controller.AnnotationController = function() {
 
         self.dataManager.ajaxHandler.getFullDataPromise()
           .then(function(){ 
-            var videoDataMap = self.dataManager.dataStore.videoDataMap;
+            var videoDataMap = self.dataManager.getData_videoDataMap();
             var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
-            self.dataManager.createTimelineChartData();
+            self.dataManager.tChart_createData();
             return videoLoadPromise;
           })
           .then(function(){ 
@@ -67,9 +67,9 @@ ZIGVU.Controller.AnnotationController = function() {
 
     self.dataManager.ajaxHandler.getFullDataPromise()
       .then(function(){ 
-        var videoDataMap = self.dataManager.dataStore.videoDataMap;
+        var videoDataMap = self.dataManager.getData_videoDataMap();
         var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
-        self.dataManager.createTimelineChartData();
+        self.dataManager.tChart_createData();
         return videoLoadPromise;
       })
       .then(function(){ 

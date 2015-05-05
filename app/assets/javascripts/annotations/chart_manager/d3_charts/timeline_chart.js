@@ -11,7 +11,6 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
 
   this.eventManager = undefined;
   this.dataManager = undefined;
-  this.timelineChartData = undefined;
   this.seekDisabled = true;
 
   var brushNumOfCounters = 500;
@@ -219,7 +218,7 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   // draw bars/lines
 
   this.draw = function(){
-    var scores = self.timelineChartData.getTimelineChartData();
+    var scores = self.dataManager.tChart_getTimelineChartData();
     contextX.domain([
       d3.min(scores, function(s) { return d3.min(s.values, function(v) { return v.counter; }); }),
       d3.max(scores, function(s) { return d3.max(s.values, function(v) { return v.counter; }); })
@@ -259,7 +258,7 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   function updateVideoPlayerAfterBrush(counter){
     if(self.seekDisabled){ return; }
 
-    var videoIdFrameNumber = self.timelineChartData.getVideoIdFrameNumber(counter);
+    var videoIdFrameNumber = self.dataManager.tChart_getVideoIdFrameNumber(counter);
     self.eventManager.fireFrameNavigateCallback(videoIdFrameNumber);
   };
 
@@ -267,7 +266,7 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   function updateChartFromVideoPlayer(args){
     if(self.seekDisabled){ return; }
 
-    var counter = self.timelineChartData.getCounter(args.video_id, args.frame_number);
+    var counter = self.dataManager.tChart_getCounter(args.video_id, args.frame_number);
     self.brushToCounter(counter);
 
     console.log("Frame number: " + args.frame_number + ", counter: " + counter);
@@ -283,7 +282,6 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
 
   this.setDataManager = function(dm){
     self.dataManager = dm;
-    self.timelineChartData = self.dataManager.timelineChartData;
     return self;
   };
 };

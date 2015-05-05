@@ -19,10 +19,10 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
 
   this.drawBboxes = function(videoId, frameNumber){
     self.clear();
-    var localizations = self.dataManager.getLocalizations(videoId, frameNumber);
+    var localizations = self.dataManager.getData_localizations(videoId, frameNumber);
     _.each(localizations, function(locs, detectableId){
       _.each(locs, function(bb){
-        var annoDetails = self.dataManager.getAnnotationDetails(detectableId);
+        var annoDetails = self.dataManager.getData_localizationDetails(detectableId);
         bbox.draw(self.ctx, bb, annoDetails.title, annoDetails.color);
       });
     });

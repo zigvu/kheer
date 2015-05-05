@@ -13,7 +13,6 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
 
   this.eventManager = undefined;
   this.dataManager = undefined;
-  this.timelineChartData = undefined;
   this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations();
   this.drawAnnotations = new ZIGVU.FrameDisplay.DrawAnnotations();
   this.drawHeatmap = new ZIGVU.FrameDisplay.DrawHeatmap();
@@ -149,7 +148,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.frameNavigate = function(numOfFrames){
     if(!isVideoPaused){ isVideoPaused = true; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
-    var newPlayPos = self.timelineChartData.getNewPlayPosition(
+    var newPlayPos = self.dataManager.tChart_getNewPlayPosition(
       currentPlayState.video_id, currentPlayState.frame_number, numOfFrames);
 
     self.multiVideoExtractor.seekToVideoFrameNumber(newPlayPos.video_id, newPlayPos.frame_number);
@@ -159,7 +158,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.playHit = function(forwardDirection){
     if(!isVideoPaused){ isVideoPaused = true; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
-    var newPlayPos = self.timelineChartData.getHitPlayPosition(
+    var newPlayPos = self.dataManager.tChart_getHitPlayPosition(
       currentPlayState.video_id, currentPlayState.frame_number, forwardDirection);
 
     self.multiVideoExtractor.seekToVideoFrameNumber(newPlayPos.video_id, newPlayPos.frame_number);
@@ -185,7 +184,6 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
 
   this.setDataManager = function(dm){
     self.dataManager = dm;
-    self.timelineChartData = self.dataManager.timelineChartData;
 
     self.drawLocalizations.setDataManager(self.dataManager);
     self.drawAnnotations.setDataManager(self.dataManager);

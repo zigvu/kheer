@@ -16,7 +16,8 @@ ZIGVU.ChartManager.AnnotationList = function() {
 
   this.display = function(){
     self.empty();
-    _.each(self.dataManager.dataStore.detectables, function(dl){
+    var annotationDetectables = self.dataManager.getAnno_annotationDetectables();
+    _.each(annotationDetectables, function(dl){
       buttonId = buttonIdPrefix + dl.id;
 
       $(divId_annotationList).append(

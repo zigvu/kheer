@@ -37,10 +37,8 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       })
       .then(function(response){
         if(response.status){
-          self.dataManager.filterStore.chiaVersionIdLocalization = response.data;
-          var selectedChiaVersion = _.find(self.dataManager.dataStore.chiaVersions, function(cv){
-            return cv.id == self.dataManager.filterStore.chiaVersionIdLocalization; 
-          });
+          self.dataManager.setFilter_chiaVersionIdLocalization(response.data);
+          var selectedChiaVersion = self.dataManager.getFilter_chiaVersionLocalization();
 
           self.filterChiaVersionsLocalization.displayInfo(selectedChiaVersion);
           self.filterScales.displayInput(selectedChiaVersion.settings.scales);
@@ -61,8 +59,8 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       })
       .then(function(response){
         if(response.status){
-          self.dataManager.filterStore.detectableIds = response.data;
-          var selectedDetectables = self.dataManager.getFilteredDetectables();
+          self.dataManager.setFilter_detectableIds(response.data);
+          var selectedDetectables = self.dataManager.getFilter_selectedDetectables();
           self.filterDetectables.displayInfo(selectedDetectables);
           self.getLocalizations();
         } else {
@@ -81,8 +79,9 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       })
       .then(function(response){
         if(response.status){
-          self.dataManager.filterStore.localizations = response.data;
-          var selectedLocalizations = self.dataManager.getFilteredLocalization();
+          self.dataManager.setFilter_localizationSettings(response.data);
+          var selectedLocalizations = self.dataManager.getFilter_localizationSettings();
+
           self.filterLocalizations.displayInfo(selectedLocalizations);
           self.getChiaVersionsAnnotation();
         } else {
@@ -94,15 +93,13 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   };
 
   this.getChiaVersionsAnnotation = function(){
-    var chiaVersions = self.dataManager.dataStore.chiaVersions;
+    var chiaVersions = self.dataManager.getData_chiaVersions();
     self.filterChiaVersionsAnnotation.show();
     self.filterChiaVersionsAnnotation.displayInput(chiaVersions)
       .then(function(response){
         if(response.status){
-          self.dataManager.filterStore.chiaVersionIdAnnotation = response.data;
-          var selectedChiaVersion = _.find(self.dataManager.dataStore.chiaVersions, function(cv){
-            return cv.id == self.dataManager.filterStore.chiaVersionIdAnnotation; 
-          });
+          self.dataManager.setFilter_chiaVersionIdAnnotation(response.data);
+          var selectedChiaVersion = self.dataManager.getFilter_chiaVersionAnnotation();
 
           self.filterChiaVersionsAnnotation.displayInfo(selectedChiaVersion);
           self.getDataLoader();
@@ -122,7 +119,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       })
       .then(function(response){
         if(response.status){
-          var dataSummary = self.dataManager.dataStore.dataSummary;
+          var dataSummary = self.dataManager.getData_dataSummary();
           self.filterDataLoader.displayInfo(dataSummary, self.filterResetDefer);
           self.videoLoadDefer.resolve(true);
         } else {

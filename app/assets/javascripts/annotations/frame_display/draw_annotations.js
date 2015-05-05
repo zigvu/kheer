@@ -32,7 +32,7 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
 
     var polygonsToSave = self.getPolygonsToSave();
     if(polygonsToSave.deleted_polys.length > 0 || polygonsToSave.new_polys.length > 0){
-      self.dataManager.saveAnnotations(currentVideoId, currentFrameNumber, polygonsToSave);
+      self.dataManager.setAnno_saveAnnotations(currentVideoId, currentFrameNumber, polygonsToSave);
     }
     polygons = [];
     polyIdCounter = 0;
@@ -44,7 +44,7 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
     currentVideoId = videoId;
     currentFrameNumber = frameNumber;
 
-    var annotations = self.dataManager.getAnnotations(currentVideoId, currentFrameNumber);
+    var annotations = self.dataManager.getAnno_annotations(currentVideoId, currentFrameNumber);
     _.each(annotations, function(anno, detectableId){
       _.each(anno, function(annoCoords){
         self.addPointCoords(annoCoords, detectableId);
@@ -94,7 +94,7 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
     var p3 = new ZIGVU.FrameDisplay.Shapes.Point(annoCoords.x2, annoCoords.y2);
     var p4 = new ZIGVU.FrameDisplay.Shapes.Point(annoCoords.x3, annoCoords.y3);
 
-    var annoDetails = self.dataManager.getAnnotationDetails(detId);
+    var annoDetails = self.dataManager.getAnno_anotationDetails(detId);
     var poly = new ZIGVU.FrameDisplay.Shapes.Polygon(
       annoCoords.chia_version_id, annoDetails.id, annoDetails.title, annoDetails.color);
     poly.addPoint(p1);
@@ -114,8 +114,8 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
       var poly = _.last(polygons);      
       // start a new polygon if no polygon exists or if last polygon is complete
       if(poly === undefined || poly.isClosed()){
-        var annoDetails = self.dataManager.getSelectedAnnotationDetails();
-        var chiaVersionId = self.dataManager.filterStore.chiaVersionIdAnnotation;
+        var annoDetails = self.dataManager.getAnno_selectedAnnotationDetails();
+        var chiaVersionId = self.dataManager.getFilter_chiaVersionIdAnnotation();
         var poly = new ZIGVU.FrameDisplay.Shapes.Polygon(
           chiaVersionId, annoDetails.id, annoDetails.title, annoDetails.color);
 

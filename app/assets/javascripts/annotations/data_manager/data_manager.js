@@ -9,15 +9,63 @@ ZIGVU.DataManager.DataManager = function() {
   var self = this;
 
   this.eventManager = undefined;
+
+  // ----------------------------------------------
+  // stores
+  this.filterStore = new ZIGVU.DataManager.Stores.FilterStore();
+  this.dataStore = new ZIGVU.DataManager.Stores.DataStore();
+
+  // ----------------------------------------------
+  // accessors
+  this.filterAccessor = new ZIGVU.DataManager.Accessors.FilterAccessor();
+  self.filterAccessor
+    .setFilterStore(self.filterStore)
+    .setDataStore(self.dataStore);
+
+  this.annotationDataAccessor = new ZIGVU.DataManager.Accessors.AnnotationDataAccessor();
+  self.annotationDataAccessor
+    .setFilterStore(self.filterStore)
+    .setDataStore(self.dataStore);
   
-  this.dataStore = new ZIGVU.DataManager.DataStore();
-  this.filterStore = new ZIGVU.DataManager.FilterStore();
-  this.timelineChartData = new ZIGVU.DataManager.TimelineChartData();
+  this.localizationDataAccessor = new ZIGVU.DataManager.Accessors.LocalizationDataAccessor();
+  self.localizationDataAccessor
+    .setFilterStore(self.filterStore)
+    .setDataStore(self.dataStore);
+  
+  this.timelineChartDataAccessor = new ZIGVU.DataManager.Accessors.TimelineChartDataAccessor();
+  self.timelineChartDataAccessor
+    .setFilterStore(self.filterStore)
+    .setDataStore(self.dataStore);
 
   this.ajaxHandler = new ZIGVU.DataManager.AjaxHandler();
   self.ajaxHandler
-    .setDataStore(self.dataStore)
-    .setFilterStore(self.filterStore);
+    .setFilterStore(self.filterStore)
+    .setDataStore(self.dataStore);
+
+  // ----------------------------------------------
+  // Annotation data
+  this.getAnno_annotationDetectables = function(){
+    return self.annotationDataAccessor.getDetectables();
+  };
+
+  this.getAnno_annotations = function(videoId, frameNumber){
+    return self.annotationDataAccessor.getAnnotations(videoId, frameNumber);
+  };
+
+  this.setAnno_saveAnnotations = function(videoId, frameNumber, annotationObjs){
+    return self.annotationDataAccessor.saveAnnotations(videoId, frameNumber, annotationObjs);
+  };
+
+  this.getAnno_selectedAnnotationDetails = function(){
+    return self.annotationDataAccessor.getSelectedAnnotationDetails();
+  };
+
+  this.getAnno_anotationDetails = function(detId){
+    return self.annotationDataAccessor.getAnnotationDetails(detId);
+  };
+
+  // ----------------------------------------------
+  // Localization data
 
   this.getModifiedFrameNumber = function(videoId, frameNumber){
     var detectionRate = self.dataStore.videoDataMap[videoId].detection_frame_rate;
@@ -25,150 +73,109 @@ ZIGVU.DataManager.DataManager = function() {
     return fn;
   };
 
-  this.getHeatmapDataPromise = function(videoId, frameNumber){
+  this.getData_heatmapDataPromise = function(videoId, frameNumber){
     var fn = self.getModifiedFrameNumber(videoId, frameNumber);
     return self.ajaxHandler.getHeatmapDataPromise(videoId, fn);
   };
 
-  this.getLocalizations = function(videoId, frameNumber){
+  this.getData_localizations = function(videoId, frameNumber){
     var fn = self.getModifiedFrameNumber(videoId, frameNumber);
-    var loc = self.dataStore.dataFullLocalizations;
-    if(loc[videoId] === undefined || loc[videoId][fn] === undefined){ return []; }
-    return loc[videoId][fn];
+    return self.localizationDataAccessor.getLocalizations(videoId, fn);
   };
 
-  this.getAnnotations = function(videoId, frameNumber){
-    var anno = self.dataStore.dataFullAnnotations;
-    if(anno[videoId] === undefined || anno[videoId][frameNumber] === undefined){ return []; }
-    return anno[videoId][frameNumber];
+  this.getData_chiaVersions = function(){
+    return self.localizationDataAccessor.getChiaVersions();
   };
 
-  this.saveAnnotations = function(videoId, frameNumber, annotationObjs){
-    // update internal data structure
-    var anno = self.dataStore.dataFullAnnotations;
-    if(anno[videoId] === undefined){ anno[videoId] = {}; }
-    if(anno[videoId][frameNumber] === undefined){ anno[videoId][frameNumber] = {}; }
-
-    // update - deleted annotations
-    _.each(annotationObjs.deleted_polys, function(ao){
-      var idx = -1;
-      _.find(anno[videoId][frameNumber][ao.detectable_id], function(a, i, l){
-        if((a.x0 == ao.x0) && (a.y0 == ao.y0) && (a.x1 == ao.x1) && 
-          (a.x2 == ao.x2) && (a.x3 == ao.x3)) { idx = i; return true; }
-        return false;
-      });
-      if(idx != -1){ anno[videoId][frameNumber][ao.detectable_id].splice(idx, 1); }
-    });
-
-    // update - deleted annotations
-    _.each(annotationObjs.new_polys, function(ao){
-      if(anno[videoId][frameNumber][ao.detectable_id] === undefined){
-        anno[videoId][frameNumber][ao.detectable_id] = []; 
-      }
-      anno[videoId][frameNumber][ao.detectable_id].push(ao);
-    });
-
-    // save to database
-    self.ajaxHandler.getAnnotationSavePromise(annotationObjs)
-      .then(function(status){ console.log(status); })
-      .catch(function (errorReason) { self.err(errorReason); }); 
+  this.getData_videoDataMap = function(){
+    return self.localizationDataAccessor.getVideoDataMap();
   };
 
-  this.createTimelineChartData = function(){
-    self.timelineChartData.counterDataMap = [];
-    self.timelineChartData.videoIdFrameNumberCounterMap = {};
-    self.timelineChartData.counterVideoIdFrameNumberMap = {};
-    var vfcm = self.timelineChartData.videoIdFrameNumberCounterMap;
-    var cvfm = self.timelineChartData.counterVideoIdFrameNumberMap;
-
-    var sortedVideoIds = _.map(Object.keys(self.dataStore.videoDataMap), function(dId){ 
-      return parseInt(dId); 
-    });
-    sortedVideoIds = _.sortBy(sortedVideoIds, function(dId){ return dId; });
-    
-    _.each(self.filterStore.detectableIds, function(detId){
-      var name = self.dataStore.detectablesMap[detId].pretty_name;
-      var color = self.dataStore.detectablesMap[detId].annotation_color;
-
-      var values = [], counter = 0;
-      var frameNumberStart, frameNumberEnd, detScores, score;
-      _.each(sortedVideoIds, function(videoId){
-        frameNumberStart = self.dataStore.videoDataMap[videoId].frame_number_start;
-        frameNumberEnd = self.dataStore.videoDataMap[videoId].frame_number_end;
-        _.each(_.range(frameNumberStart, frameNumberEnd + 1), function(frameNumber){
-          score = 0;
-          if((self.dataStore.dataFullLocalizations[videoId]) &&
-            (self.dataStore.dataFullLocalizations[videoId][frameNumber]) &&
-            (self.dataStore.dataFullLocalizations[videoId][frameNumber][detId])){
-            detScores = self.dataStore.dataFullLocalizations[videoId][frameNumber][detId];
-            score = _.max(detScores, function(ds){ return ds.prob_score; }).prob_score;
-          }
-          values.push({counter: counter++, score: score});
-          // create maps beteween videoId/frameNumber and counter
-          if(!vfcm[videoId]){ vfcm[videoId] = {}; }
-          if(!vfcm[videoId][frameNumber]){ vfcm[videoId][frameNumber] = counter - 1; }
-          if(!cvfm[counter - 1]){ cvfm[counter - 1] = {video_id: videoId, frame_number: frameNumber}; }
-        });
-      });
-      self.timelineChartData.counterDataMap.push({name: name, color: color, values: values});
-    });
+  this.getData_dataSummary = function(){
+    return self.localizationDataAccessor.getDataSummary();
+  };
+  this.getData_cellMap = function(){
+    return self.localizationDataAccessor.getCellMap();
+  };
+  this.getData_colorMap = function(){
+    return self.localizationDataAccessor.getColorMap();
   };
 
-  this.getSelectedAnnotationDetails = function(){
-    if(self.filterStore.currentAnnotationDetId === undefined){
-      err('No annotation class selected');
-    } else {
-      return self.getAnnotationDetails(self.filterStore.currentAnnotationDetId);
-    }
+  // TODO: change to localization
+  this.getData_localizationDetails = function(detId){
+    return self.annotationDataAccessor.getAnnotationDetails(detId);
   };
 
-  this.getAnnotationDetails = function(detId){
-    return {
-      id: detId,
-      title: self.dataStore.detectablesMap[detId].pretty_name,
-      color: self.dataStore.detectablesMap[detId].annotation_color
-    };
-  }
+  // ----------------------------------------------
+  // Filter data
 
-  this.getFilteredDetectables = function(){
-    if(self.filterStore.detectableIds === undefined){
-      err('No detectable ids filter found');
-    } else if(self.dataStore.detectables === undefined){
-      err('No detectables data found');
-    } else {
-      return _.filter(self.dataStore.detectables, function(detectable){
-        return _.contains(self.filterStore.detectableIds, detectable.id);
-      });
-    }
-    return undefined;
+  this.setFilter_chiaVersionIdLocalization = function(chiaVersionId){
+    return self.filterAccessor.setChiaVersionIdLocalization(chiaVersionId);
+  };
+  this.getFilter_chiaVersionLocalization = function(){
+    return self.filterAccessor.getChiaVersionLocalization();
+  };
+
+  this.setFilter_chiaVersionIdAnnotation = function(chiaVersionId){
+    return self.filterAccessor.setChiaVersionIdAnnotation(chiaVersionId);
+  };
+  this.getFilter_chiaVersionIdAnnotation = function(chiaVersionId){
+    return self.filterAccessor.getChiaVersionIdAnnotation();
+  };
+  this.getFilter_chiaVersionAnnotation = function(){
+    return self.filterAccessor.getChiaVersionAnnotation();
+  };
+
+  this.setFilter_detectableIds = function(detectableIds){
+    return self.filterAccessor.setLocalizationDetectableIds(detectableIds);
+  };
+  this.getFilter_selectedDetectables = function(){
+    return self.filterAccessor.getSelectedDetectables();
+  };
+
+  this.setFilter_localizationSettings = function(localizationSettings){
+    return self.filterAccessor.setLocalizationSettings(localizationSettings);
+  };
+  this.getFilter_localizationSettings = function(){
+    return self.filterAccessor.getLocalizationSettings();
+  };
+
+  // ----------------------------------------------
+  // Timeline chart
+  this.tChart_createData = function(){
+    self.timelineChartDataAccessor.createChartData(self.localizationDataAccessor, self.filterAccessor);
   };
 
 
-  this.getFilteredLocalization = function(){
-    if(self.filterStore.localizations === undefined){
-      err('No localizations filter found');
-    } else {
-      return self.filterStore.localizations;
-    }
-    return undefined;
+  this.tChart_getNewPlayPosition = function(videoId, frameNumber, numOfFrames){
+    return self.timelineChartDataAccessor.getNewPlayPosition(videoId, frameNumber, numOfFrames);
   };
 
-  this.resetFilters = function(){
-    self.dataStore.reset();
-    self.filterStore.reset();
-  }
+  this.tChart_getHitPlayPosition = function(videoId, frameNumber, forwardDirection){
+    return self.timelineChartDataAccessor.getHitPlayPosition(videoId, frameNumber, forwardDirection);
+  };
 
+  this.tChart_getCounter = function(videoId, frameNumber){
+    return self.timelineChartDataAccessor.getCounter(videoId, frameNumber);
+  };
+
+  this.tChart_getVideoIdFrameNumber = function(counter){
+    return self.timelineChartDataAccessor.getVideoIdFrameNumber(counter);
+  };
+
+  this.tChart_getTimelineChartData = function(){
+    return self.timelineChartDataAccessor.getTimelineChartData();
+  };
+
+  // ----------------------------------------------
+  // event handling
   function updateAnnoListSelected(detectableId){
     self.filterStore.currentAnnotationDetId = detectableId;
     self.filterStore.heatmap.detectable_id = detectableId;
   };
+
   function updateScaleSelected(scale){
     self.filterStore.heatmap.scale = scale;
-  };
-
-  // shorthand for error printing
-  this.err = function(errorReason){
-    displayJavascriptError('ZIGVU.DataManager.DataManager -> ' + errorReason);
   };
 
   //------------------------------------------------
@@ -178,5 +185,16 @@ ZIGVU.DataManager.DataManager = function() {
     self.eventManager.addAnnoListSelectedCallback(updateAnnoListSelected);
     self.eventManager.addScaleSelectedCallback(updateScaleSelected);
     return self;
+  };
+
+  this.resetFilters = function(){
+    self.dataStore.reset();
+    self.filterStore.reset();
+  }
+
+  //------------------------------------------------
+  // shorthand for error printing
+  this.err = function(errorReason){
+    displayJavascriptError('ZIGVU.DataManager.DataManager -> ' + errorReason);
   };
 };

@@ -18,10 +18,10 @@ ZIGVU.FrameDisplay.DrawHeatmap = function() {
 
   this.drawHeatmap = function(videoId, frameNumber){
     self.clear();
-    self.dataManager.getHeatmapDataPromise(videoId, frameNumber)
+    self.dataManager.getData_heatmapDataPromise(videoId, frameNumber)
       .then(function(heatmapData){
-        var cellMap = self.dataManager.dataStore.cellMap;
-        var colorMap = self.dataManager.dataStore.colorMap;
+        var cellMap = self.dataManager.getData_cellMap();
+        var colorMap = self.dataManager.getData_colorMap();
 
         _.each(heatmapData.scores, function(score, idx, list){
           var cell = cellMap[idx];
