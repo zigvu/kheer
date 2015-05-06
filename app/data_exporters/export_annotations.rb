@@ -13,7 +13,9 @@ module DataExporters
 		end
 
 		def export
-			Annotation.where(chia_version_id: @chiaVersionId).group_by{|a1| a1.video_id}.each do |videoId, a2|
+			::Annotation.where(chia_version_id: @chiaVersionId).where(active: true)
+				.group_by{|a1| a1.video_id}.each do |videoId, a2|
+				
 				vCol = Video.find(videoId).video_collection
 				width = vCol.width
 				height = vCol.height
@@ -36,7 +38,7 @@ module DataExporters
 					end
 				end
 				File.open(frameIdsFilename, "w") do |f|
-					f.write(frameIds.to_s[1..-2])
+					f.write(frameIds.to_s[1..-2].gsub(/,/, ''))
 				end
 			end
 			true

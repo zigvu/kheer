@@ -17,7 +17,7 @@ module DataImporters
 					ft: frameTime,
 
 					di: @detectableChiaIdMap.getDetectableId(chiaClsId),
-					ps: localization["score"].to_f,
+					ps: localization["score"].to_f.round(2),
 					zd: localization["zdist_thresh"].to_f,
 					sl: localization["scale"].to_f,
 					x: localization["bbox"]["x"].to_i,

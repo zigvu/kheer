@@ -46,7 +46,7 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
       return [
         scale, 
         '<input type="checkbox" name="' + scaleInputName + '" value="' 
-        + scale + '" id="input-scale-values">'
+        + scale + '" id="input-scale-values" checked>'
       ];
     });
 
@@ -62,6 +62,9 @@ ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
     bodyArr.push([cancelButton, submitButton]);
 
     $(divId_filterTable).append(htmlGenerator.table(headerArr, bodyArr));
+
+    // select first zdist value
+    $('input[type=radio][name="' + zdistInputName + '"]:nth(0)').attr('checked', true);
 
     // resolve promise on button clicks
     $('#' + submitButtonId).click(function(){

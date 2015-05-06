@@ -26,8 +26,8 @@ module DataImporters
 					# mongo keys need to be strings
 					detectableIdStr = @detectableChiaIdMap.getDetectableId(chiaClsId).to_s
 					patchScoresHash[detectableIdStr] = {}
-					patchScoresHash[detectableIdStr]["prob"] = chiaScrs["prob"].map{|x| x.to_f}
-					patchScoresHash[detectableIdStr]["fc8"] = chiaScrs["fc8"].map{|x| x.to_f}
+					patchScoresHash[detectableIdStr]["prob"] = chiaScrs["prob"].map{|x| x.to_f.round(2)}
+					patchScoresHash[detectableIdStr]["fc8"] = chiaScrs["fc8"].map{|x| x.to_f.round(2)}
 				end
 				return patchScoresHash
 			end

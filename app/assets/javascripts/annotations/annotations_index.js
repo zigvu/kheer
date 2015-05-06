@@ -4,6 +4,7 @@ $(".analysis_annotations.index").ready(function() {
   annotationController = new ZIGVU.Controller.AnnotationController();
   annotationController.register();
   annotationController.startFilter();
+  annotationController.bindPageUnload();
   // annotationController.loadDataTest();
 });
 

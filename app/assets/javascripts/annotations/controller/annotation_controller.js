@@ -81,6 +81,12 @@ ZIGVU.Controller.AnnotationController = function() {
       .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
+  this.bindPageUnload = function(){
+    $(window).bind('beforeunload', function(){
+      return 'Are you sure you want to leave?';
+    });
+  };
+
   this.resetFilters = function(){
     console.log('Resetting filters');
   };

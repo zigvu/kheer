@@ -32,12 +32,12 @@ ZIGVU.ChartManager.ChartFilters.FilterFrameScales = function(htmlGenerator) {
     $(divId_filterTable).append(htmlGenerator.table(headerArr, bodyArr));
 
     // on value change, inform filter
-    $('input[type=radio][name=' + inputName + ']').change(function() {
+    $('input[type=radio][name="' + inputName + '"]').change(function() {
       self.eventManager.fireScaleSelectedCallback(parseFloat(this.value));
     });
 
     // set to first scale
-    $('input[type=radio][name=' + inputName + ']:nth(0)').attr('checked', true);
+    $('input[type=radio][name="' + inputName + '"]:nth(0)').attr('checked', true);
     self.eventManager.fireScaleSelectedCallback(parseFloat(scalesArr[0]));
   };
 
