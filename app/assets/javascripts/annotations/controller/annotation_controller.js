@@ -32,7 +32,8 @@ ZIGVU.Controller.AnnotationController = function() {
     self.dataManager.filterStore.heatmap.detectable_id = 48;
     self.dataManager.filterStore.heatmap.scale = 1.3;
 
-    self.chartManager.filterManager.filterScales.displayInput([0.4,0.7,1.0,1.3,1.6]);
+    self.chartManager.filterManager.filterFrameScales.displayInput([0.4,0.7,1.0,1.3,1.6]);
+    self.chartManager.filterManager.filterFrameZdistThresh.displayInput([0, 1.5, 2.5, 4.5]);
 
     self.dataManager.ajaxHandler.getChiaVersionsPromise()
       .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getDetectablesPromise(); })

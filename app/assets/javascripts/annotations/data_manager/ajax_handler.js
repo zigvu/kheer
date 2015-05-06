@@ -169,6 +169,37 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return self.getGETRequestPromise(dataURL, dataParam);
   };
 
+  this.getAllLocalizationsPromise = function(videoId, frameNumber){
+    var requestDefer = Q.defer();
+
+    var chiaVersionId = self.filterStore.chiaVersionIdLocalization;
+    var zdistThresh = self.filterStore.heatmap.zdist_thresh;
+
+    var dataURL = '/api/v1/frames/localization_data';
+    var dataParam = {
+      localization: {
+        chia_version_id: chiaVersionId,
+        video_id: videoId,
+        frame_number: frameNumber,
+        zdist_thresh: zdistThresh
+      }
+    };
+    self.getGETRequestPromise(dataURL, dataParam)
+      .then(function(data){
+        var localizations = [];
+        if((data.localizations[videoId] !== undefined) && 
+          (data.localizations[videoId][frameNumber] !== undefined)){ 
+          localizations = data.localizations[videoId][frameNumber];
+        }
+        requestDefer.resolve(localizations);
+      })
+      .catch(function (errorReason) {
+        requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
+      });
+
+    return requestDefer.promise;
+  };
+
   // note: while jquery ajax return promises, they are deficient
   // and we need to convert to `q` based promises
   this.getGETRequestPromise = function(url, params){

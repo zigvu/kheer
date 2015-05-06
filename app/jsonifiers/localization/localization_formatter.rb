@@ -1,6 +1,6 @@
-module Annotators
-	module Formatters
-		class FilterQueryLocalizationFormatter
+module Jsonifiers
+	module Localization
+		class LocalizationFormatter
 
 			def initialize(query)
 				@query = query

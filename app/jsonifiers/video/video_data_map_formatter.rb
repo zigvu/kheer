@@ -1,6 +1,6 @@
-module Annotators
-	module Formatters
-		class VideoDataMapQueryFormatter
+module Jsonifiers
+	module Video
+		class VideoDataMapFormatter
 
 			def initialize(query)
 				@query = query

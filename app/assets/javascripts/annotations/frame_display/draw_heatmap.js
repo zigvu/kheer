@@ -31,7 +31,7 @@ ZIGVU.FrameDisplay.DrawHeatmap = function() {
         heatmapDrawn = true;
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
-  }
+  };
 
   this.clear = function(){
     if(heatmapDrawn){

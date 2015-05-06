@@ -1,5 +1,5 @@
-module Annotators
-	module Queries
+module Jsonifiers
+	module Video
 		class VideoDataMapQuery
 
 			def initialize(parsedVDM)
@@ -7,7 +7,7 @@ module Annotators
 			end
 
 			def run
-				@query = Video
+				@query = ::Video
 				applyVideoIds()
 				return @query
 			end

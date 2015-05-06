@@ -17,17 +17,29 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
 
   var bbox = new ZIGVU.FrameDisplay.Shapes.Bbox();
 
-  this.drawBboxes = function(videoId, frameNumber){
+  this.drawLocalizations = function(videoId, frameNumber){
+    var localizations = self.dataManager.getData_localizationsData(videoId, frameNumber);
+    self.drawBboxes(localizations);
+  };
+
+  this.drawAllLocalizations = function(videoId, frameNumber){
+    self.dataManager.getData_allLocalizationsDataPromise(videoId, frameNumber)
+      .then(function(localizations){
+        self.drawBboxes(localizations);
+      })
+      .catch(function (errorReason) { self.err(errorReason); }); 
+  };
+
+  this.drawBboxes = function(localizations){
     self.clear();
-    var localizations = self.dataManager.getData_localizations(videoId, frameNumber);
     _.each(localizations, function(locs, detectableId){
       _.each(locs, function(bb){
         var annoDetails = self.dataManager.getData_localizationDetails(detectableId);
         bbox.draw(self.ctx, bb, annoDetails.title, annoDetails.color);
       });
     });
-    localizationDrawn = true;
-  }
+    localizationDrawn = true;    
+  };
 
   this.clear = function(){
     if(localizationDrawn){
@@ -41,5 +53,10 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
   this.setDataManager = function(dm){
     self.dataManager = dm;
     return self;
+  };
+
+  // shorthand for error printing
+  this.err = function(errorReason){
+    displayJavascriptError('ZIGVU.FrameDisplay.DrawLocalizations -> ' + errorReason);
   };
 };

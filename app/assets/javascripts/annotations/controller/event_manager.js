@@ -25,6 +25,10 @@ ZIGVU.Controller.EventManager = function() {
   var scaleSelectedCallbacks = $.Callbacks("unique");
   this.addScaleSelectedCallback = function(callback){ scaleSelectedCallbacks.add(callback); };
   this.fireScaleSelectedCallback = function(args){ scaleSelectedCallbacks.fire(args); };
+
+  var zdistThreshSelectedCallbacks = $.Callbacks("unique");
+  this.addZdistThreshSelectedCallback = function(callback){ zdistThreshSelectedCallbacks.add(callback); };
+  this.fireZdistThreshSelectedCallback = function(args){ zdistThreshSelectedCallbacks.fire(args); };
   //------------------------------------------------
 
 

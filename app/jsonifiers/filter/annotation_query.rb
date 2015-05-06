@@ -1,13 +1,13 @@
-module Annotators
-	module Queries
-		class FilterQueryAnnotation
+module Jsonifiers
+	module Filter
+		class AnnotationQuery
 
 			def initialize(parsedFilter)
 				@parsedFilter = parsedFilter
 			end
 
 			def run
-				@query = Annotation.where(active: true)
+				@query = ::Annotation.where(active: true)
 				# applyChiaVersionId()
 				return @query
 			end

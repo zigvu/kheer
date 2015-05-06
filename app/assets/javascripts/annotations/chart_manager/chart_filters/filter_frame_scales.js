@@ -6,7 +6,7 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
   Filter to select scales
 */
 
-ZIGVU.ChartManager.ChartFilters.FilterScales = function(htmlGenerator) {
+ZIGVU.ChartManager.ChartFilters.FilterFrameScales = function(htmlGenerator) {
   var self = this;
   this.eventManager = undefined;
 

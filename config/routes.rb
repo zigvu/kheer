@@ -13,6 +13,7 @@ Kheer::Application.routes.draw do
       resources :filters, only: [:new]
 
       post 'frames/update_annotations'
+      get 'frames/localization_data'
       get 'frames/heatmap_data'
     end
   end

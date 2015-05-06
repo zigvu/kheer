@@ -21,6 +21,7 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
   var divId_toggleVideoControlsContainer = '#toggle-video-controls-container';
 
   var divId_drawHeatmap = '#draw-heatmap';
+  var divId_drawAllLocalizations = '#draw-all-localizations';
   var divId_videoPlaybackSpeed = '#video-playback-speed';
 
 
@@ -34,6 +35,7 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
 
   $(divId_toggleVideoControlsContainer).click(function(){ toggleVideoControlsContainer(); });
   $(divId_drawHeatmap).click(function(){ videoPlayer.paintHeatmap(); });
+  $(divId_drawAllLocalizations).click(function(){ videoPlayer.drawAllLocalizations(); });
 
   this.setVideoPlaybackSpeed = function(speed){
     var s = Math.round(speed * 10)/10;
@@ -119,6 +121,12 @@ ZIGVU.VideoHandler.VideoPlayerControls = function(videoPlayer) {
 
       case 104: // 'h'
         videoPlayer.paintHeatmap();
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+
+      case 97: // 'a'
+        videoPlayer.drawAllLocalizations();
         e.preventDefault();
         e.stopPropagation();
         break;

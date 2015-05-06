@@ -6,10 +6,19 @@ module Api
 
 			# POST api/v1/frames/update_annotations
 			def update_annotations
-				annotations = Annotators::Parsers::AnnotationParser.new(params[:annotations])
-				annotationSaver = Annotators::Queries::AnnotationSaver.new(annotations)
+				annotationParams = Jsonifiers::Annotation::AnnotationParamsParser.new(params[:annotations])
+				annotationSaver = Jsonifiers::Annotation::AnnotationSaver.new(annotationParams)
 				saveResults = annotationSaver.save()
 				render json: saveResults.to_json
+			end
+
+			# GET api/v1/frames/localization_data
+			def localization_data
+				localizationParams = Jsonifiers::Localization::LocalizationParamsParser.new(params[:localization])
+				localizationQuery = Jsonifiers::Localization::LocalizationQuery.new(localizationParams).run()
+				formatted = Jsonifiers::Localization::LocalizationFormatter.new(localizationQuery).formatted()
+
+				render json: formatted.to_json
 			end
 
 			# GET api/v1/frames/heatmap_data
@@ -19,15 +28,6 @@ module Api
 					p.chiaVersionId, p.videoId, p.frameNumber, p.scale, p.detectableId)
 				render json: hde.formatted().to_json
 			end
-
-			private
-
-				# Only allow a trusted parameter "white list" through.
-				def frames_params
-					# TBD: Not used currently
-					params.permit(:annotations, :heatmap)
-				end
-
 		end
 	end
 end

@@ -44,12 +44,13 @@ ZIGVU.ChartManager.ChartManager = function() {
     self.annotationList.empty();
   };
 
+  //------------------------------------------------
   // set relations
   this.setEventManager = function(em){
     self.eventManager = em;
-    self.timelineChart.setEventManager(self.eventManager);
+    self.filterManager.setEventManager(self.eventManager);
     self.annotationList.setEventManager(self.eventManager);
-    self.filterManager.filterScales.setEventManager(self.eventManager);
+    self.timelineChart.setEventManager(self.eventManager);
     return self;
   };
 

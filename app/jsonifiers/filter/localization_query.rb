@@ -1,13 +1,13 @@
-module Annotators
-	module Queries
-		class FilterQueryLocalization
+module Jsonifiers
+	module Filter
+		class LocalizationQuery
 
 			def initialize(parsedFilter)
 				@parsedFilter = parsedFilter
 			end
 
 			def run
-				@query = Localization
+				@query = ::Localization
 				applyChiaVersionId()
 				applyDetectableIds()
 				applyLocalizationProbScores()

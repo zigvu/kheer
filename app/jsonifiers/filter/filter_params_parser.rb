@@ -1,6 +1,6 @@
-module Annotators
-	module Parsers
-		class FilterParser
+module Jsonifiers
+	module Filter
+		class FilterParamsParser
 
 			attr_accessor :chiaVersionId, :detectableIds
 			attr_accessor :localizationProbScores, :localizationZdistThresh, :localizationScales

@@ -22,7 +22,7 @@ ZIGVU.DataManager = ZIGVU.DataManager || {};
 
   currentAnnotationDetId: integer
 
-  heatmap: {scale:, :detectable_id: }
+  heatmap: {scale:, :detectable_id:, zdist_thresh: }
 
 */
 

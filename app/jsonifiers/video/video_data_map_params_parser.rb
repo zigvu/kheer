@@ -1,6 +1,6 @@
-module Annotators
-	module Parsers
-		class VideoDataMapParser
+module Jsonifiers
+	module Video
+		class VideoDataMapParamsParser
 
 			attr_accessor :videoIds
 

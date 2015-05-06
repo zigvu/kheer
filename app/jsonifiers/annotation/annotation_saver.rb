@@ -1,5 +1,5 @@
-module Annotators
-	module Queries
+module Jsonifiers
+	module Annotation
 		class AnnotationSaver
 
 			def initialize(parsedAnnotations)
@@ -13,7 +13,7 @@ module Annotators
 
 				# delete annotation by setting active to false
 				@annotationsDeleted.each do |annotation|
-					anno = Annotation.where(annotation).first
+					anno = ::Annotation.where(annotation).first
 					if anno != nil
 						anno.update(active: false)
 						totalDeleted += 1
@@ -22,7 +22,7 @@ module Annotators
 
 				# create new annotation if doesn't exist
 				@annotationsNew.each do |annotation|
-					Annotation.create(annotation)
+					::Annotation.create(annotation)
 					totalCreated += 1
 				end
 

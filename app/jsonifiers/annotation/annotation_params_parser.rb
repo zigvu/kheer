@@ -1,6 +1,6 @@
-module Annotators
-	module Parsers
-		class AnnotationParser
+module Jsonifiers
+	module Annotation
+		class AnnotationParamsParser
 
 			attr_accessor :annotationsDeleted, :annotationsNew
 

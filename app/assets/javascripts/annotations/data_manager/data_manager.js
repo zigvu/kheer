@@ -80,9 +80,14 @@ ZIGVU.DataManager.DataManager = function() {
     return self.ajaxHandler.getHeatmapDataPromise(videoId, fn);
   };
 
-  this.getData_localizations = function(videoId, frameNumber){
+  this.getData_localizationsData = function(videoId, frameNumber){
     var fn = self.getModifiedFrameNumber(videoId, frameNumber);
     return self.localizationDataAccessor.getLocalizations(videoId, fn);
+  };
+
+  this.getData_allLocalizationsDataPromise = function(videoId, frameNumber){
+    var fn = self.getModifiedFrameNumber(videoId, frameNumber);
+    return self.ajaxHandler.getAllLocalizationsPromise(videoId, fn);
   };
 
   this.getData_chiaVersions = function(){
@@ -180,12 +185,17 @@ ZIGVU.DataManager.DataManager = function() {
     self.filterStore.heatmap.scale = scale;
   };
 
+  function updateZdistThreshSelected(zdistThresh){
+    self.filterStore.heatmap.zdist_thresh = zdistThresh;
+  };
+
   //------------------------------------------------
   // set relations
   this.setEventManager = function(em){
     self.eventManager = em;
     self.eventManager.addAnnoListSelectedCallback(updateAnnoListSelected);
     self.eventManager.addScaleSelectedCallback(updateScaleSelected);
+    self.eventManager.addZdistThreshSelectedCallback(updateZdistThreshSelected);
     return self;
   };
 

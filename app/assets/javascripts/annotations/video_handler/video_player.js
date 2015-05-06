@@ -81,7 +81,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   // paint localizations
   this.paintFrameWithLocalization = function(){
     var currentPlayState = self.multiVideoExtractor.paintFrame();
-    self.drawLocalizations.drawBboxes(currentPlayState.video_id, currentPlayState.frame_number);
+    self.drawLocalizations.drawLocalizations(currentPlayState.video_id, currentPlayState.frame_number);
     // TODO: not working right now
     // self.drawAnnotations.drawAnnotations(currentPlayState.video_id, currentPlayState.frame_number);
     // only clear heatmap here - paint in another function
@@ -93,7 +93,13 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
     if(!isVideoPaused){ return; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
     self.drawHeatmap.drawHeatmap(currentPlayState.video_id, currentPlayState.frame_number);
-  }
+  };
+
+  this.drawAllLocalizations = function(){
+    if(!isVideoPaused){ return; }
+    var currentPlayState = self.multiVideoExtractor.getCurrentState();
+    self.drawLocalizations.drawAllLocalizations(currentPlayState.video_id, currentPlayState.frame_number);
+  };
 
   //------------------------------------------------
   // player keys and button control
