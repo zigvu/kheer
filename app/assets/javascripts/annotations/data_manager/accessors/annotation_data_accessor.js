@@ -16,11 +16,9 @@ ZIGVU.DataManager.Accessors.AnnotationDataAccessor = function() {
   // ----------------------------------------------
   // chia data
   this.getDetectables = function(){
-    // TODO: change to annotaiton
-    return self.dataStore.detectables;
+    return self.dataStore.detectables.annotation;
   };
   
-
   // ----------------------------------------------
   // annotaitons raw data
 
@@ -68,9 +66,67 @@ ZIGVU.DataManager.Accessors.AnnotationDataAccessor = function() {
   this.getAnnotationDetails = function(detId){
     return {
       id: detId,
-      title: self.dataStore.detectablesMap[detId].pretty_name,
-      color: self.dataStore.detectablesMap[detId].annotation_color
+      title: self.dataStore.detectables.decorations[detId].pretty_name,
+      color: self.dataStore.detectables.decorations[detId].annotation_color
     };
+  };
+
+  //------------------------------------------------
+  // create decorations
+    this.createDetectableDecorations = function(){
+    var colorCreator = self.dataStore.colorCreator;
+    var textFormatters = self.dataStore.textFormatters;
+
+    self.dataStore.detectables.decorations = {};
+    var decorations = self.dataStore.detectables.decorations;
+    
+    // provide color to annotation list first
+    _.each(self.dataStore.detectables.annotation, function(d){
+      var decos = {
+        pretty_name: textFormatters.ellipsisForAnnotation(d.pretty_name),
+        button_color: colorCreator.getColorButton(),
+        button_hover_color: colorCreator.getColorButtonHover(),
+        annotation_color: colorCreator.getColorAnnotation(),
+        chart_color: colorCreator.getColorChart()
+      };
+
+      colorCreator.nextColor();
+      decorations[d.id] = _.extend(d, decos);
+    });
+
+    // provide color to localization list second
+    _.each(self.dataStore.detectables.localization, function(d){
+      // skip if already in decoration map
+      if(_.has(decorations, d.id)){ return; }
+      // else, continue
+      var decos = {
+        pretty_name: textFormatters.ellipsisForAnnotation(d.pretty_name),
+        button_color: colorCreator.getColorButton(),
+        button_hover_color: colorCreator.getColorButtonHover(),
+        annotation_color: colorCreator.getColorAnnotation(),
+        chart_color: colorCreator.getColorChart()
+      };
+
+      colorCreator.nextColor();
+      decorations[d.id] = _.extend(d, decos);
+    });
+
+    // finally, provide color to alllist
+    _.each(self.dataStore.detectables.alllist, function(d){
+      // skip if already in decoration map
+      if(_.has(decorations, d.id)){ return; }
+      // else, continue
+      var decos = {
+        pretty_name: textFormatters.ellipsisForAnnotation(d.pretty_name),
+        button_color: colorCreator.getColorButton(),
+        button_hover_color: colorCreator.getColorButtonHover(),
+        annotation_color: colorCreator.getColorAnnotation(),
+        chart_color: colorCreator.getColorChart()
+      };
+
+      colorCreator.nextColor();
+      decorations[d.id] = _.extend(d, decos);
+    });
   };
 
   //------------------------------------------------

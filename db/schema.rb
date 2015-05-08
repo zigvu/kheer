@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150423173555) do
+ActiveRecord::Schema.define(version: 20150507162939) do
+
+  create_table "chia_version_detectables", force: true do |t|
+    t.integer  "chia_version_id"
+    t.integer  "detectable_id"
+    t.integer  "chia_detectable_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chia_version_detectables", ["chia_version_id"], name: "index_chia_version_detectables_on_chia_version_id", using: :btree
+  add_index "chia_version_detectables", ["detectable_id"], name: "index_chia_version_detectables_on_detectable_id", using: :btree
 
   create_table "chia_versions", force: true do |t|
     t.string   "name"
@@ -26,13 +37,9 @@ ActiveRecord::Schema.define(version: 20150423173555) do
     t.string   "name"
     t.string   "pretty_name"
     t.text     "description"
-    t.integer  "chia_version_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "chia_detectable_id"
   end
-
-  add_index "detectables", ["chia_version_id"], name: "index_detectables_on_chia_version_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

@@ -25,14 +25,10 @@ ZIGVU.FrameDisplay.Shapes.Bbox = function() {
   var scaleHeight = 10;
   var scaleWidth = 40;
 
-  this.draw = function(ctx, bbox, detName, fillColor){
+  this.draw = function(ctx, bbox, detName){
     var x = bbox.x, y = bbox.y, w = bbox.w, h = bbox.h;
     var name = detName, score = bbox.prob_score;
     var scaleZDist = bbox.scale + ' : ' + bbox.zdist_thresh;
-
-    // area rendering
-    // ctx.fillStyle = fillColor;
-    // ctx.crispFillRect(x, y, w, h);
 
     // all text hang from x,y
     ctx.textBaseline = "hanging";

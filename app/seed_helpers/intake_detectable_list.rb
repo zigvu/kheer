@@ -42,8 +42,9 @@ module SeedHelpers
 			@csvData.each do |org, orgData|
 				# create detectables
 				orgData[:detectables].each do |d|
-					Detectable.create(
-						name: d[:name], pretty_name: d[:pretty_name], description: d[:description],
+					detectable = Detectable.create(
+						name: d[:name], pretty_name: d[:pretty_name], description: d[:description])
+					detectable.chia_version_detectables.create(
 						chia_detectable_id: d[:chia_detectable_id], chia_version_id: chiaVersionId)
 				end
 			end

@@ -45,6 +45,19 @@ ZIGVU.DataManager.DataManager = function() {
 
 
   // ----------------------------------------------
+  // General calls
+
+  this.getModifiedFrameNumber = function(videoId, frameNumber){
+    var detectionRate = self.dataStore.videoDataMap[videoId].detection_frame_rate;
+    var fn = (frameNumber - 1) - ((frameNumber - 1) % detectionRate) + 1;
+    return fn;
+  };
+
+  this.createDetectableDecorations = function(){
+    return self.annotationDataAccessor.createDetectableDecorations();
+  };
+
+  // ----------------------------------------------
   // Annotation data
   this.getAnno_annotationDetectables = function(){
     return self.annotationDataAccessor.getDetectables();
@@ -68,12 +81,6 @@ ZIGVU.DataManager.DataManager = function() {
 
   // ----------------------------------------------
   // Localization data
-
-  this.getModifiedFrameNumber = function(videoId, frameNumber){
-    var detectionRate = self.dataStore.videoDataMap[videoId].detection_frame_rate;
-    var fn = (frameNumber - 1) - ((frameNumber - 1) % detectionRate) + 1;
-    return fn;
-  };
 
   this.getData_heatmapDataPromise = function(videoId, frameNumber){
     var fn = self.getModifiedFrameNumber(videoId, frameNumber);
@@ -108,9 +115,8 @@ ZIGVU.DataManager.DataManager = function() {
     return self.localizationDataAccessor.getColorMap();
   };
 
-  // TODO: change to localization
   this.getData_localizationDetails = function(detId){
-    return self.annotationDataAccessor.getAnnotationDetails(detId);
+    return self.localizationDataAccessor.getLocalizationDetails(detId);
   };
 
   // ----------------------------------------------
@@ -133,11 +139,11 @@ ZIGVU.DataManager.DataManager = function() {
     return self.filterAccessor.getChiaVersionAnnotation();
   };
 
-  this.setFilter_detectableIds = function(detectableIds){
+  this.setFilter_localizationDetectableIds = function(detectableIds){
     return self.filterAccessor.setLocalizationDetectableIds(detectableIds);
   };
-  this.getFilter_selectedDetectables = function(){
-    return self.filterAccessor.getSelectedDetectables();
+  this.getFilter_localizationSelectedDetectables = function(){
+    return self.filterAccessor.getLocalizationSelectedDetectables();
   };
 
   this.setFilter_localizationSettings = function(localizationSettings){
@@ -150,7 +156,9 @@ ZIGVU.DataManager.DataManager = function() {
   // ----------------------------------------------
   // Timeline chart
   this.tChart_createData = function(){
-    self.timelineChartDataAccessor.createChartData(self.localizationDataAccessor, self.filterAccessor);
+    return self.timelineChartDataAccessor.createChartData(
+      self.localizationDataAccessor, self.filterAccessor
+    );
   };
 
 

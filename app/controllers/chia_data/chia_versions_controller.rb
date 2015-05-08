@@ -1,6 +1,7 @@
 module ChiaData
   class ChiaVersionsController < ApplicationController
-    before_action :set_chia_version, only: [:show, :edit, :update, :destroy]
+    before_action :set_chia_version, only: [:show, :edit, :update, :destroy, 
+      :all_addable_detectables, :add_detectables]
 
     # GET /chia_versions
     # GET /chia_versions.json
@@ -12,7 +13,9 @@ module ChiaData
     # GET /chia_versions/1.json
     def show
       @chia_versions = ::ChiaVersion.all - [@chia_version]
-      @detectables = @chia_version.detectables
+      @chiaVersionDetectables = @chia_version
+        .chia_version_detectables
+        .order(:chia_detectable_id => :asc)
     end
 
     # GET /chia_versions/new
@@ -82,24 +85,46 @@ module ChiaData
 
     # manage detectables
 
+    # GET /chia_versions/1/all_addable_detectables
+    def all_addable_detectables
+      chiaVersionId = params[:chia_version_id]
+      allDetectableIds = ::Detectable.all.pluck(:id)
+      selfDetectableIds = @chia_version.chia_version_detectables.pluck(:detectable_id)
+      @detectables = ::Detectable.where(id: (allDetectableIds - selfDetectableIds))
+      @incomingChiaVersionId = nil
+    end
+
+
     # GET /chia_versions/1/list_detectables.js
     def list_detectables
-      chiaVersionId = params[:chia_version_id]
-      @detectables = ::ChiaVersion.find(chiaVersionId).detectables
+      @incomingChiaVersionId = params[:chia_version_id].to_i
+      @detectables = ::Detectable.joins(:chia_version_detectables)
+        .where(chia_version_detectables: {chia_version_id: @incomingChiaVersionId})
       respond_to do |format|
         format.js
       end
     end
 
-    # GET /chia_versions/1/add_detectables.js
+    # GET /chia_versions/1/add_detectables
     def add_detectables
-      @chia_version = ::ChiaVersion.find(params[:id])
-      detectables = params[:detectable_ids].map{ |dId| ::Detectable.find(dId.to_i) }
-      detectables.each do |d|
-        @chia_version.detectables.create(
-          name: d.name, pretty_name: d.pretty_name,
-          description: d.description, chia_detectable_id: d.chia_detectable_id)
+      selfDetectableIds = @chia_version.chia_version_detectables.pluck(:detectable_id)
+      params[:detectable_ids].map{ |d| d.to_i }.each do |dId|
+        if not selfDetectableIds.include?(dId)
+          incomingChiaVersionId = params[:incoming_chia_version_id]
+          if incomingChiaVersionId == nil || incomingChiaVersionId == ""
+            @chia_version.chia_version_detectables.create(detectable_id: dId)
+          else
+            chiaDetectableId = ::ChiaVersionDetectable.where(
+                chia_version_id: incomingChiaVersionId.to_i,
+                detectable_id: dId
+              ).first.chia_detectable_id
+
+            @chia_version.chia_version_detectables
+              .create(detectable_id: dId, chia_detectable_id: chiaDetectableId)
+          end
+        end
       end
+
       redirect_to chia_data_chia_version_url(@chia_version), notice: 'Detectables added'
     end
 

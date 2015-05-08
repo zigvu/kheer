@@ -36,7 +36,7 @@ module DataImporters
 			FileUtils.mkdir_p(fullFolderName)
 			FileUtils.mv(@videoURL, fullFileName)
 
-			# update video ID
+			# update video url
 			video.update(video_url: fileName)
 
 			return video

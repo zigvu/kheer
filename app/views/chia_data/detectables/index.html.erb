@@ -1,0 +1,30 @@
+<h3>Detectables</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Pretty Name</th>
+      <th># Chia Versions</th>
+      <th>Edit | Destroy</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @detectables.each do |detectable| %>
+      <tr>
+        <td><%= detectable.id %></td>
+        <td><%= detectable.pretty_name %></td>
+        <td><%= detectable.chia_version_detectables.count %></td>
+        <td>
+          <%= link_to 'Edit', edit_chia_data_detectable_path(detectable) %> | 
+          <%= link_to 'Destroy', [:chia_data, detectable], method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Detectable', new_chia_data_detectable_path, class: "button" %>

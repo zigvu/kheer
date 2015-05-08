@@ -15,12 +15,14 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
     {id:, name:, description:, settings: {zdistThresh: [zdistValues, ], scales: [scale, ]}},
   ]
 
-  detectables: [
-      { id:, name:, pretty_name:, chia_detectable_id:, 
-        button_color:, button_hover_color:, annotation_color:
-      }, ]
-
-  detectablesMap: {:detectable_id => {detectables_props_from_above}}
+  detectables: {annotation: det, localization: det, alllist: det, decorations: map}
+    where:
+      det: [ { id:, name:, pretty_name:, chia_detectable_id: }, ]
+      map: {:detectable_id => 
+          { id:, name:, pretty_name:,
+            button_color:, button_hover_color:, annotation_color:
+          }
+      }
 
   dataSummary: {"Localization Count", "Annotation Count", "Video Count", "Frame Count"}
 
@@ -34,7 +36,7 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
     {video_url:, playback_frame_rate:, detection_frame_rate:, frame_number_start:, frame_number_end:}
   }
 
-  colorMap: {:integer => 'rgba', }
+  colorMap: {:integer => 'rgb', }
 
   cellMap: {cell_idx: {x:, y:, w:, h:}, }
 
@@ -46,12 +48,15 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
 
 ZIGVU.DataManager.Stores.DataStore = function() {
   var self = this;
-  var colorCreator = new ZIGVU.Helpers.ColorCreator();
-  var textFormatters = new ZIGVU.Helpers.TextFormatters();
+  this.colorCreator = new ZIGVU.Helpers.ColorCreator();
+  this.textFormatters = new ZIGVU.Helpers.TextFormatters();
 
   this.chiaVersions = undefined;
-  this.detectables = undefined;
-  this.detectablesMap = undefined;
+  this.detectables = { 
+    annotation: undefined, localization: undefined, 
+    alllist: undefined, decorations: undefined 
+  };
+
   this.dataSummary = undefined;
   this.dataFullLocalizations = undefined;
   this.dataFullAnnotations = undefined;
@@ -64,26 +69,13 @@ ZIGVU.DataManager.Stores.DataStore = function() {
   this.toCounterMap = undefined;
   this.fromCounterMap = undefined;
 
-
-  // add color information to detectable list
-  this.addDetectablesWithColor = function(dets){
-    self.detectablesMap = {};
-    self.detectables = _.each(dets, function(d){
-      d.pretty_name = textFormatters.ellipsisForAnnotation(d.pretty_name);
-      d.button_color = colorCreator.getColorButton();
-      d.button_hover_color = colorCreator.getColorButtonHover();
-      d.annotation_color = colorCreator.getColorAnnotation();
-
-      colorCreator.nextColor();
-      self.detectablesMap[d.id] = d;
-      return d;
-    });
-  };
-
   this.reset = function(){
     self.chiaVersions = undefined;
-    self.detectables = undefined;
-    self.detectablesMap = undefined;
+    self.detectables = { 
+      annotation: undefined, localization: undefined, 
+      alllist: undefined, decorations: undefined 
+    };
+
     self.dataSummary = undefined;
     self.dataFullLocalizations = undefined;
     self.dataFullAnnotations = undefined;

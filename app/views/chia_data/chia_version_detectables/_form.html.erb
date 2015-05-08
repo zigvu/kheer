@@ -1,0 +1,31 @@
+<%= simple_form_for([:chia_data, @chia_version_detectable]) do |f| %>
+  <%= f.error_notification %>
+
+
+	<table>
+	  <thead>
+	    <tr>
+	      <th>Detectable Id</th>
+	      <th>Name</th>
+	      <th>Pretty Name</th>
+	    </tr>
+	  </thead>
+
+	  <tbody>
+      <tr>
+        <td><%= @chia_version_detectable.detectable.id %></td>
+        <td><%= @chia_version_detectable.detectable.name %></td>
+        <td><%= @chia_version_detectable.detectable.pretty_name %></td>
+      </tr>
+	  </tbody>
+	</table>
+
+  <div class="form-inputs">
+    <%= f.input :chia_detectable_id %>
+    <%= f.hidden_field :chia_version_id, value: @chia_version.id %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

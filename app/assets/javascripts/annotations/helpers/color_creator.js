@@ -12,10 +12,12 @@ ZIGVU.Helpers.ColorCreator = function() {
   var buttonTransparency = 0.6,
     buttonHoverTransparency = 1.0,
     annotationPolygonTransparency = 0.5;
+    chartTransparency = 0.8;
   
   this.getColorButton = function(){ return self.getRGBAColor(buttonTransparency); };
   this.getColorButtonHover = function(){ return self.getRGBAColor(buttonHoverTransparency); };
   this.getColorAnnotation = function(){ return self.getRGBAColor(annotationPolygonTransparency); };
+  this.getColorChart = function(){ return self.getRGBAColor(chartTransparency); };
 
   this.getRGBAColor = function(transparency){
     return self.rgba(allColors[curColorCounter], transparency);
@@ -23,6 +25,7 @@ ZIGVU.Helpers.ColorCreator = function() {
 
   this.nextColor = function(){
     curColorCounter++;
+    if(curColorCounter >= allColors.length){ curColorCounter = 0; }
   };
   
   this.rgba = function(rgb, a){

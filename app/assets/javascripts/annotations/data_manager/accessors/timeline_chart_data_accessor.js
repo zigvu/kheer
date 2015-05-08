@@ -27,8 +27,8 @@ ZIGVU.DataManager.Accessors.TimelineChartDataAccessor = function() {
     
     // loop through all filtered detectables
     _.each(detectableIds, function(detId){
-      var name = self.dataStore.detectablesMap[detId].pretty_name;
-      var color = self.dataStore.detectablesMap[detId].annotation_color;
+      var name = self.dataStore.detectables.decorations[detId].pretty_name;
+      var color = self.dataStore.detectables.decorations[detId].chart_color;
 
       // d3 chart data expectations
       var values = [], counter = 0;

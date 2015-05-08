@@ -32,20 +32,18 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return requestDefer.promise;
   };
 
-  this.getDetectablesPromise = function(){
+  this.getLocalizationDetectablesPromise = function(){
     var dataURL = '/api/v1/filters/detectables';
     var dataParam = {chia_version_id: self.filterStore.chiaVersionIdLocalization};
 
     var requestDefer = Q.defer();
     if(self.filterStore.chiaVersionIdLocalization === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> No chia version filter found');
-    } else if(self.dataStore.detectables !== undefined){
-      requestDefer.resolve(self.dataStore.detectables);
     } else {
       self.getGETRequestPromise(dataURL, dataParam)
         .then(function(data){
-          self.dataStore.addDetectablesWithColor(data);
-          requestDefer.resolve(self.dataStore.detectables);
+          self.dataStore.detectables.localization = data;
+          requestDefer.resolve(self.dataStore.detectables.localization);
         })
         .catch(function (errorReason) {
           requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
@@ -55,7 +53,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return requestDefer.promise;
   };
 
-  this.getLocalizationPromise = function(){
+  this.getLocalizationSettingsPromise = function(){
     // NOTE: currently all localization information is gotten without AJAX
     // this might change in the future, so need to use promises
     var requestDefer = Q.defer();
@@ -100,6 +98,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     if(self.filterStore === undefined){
       requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> Filter could not be constructed');
     } else {
+      // get full data
       var dataURL = '/api/v1/filters/filtered_data';
       var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
       self.getPOSTRequestPromise(dataURL, dataParam)
@@ -107,8 +106,32 @@ ZIGVU.DataManager.AjaxHandler = function() {
           self.dataStore.dataFullLocalizations = data.localizations;
           self.dataStore.dataFullAnnotations = data.annotations;
 
+          // get detectable list for annotation
+          dataURL = '/api/v1/filters/detectables';
+          dataParam = {chia_version_id: self.filterStore.chiaVersionIdAnnotation};
+          return self.getGETRequestPromise(dataURL, dataParam)
+        })
+        .then(function(data){
+          var ds = self.dataStore;
+          ds.detectables.annotation = data;
+
+          // get detectable details for decorations
+          var annoDetIds = _.map(ds.detectables.annotation, function(d){ return "" + d.id; });
+          var detectableIds = _.difference(_.uniq(_.flatten(
+            _.map(ds.dataFullAnnotations, function(v){ 
+              return _.map(v, function(f){ return Object.keys(f); }); 
+            })
+          )), annoDetIds);
+
+          dataURL = '/api/v1/filters/detectable_details';
+          dataParam = {detectable_ids: detectableIds};
+          return self.getGETRequestPromise(dataURL, dataParam)
+        })
+        .then(function(data){
+          self.dataStore.detectables.alllist = data;
+
           // get video data map
-          var videoIds = Object.keys(data.localizations);
+          var videoIds = Object.keys(self.dataStore.dataFullLocalizations);
           self.filterStore.videoIds = videoIds;
 
           dataURL = '/api/v1/filters/video_data_map';

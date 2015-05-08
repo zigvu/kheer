@@ -35,7 +35,7 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
     _.each(localizations, function(locs, detectableId){
       _.each(locs, function(bb){
         var annoDetails = self.dataManager.getData_localizationDetails(detectableId);
-        bbox.draw(self.ctx, bb, annoDetails.title, annoDetails.color);
+        bbox.draw(self.ctx, bb, annoDetails.title);
       });
     });
     localizationDrawn = true;    

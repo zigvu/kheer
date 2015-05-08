@@ -1,3 +1,3 @@
 class Detectable < ActiveRecord::Base
-  belongs_to :chia_version
+	has_many :chia_version_detectables, dependent: :destroy
 end

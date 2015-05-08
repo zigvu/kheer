@@ -11,16 +11,16 @@
   </thead>
 
   <tbody>
-    <% @detectables.each do |detectable| %>
+    <% @chiaVersionDetectables.each do |cvd| %>
       <tr>
-        <td><%= detectable.id %></td>
-        <td><%= detectable.chia_detectable_id %></td>
-        <td><%= detectable.name %></td>
-        <td><%= detectable.pretty_name %></td>
-        <td><%= detectable.description %></td>
+        <td><%= cvd.detectable.id %></td>
+        <td><%= cvd.chia_detectable_id %></td>
+        <td><%= cvd.detectable.name %></td>
+        <td><%= cvd.detectable.pretty_name %></td>
+        <td><%= cvd.detectable.description %></td>
         <td>
-          <%= link_to 'Edit', edit_chia_data_detectable_path(detectable) %> | 
-          <%= link_to 'Destroy', [:chia_data, detectable], method: :delete, data: { confirm: 'Are you sure?' } %>
+          <%= link_to 'Edit', edit_chia_data_chia_version_detectable_path(cvd, chia_version_detectable: {chia_version_id: @chia_version.id}) %> | 
+          <%= link_to 'Destroy', [:chia_data, cvd], method: :delete, data: { confirm: 'Are you sure?' } %>
         </td>
       </tr>
     <% end %>

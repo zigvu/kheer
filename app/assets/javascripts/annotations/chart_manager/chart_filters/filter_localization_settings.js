@@ -6,7 +6,7 @@ ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
   Localization filter.
 */
 
-ZIGVU.ChartManager.ChartFilters.FilterLocalizations = function(htmlGenerator) {
+ZIGVU.ChartManager.ChartFilters.FilterLocalizationSettings = function(htmlGenerator) {
   var self = this;
 
   var divId_filterContainer = "#filter-localization-container";

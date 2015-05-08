@@ -2,15 +2,19 @@ module ChiaData
   class DetectablesController < ApplicationController
     before_action :set_detectable, only: [:edit, :update, :destroy]
 
+    # GET /detectables
+    # GET /detectables.json
+    def index
+      @detectables = ::Detectable.all
+    end
+
     # GET /detectables/new
     def new
       @detectable = ::Detectable.new
-      @chia_version = ::ChiaVersion.find(detectable_params[:chia_version_id].to_i)
     end
 
     # GET /detectables/1/edit
     def edit
-      @chia_version = @detectable.chia_version
     end
 
     # POST /detectables
@@ -20,7 +24,7 @@ module ChiaData
 
       respond_to do |format|
         if @detectable.save
-          format.html { redirect_to chia_data_chia_version_url(@detectable.chia_version), notice: 'Detectable was successfully created.' }
+          format.html { redirect_to chia_data_detectables_url, notice: 'Detectable was successfully created.' }
           format.json { render action: 'show', status: :created, location: @detectable }
         else
           format.html { render action: 'new' }
@@ -34,7 +38,7 @@ module ChiaData
     def update
       respond_to do |format|
         if @detectable.update(detectable_params)
-          format.html { redirect_to chia_data_chia_version_url(@detectable.chia_version), notice: 'Detectable was successfully updated.' }
+          format.html { redirect_to chia_data_detectables_url, notice: 'Detectable was successfully updated.' }
           format.json { head :no_content }
         else
           format.html { render action: 'edit' }
@@ -46,10 +50,9 @@ module ChiaData
     # DELETE /detectables/1
     # DELETE /detectables/1.json
     def destroy
-      chia_version = @detectable.chia_version
       @detectable.destroy
       respond_to do |format|
-        format.html { redirect_to chia_data_chia_version_url(chia_version) }
+        format.html { redirect_to chia_data_detectables_url }
         format.json { head :no_content }
       end
     end
@@ -62,7 +65,7 @@ module ChiaData
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def detectable_params
-        params.require(:detectable).permit(:name, :pretty_name, :description, :chia_version_id, :chia_detectable_id)
+        params.require(:detectable).permit(:name, :pretty_name, :description)
       end
   end
 end

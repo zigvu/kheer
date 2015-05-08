@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  chia_version_id: 
+  detectable_id: 
+  chia_detectable_id: 1
+
+two:
+  chia_version_id: 
+  detectable_id: 
+  chia_detectable_id: 1

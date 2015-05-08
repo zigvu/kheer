@@ -17,7 +17,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   this.filterStartButton = new ZIGVU.ChartManager.ChartFilters.FilterStartButton(self.htmlGenerator);
   this.filterChiaVersionsLocalization = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsLocalization(self.htmlGenerator);
   this.filterDetectables = new ZIGVU.ChartManager.ChartFilters.FilterDetectables(self.htmlGenerator);
-  this.filterLocalizations = new ZIGVU.ChartManager.ChartFilters.FilterLocalizations(self.htmlGenerator);
+  this.filterLocalizationSettings = new ZIGVU.ChartManager.ChartFilters.FilterLocalizationSettings(self.htmlGenerator);
   this.filterChiaVersionsAnnotation = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsAnnotation(self.htmlGenerator);
   this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(self.htmlGenerator);
 
@@ -46,7 +46,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           self.filterFrameScales.displayInput(selectedChiaVersion.settings.scales);
           self.filterFrameZdistThresh.displayInput(selectedChiaVersion.settings.zdistThresh);
 
-          self.getDetectables();
+          self.getLocalizationDetectables();
         } else {
           self.reset();
           self.startFilter();
@@ -55,18 +55,18 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       .catch(function (errorReason) { self.err(errorReason); });    
   };
 
-  this.getDetectables = function(){
-    self.dataManager.ajaxHandler.getDetectablesPromise()
+  this.getLocalizationDetectables = function(){
+    self.dataManager.ajaxHandler.getLocalizationDetectablesPromise()
       .then(function(detectables){
         self.filterDetectables.show();
         return self.filterDetectables.displayInput(detectables);
       })
       .then(function(response){
         if(response.status){
-          self.dataManager.setFilter_detectableIds(response.data);
-          var selectedDetectables = self.dataManager.getFilter_selectedDetectables();
+          self.dataManager.setFilter_localizationDetectableIds(response.data);
+          var selectedDetectables = self.dataManager.getFilter_localizationSelectedDetectables();
           self.filterDetectables.displayInfo(selectedDetectables);
-          self.getLocalizations();
+          self.getLocalizationSettings();
         } else {
           self.reset();
           self.startFilter();
@@ -75,18 +75,18 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       .catch(function (errorReason) { self.err(errorReason); });    
   };
 
-  this.getLocalizations = function(){
-    self.dataManager.ajaxHandler.getLocalizationPromise()
-      .then(function(localizations){
-        self.filterLocalizations.show();
-        return self.filterLocalizations.displayInput(localizations);
+  this.getLocalizationSettings = function(){
+    self.dataManager.ajaxHandler.getLocalizationSettingsPromise()
+      .then(function(localizationSettings){
+        self.filterLocalizationSettings.show();
+        return self.filterLocalizationSettings.displayInput(localizationSettings);
       })
       .then(function(response){
         if(response.status){
           self.dataManager.setFilter_localizationSettings(response.data);
-          var selectedLocalizations = self.dataManager.getFilter_localizationSettings();
+          var selectedLocalizationSettings = self.dataManager.getFilter_localizationSettings();
 
-          self.filterLocalizations.displayInfo(selectedLocalizations);
+          self.filterLocalizationSettings.displayInfo(selectedLocalizationSettings);
           self.getChiaVersionsAnnotation();
         } else {
           self.reset();
@@ -138,7 +138,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
     self.filterStartButton.show();
     self.filterChiaVersionsLocalization.hide();
     self.filterDetectables.hide();
-    self.filterLocalizations.hide();
+    self.filterLocalizationSettings.hide();
     self.filterChiaVersionsAnnotation.hide();
     self.filterDataLoader.hide();
 

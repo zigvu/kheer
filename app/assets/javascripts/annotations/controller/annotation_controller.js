@@ -26,7 +26,7 @@ ZIGVU.Controller.AnnotationController = function() {
   // TODO: remove
   this.loadDataTest = function(){
     self.dataManager.filterStore.chiaVersionIdLocalization = 1;
-    self.dataManager.filterStore.chiaVersionIdAnnotation = 1;
+    self.dataManager.filterStore.chiaVersionIdAnnotation = 2;
     self.dataManager.filterStore.detectableIds = [1, 48, 49];
     self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: 0, scales: [0.7, 1.0]};
     self.dataManager.filterStore.heatmap.detectable_id = 48;
@@ -36,41 +36,24 @@ ZIGVU.Controller.AnnotationController = function() {
     self.chartManager.filterManager.filterFrameZdistThresh.displayInput([0, 1.5, 2.5, 4.5]);
 
     self.dataManager.ajaxHandler.getChiaVersionsPromise()
-      .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getDetectablesPromise(); })
-      .then(function(detectables){ return self.dataManager.ajaxHandler.getLocalizationPromise(); })
-      .then(function(localizations){ return self.dataManager.ajaxHandler.getDataSummaryPromise(); })
-      .then(function(dataSummary){ 
-        // show annotation list
-        self.chartManager.showAnnotationList();
-
-        self.dataManager.ajaxHandler.getFullDataPromise()
-          .then(function(){ 
-            var videoDataMap = self.dataManager.getData_videoDataMap();
-            var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
-            self.dataManager.tChart_createData();
-            return videoLoadPromise;
-          })
-          .then(function(){ 
-            self.videoPlayer.enableControls(true);
-            self.chartManager.drawTimelineChart();
-            self.videoPlayer.pausePlayback();
-          })
-          .catch(function (errorReason) { self.err(errorReason); }); 
-
-        console.log('Loading videos');
-      })
+      .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getLocalizationDetectablesPromise(); })
+      .then(function(detectables){ return self.dataManager.ajaxHandler.getLocalizationSettingsPromise(); })
+      .then(function(localizationSettings){ return self.dataManager.ajaxHandler.getDataSummaryPromise(); })
+      .then(function(dataSummary){ self.loadVideos(); })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
   this.loadVideos = function(){
-    // show annotation list
-    self.chartManager.showAnnotationList();
-
     self.dataManager.ajaxHandler.getFullDataPromise()
       .then(function(){ 
         var videoDataMap = self.dataManager.getData_videoDataMap();
         var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
+
+        // as video is loading, work some more
+        self.dataManager.createDetectableDecorations();
+        self.chartManager.showAnnotationList();
         self.dataManager.tChart_createData();
+
         return videoLoadPromise;
       })
       .then(function(){ 

@@ -49,8 +49,8 @@ ZIGVU.DataManager.Accessors.FilterAccessor = function() {
     return self.filterStore.detectableIds;
   };
 
-  this.getSelectedDetectables = function(){
-    return _.filter(self.dataStore.detectables, function(detectable){
+  this.getLocalizationSelectedDetectables = function(){
+    return _.filter(self.dataStore.detectables.localization, function(detectable){
       return _.contains(self.filterStore.detectableIds, detectable.id);
     });
   };

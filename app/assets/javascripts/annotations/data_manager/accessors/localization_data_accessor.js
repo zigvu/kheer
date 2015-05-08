@@ -39,12 +39,14 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
 
   // ----------------------------------------------
   // detectable mapping
-  this.getDetectableName = function(detId){ 
-    self.dataStore.detectablesMap[detId].pretty_name;
+  this.getLocalizationDetails = function(detId){
+    return {
+      id: detId,
+      title: self.dataStore.detectables.decorations[detId].pretty_name,
+      color: self.dataStore.detectables.decorations[detId].annotation_color
+    };
   };
-  this.getDetectableColor = function(detId){ 
-    self.dataStore.detectablesMap[detId].annotation_color;
-  };
+
 
   // ----------------------------------------------
   // localization raw data

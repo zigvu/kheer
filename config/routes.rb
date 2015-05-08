@@ -4,6 +4,7 @@ Kheer::Application.routes.draw do
     namespace :v1 do
       
       get 'filters/detectables'
+      get 'filters/detectable_details'
       get 'filters/chia_versions'
       get 'filters/color_map'
       get 'filters/cell_map'
@@ -19,9 +20,11 @@ Kheer::Application.routes.draw do
   end
 
   namespace :chia_data do
-    resources :detectables, only: [:new, :edit, :create, :update, :destroy]
+    resources :detectables
+    resources :chia_version_detectables, only: [:edit, :update, :destroy]
     resources :chia_versions do
       member do
+        get 'all_addable_detectables'
         get 'list_detectables'
         get 'add_detectables'
       end

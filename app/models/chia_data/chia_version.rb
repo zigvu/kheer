@@ -2,7 +2,7 @@ class ChiaVersion < ActiveRecord::Base
 	serialize :settings, Hash
 	after_create :initialize_settings
 
-	has_many :detectables, dependent: :destroy
+	has_many :chia_version_detectables, dependent: :destroy
 
 	before_destroy :destroy_mongo_documents, prepend: true
 

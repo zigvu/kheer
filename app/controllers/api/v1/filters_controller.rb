@@ -69,15 +69,23 @@ module Api
 
 			# GET api/v1/filters/detectables
 			def detectables
-				chiaVersionId = params[:chia_version_id]
-				@detectables = ::Detectable.where(chia_version_id: chiaVersionId)
-				render json: @detectables.to_json(:only => [:id, :name, :pretty_name, :chia_detectable_id])
+				chiaVersionId = params[:chia_version_id].to_i
+
+				formatted = Jsonifiers::Detectable::DetectableFormatter.new(chiaVersionId).formatted()
+				render json: formatted.to_json
 			end
 
 			# GET api/v1/filters/chia_versions
 			def chia_versions
 				@chiaVersions = ::ChiaVersion.all
 				render json: @chiaVersions.to_json(:only => [:id, :name, :description, :settings])
+			end
+
+			# GET api/v1/filters/detectable_details
+			def detectable_details
+				detectableIds = params[:detectable_ids].map{ |d| d.to_i } if params[:detectable_ids]
+
+				render json: ::Detectable.where(id: detectableIds).to_json(:only => [:id, :name, :pretty_name])
 			end
 		end
 	end
