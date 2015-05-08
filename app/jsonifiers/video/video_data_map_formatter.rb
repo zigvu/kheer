@@ -20,6 +20,7 @@ module Jsonifiers
 				@query.each do |v|
 					vc = v.video_collection
 					vdm[v.id] = {
+						video_collection_id: vc.id,
 						video_url: v.video_url,
 						playback_frame_rate: vc.playback_frame_rate,
 						detection_frame_rate: vc.detection_frame_rate,

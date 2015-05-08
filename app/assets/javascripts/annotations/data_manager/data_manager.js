@@ -119,6 +119,10 @@ ZIGVU.DataManager.DataManager = function() {
     return self.localizationDataAccessor.getLocalizationDetails(detId);
   };
 
+  this.getData_currentVideoState = function(videoId, frameNumber){
+    return self.localizationDataAccessor.getCurrentVideoState(videoId, frameNumber);
+  };
+
   // ----------------------------------------------
   // Filter data
 

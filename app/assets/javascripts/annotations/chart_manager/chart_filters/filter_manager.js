@@ -24,6 +24,8 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   this.filterFrameScales = new ZIGVU.ChartManager.ChartFilters.FilterFrameScales(self.htmlGenerator);
   this.filterFrameZdistThresh = new ZIGVU.ChartManager.ChartFilters.FilterFrameZdistThresh(self.htmlGenerator);
 
+  this.filterStatusVideo = new ZIGVU.ChartManager.ChartFilters.FilterStatusVideo(self.htmlGenerator);
+
   this.startFilter = function(){
     self.filterStartButton.displayInput(undefined)
       .then(function(data){ self.getChiaVersionsLocalization(); })
@@ -156,11 +158,13 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
     self.eventManager = em;
     self.filterFrameScales.setEventManager(self.eventManager);
     self.filterFrameZdistThresh.setEventManager(self.eventManager);
+    self.filterStatusVideo.setEventManager(self.eventManager);
     return self;
   };
 
   this.setDataManager = function(dm){
     self.dataManager = dm;
+    self.filterStatusVideo.setDataManager(self.dataManager);
     return self;
   };
 

@@ -27,6 +27,8 @@ zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", p
 # chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
 # chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
 
+# chiaVersionId = 1; chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(chiaVersionId); chiaSerializer.resetSettings(); chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5]); chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+
 # idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
 # idl.saveToDb(firstChiaVersion.id)
 

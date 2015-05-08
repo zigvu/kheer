@@ -33,7 +33,10 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
     where anno: {chia_version_id:, x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
 
   videoDataMap: {:video_id => 
-    {video_url:, playback_frame_rate:, detection_frame_rate:, frame_number_start:, frame_number_end:}
+    {
+      video_collection_id:, video_url:, playback_frame_rate:, 
+      detection_frame_rate:, frame_number_start:, frame_number_end:
+    }
   }
 
   colorMap: {:integer => 'rgb', }

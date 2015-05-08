@@ -20,11 +20,13 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
 
   // ----------------------------------------------
   // video data mapping
-
+  this.sortedVideoIds = undefined;
   this.getSortedVideoIds = function(){
-    var sIds = _.map(Object.keys(self.dataStore.videoDataMap), function(id){ return parseInt(id); });
-    sIds = _.sortBy(sIds, function(id){ return id; });
-    return sIds;
+    if(self.sortedVideoIds === undefined){
+      var sIds = _.map(Object.keys(self.dataStore.videoDataMap), function(id){ return parseInt(id); });
+      self.sortedVideoIds = _.sortBy(sIds, function(id){ return id; });
+    }
+    return self.sortedVideoIds;
   };
   this.getFrameNumberStart = function(videoId){ 
     return self.dataStore.videoDataMap[videoId].frame_number_start; 
@@ -79,6 +81,30 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
   };
   this.getColorMap = function(){
     return self.dataStore.colorMap;
+  };
+  //------------------------------------------------
+  // for video status
+  this.getCurrentVideoState = function(videoId, frameNumber){
+    var collectionId = self.dataStore.videoDataMap[videoId].video_collection_id;
+
+    // compute quanta frame time
+    var quantaFrameNumber = frameNumber;
+    var quantaFrameTime = self.dataStore.textFormatters.getReadableTime(
+      1000.0 * quantaFrameNumber / self.dataStore.videoDataMap[videoId].playback_frame_rate);
+
+    // TODO:
+    var collectionFrameNumber = quantaFrameNumber;
+    var collectionFrameTime = quantaFrameTime;
+
+    // return in format usable by display JS
+    return {
+      video_collection_id: collectionId,
+      video_collection_frame_number: collectionFrameNumber,
+      video_collection_frame_time: collectionFrameTime,
+      video_quanta_id: videoId,
+      video_quanta_frame_number: quantaFrameNumber,
+      video_quanta_frame_time: quantaFrameTime
+    };
   };
 
   //------------------------------------------------
