@@ -12,9 +12,11 @@ module DataImporters
 		end
 
 		def getOrderedFiles(scoreFolder)
+			# hash structure
+			# {frame_number: filename}
 			orderedFiles = {}
 			Rails.logger.debug { "ScoreFolderReader : Sorting files prior to import" }
-			Dir.glob("#{@scoreFolder}/*.json") do |jsonFile|
+			Dir.glob("#{scoreFolder}/*.json") do |jsonFile|
 				jsonFileHash = JSON.load(File.open(jsonFile))
 				frameNumber = jsonFileHash['frame_number'].to_i
 				orderedFiles[frameNumber] = jsonFile

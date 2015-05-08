@@ -35,7 +35,7 @@ module DataImporters
 			# error out if chia version data is already there
 			# TODO: make more robust - if expiring scores, then this will have to change
 			# if scoresExist()
-			# 	raise RuntimeError("VideoId: #{@videoId}, ChiaVersionId: #{@chiaVersionId} - scores already exists")
+			# 	raise RuntimeError, "VideoId: #{@videoId}, ChiaVersionId: #{@chiaVersionId} - scores already exists"
 			# end
 
 			# set up utility classes

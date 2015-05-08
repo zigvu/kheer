@@ -24,7 +24,7 @@ module Jsonifiers
 				end
 
 				@scaleCellValues.each_with_index do |sv, idx|
-					raise RuntimeError("Some cell values not populated") if sv < 0
+					raise RuntimeError, "Some cell values not populated" if sv < 0
 
 					# round to integer between [0, 100]
 					@scaleCellValues[idx] = (sv * 100).round

@@ -12,7 +12,7 @@ module DataImporters
 
 		def saveToDb(chiaVersionId)
 			chiaVersion = ChiaVersion.find(chiaVersionId)
-			raise RuntimeError("ChiaVersion doesn't exist") if chiaVersion == nil
+			raise RuntimeError, "ChiaVersion doesn't exist" if chiaVersion == nil
 			savePatchMap(chiaVersion)
 			saveCellMap(chiaVersion)
 		end
@@ -38,7 +38,7 @@ module DataImporters
 					h = patch["bbox"]["h"].to_i
 
 					cellIdxs = getCellIdxs(scale, x, y, w, h)
-					raise RuntimeError("Cellmap missing: #{scale}: #{x}, #{y}") if cellIdxs == nil
+					raise RuntimeError, "Cellmap missing: #{scale}: #{x}, #{y}" if cellIdxs == nil
 
 					patchMap.patch_boxes.create(
 						patch_idx: patch_idx, scale: scale, x: x, y: y, w: w, h: h, cell_idxs: cellIdxs

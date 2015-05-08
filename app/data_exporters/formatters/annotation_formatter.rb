@@ -4,7 +4,8 @@ module DataExporters
 
 			attr_accessor :annoFilename
 
-			def initialize(videoId, frameNumber, width, height)
+			def initialize(chiaVersionId, videoId, frameNumber, width, height)
+				@chiaVersionId = chiaVersionId
 				@videoId = videoId
 				@frameNumber = frameNumber
 				@width = width
@@ -18,6 +19,10 @@ module DataExporters
 			def getFormatted
 				# Note: this is tied to JSON expectation of Chia python scripts
 				return {
+					chia_version_id: @chiaVersionId,
+					video_id: @videoId,
+					frame_number: @frameNumber,
+
 					width: @width,
 					height: @height,
 					frame_filename: @frameFilename,
@@ -46,7 +51,7 @@ module DataExporters
 					y2: anno.y2,
 					
 					x3: anno.x3,
-					y3: anno.y3					
+					y3: anno.y3
 				}
 			end
 

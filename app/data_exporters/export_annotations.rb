@@ -27,7 +27,8 @@ module DataExporters
 
 				a2.group_by{|a3| a3.frame_number}.each do |frameNumber, a4|
 					frameIds << frameNumber
-					annoFormatter = DataExporters::Formatters::AnnotationFormatter.new(videoId, frameNumber, width, height)
+					annoFormatter = DataExporters::Formatters::AnnotationFormatter.new(
+						@chiaVersionId, videoId, frameNumber, width, height)
 					a4.group_by{|a5| a5.detectable_id}.each do |detId, a6|
 						a6.each do |a7|
 							annoFormatter.addAnnotation(getDetName(detId), a7)
