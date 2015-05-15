@@ -5,7 +5,7 @@ $(".analysis_annotations.index").ready(function() {
   annotationController.register();
   annotationController.startFilter();
   annotationController.bindPageUnload();
-  // annotationController.loadDataTest();
+  annotationController.loadDataTest();
 });
 
 $(".analysis_annotations.temp").ready(function() {
