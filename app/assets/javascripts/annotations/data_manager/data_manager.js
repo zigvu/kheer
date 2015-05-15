@@ -157,6 +157,13 @@ ZIGVU.DataManager.DataManager = function() {
     return self.filterAccessor.getLocalizationSettings();
   };
 
+  this.setFilter_videoSelectionIds = function(videoIds){
+    return self.filterAccessor.setVideoSelectionIds(videoIds);
+  };
+  this.getFilter_videoSelections = function(){
+    return self.filterAccessor.getVideoSelections();
+  };
+
   // ----------------------------------------------
   // Timeline chart
   this.tChart_createData = function(){

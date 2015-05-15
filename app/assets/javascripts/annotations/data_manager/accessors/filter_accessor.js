@@ -55,6 +55,21 @@ ZIGVU.DataManager.Accessors.FilterAccessor = function() {
     });
   };
 
+  this.setVideoSelectionIds = function(videoIds){
+    self.filterStore.videoIds = videoIds;
+    // create videoDataMap in dataStore
+    self.dataStore.videoDataMap = {}
+    _.each(self.dataStore.videoList, function(video){
+      if(_.contains(self.filterStore.videoIds, video.video_id)){
+        self.dataStore.videoDataMap[video.video_id] = video;
+      }
+    });
+  };
+  this.getVideoSelections = function(){
+    return _.filter(self.dataStore.videoList, function(video){
+      return _.contains(self.filterStore.videoIds, video.video_id);
+    });
+  };
   //------------------------------------------------
   // set relations
   this.setFilterStore = function(fs){

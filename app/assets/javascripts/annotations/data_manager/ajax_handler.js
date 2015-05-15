@@ -70,6 +70,31 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return requestDefer.promise;
   };
 
+  this.getAllVideoListPromise = function(){
+    var dataURL = '/api/v1/filters/video_list';
+    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
+
+    var requestDefer = Q.defer();
+    if(self.filterStore.chiaVersionIdLocalization === undefined){
+      requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> No chia version filter found');
+    } else {
+      self.getPOSTRequestPromise(dataURL, dataParam)
+        .then(function(data){
+          self.dataStore.videoList = data.video_list;
+          // prettify length
+          _.each(self.dataStore.videoList, function(video){
+            video.pretty_length = self.dataStore.textFormatters.getReadableTime(video.length);
+          });
+          requestDefer.resolve(self.dataStore.videoList);
+        })
+        .catch(function (errorReason) {
+          requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
+        });
+    }
+
+    return requestDefer.promise;
+  };
+
   this.getDataSummaryPromise = function(){
     var dataURL = '/api/v1/filters/filtered_summary';
     var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
@@ -129,17 +154,6 @@ ZIGVU.DataManager.AjaxHandler = function() {
         })
         .then(function(data){
           self.dataStore.detectables.alllist = data;
-
-          // get video data map
-          var videoIds = Object.keys(self.dataStore.dataFullLocalizations);
-          self.filterStore.videoIds = videoIds;
-
-          dataURL = '/api/v1/filters/video_data_map';
-          dataParam = {video_data_map: {video_ids: videoIds}};
-          return self.getGETRequestPromise(dataURL, dataParam)
-        })
-        .then(function(data){
-          self.dataStore.videoDataMap = data.video_data_map;
 
           // get color map
           dataURL = '/api/v1/filters/color_map';

@@ -38,8 +38,12 @@ ZIGVU.Controller.AnnotationController = function() {
     self.dataManager.ajaxHandler.getChiaVersionsPromise()
       .then(function(chiaVersions){ return self.dataManager.ajaxHandler.getLocalizationDetectablesPromise(); })
       .then(function(detectables){ return self.dataManager.ajaxHandler.getLocalizationSettingsPromise(); })
-      .then(function(localizationSettings){ return self.dataManager.ajaxHandler.getDataSummaryPromise(); })
-      .then(function(dataSummary){ self.loadVideos(); })
+      .then(function(localizationSettings){ return self.dataManager.ajaxHandler.getAllVideoListPromise(); })
+      .then(function(videoList){ return self.dataManager.ajaxHandler.getDataSummaryPromise(); })
+      .then(function(dataSummary){ 
+        self.dataManager.setFilter_videoSelectionIds([1]);
+        self.loadVideos(); 
+      })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };
 
