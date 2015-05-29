@@ -15,12 +15,13 @@ module Messaging
       # need a non-blocking connection else rails won't load
       serverQueue.subscribe(manual_ack: true) do |delivery_info, properties, payload|
         channel.ack(delivery_info.delivery_tag)
-        response = @rpcHandlerObj.call(payload)
+        responseHeaders, responseMessage = @rpcHandlerObj.call(properties.headers, payload)
 
-        exchange.publish(response, 
+        exchange.publish(responseMessage, 
           routing_key: properties.reply_to,
           content_type: 'application/json',
-          correlation_id: properties.correlation_id)
+          correlation_id: properties.correlation_id,
+          headers: responseHeaders)
       end
     end
 

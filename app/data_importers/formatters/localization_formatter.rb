@@ -2,28 +2,33 @@ module DataImporters
 	module Formatters
 		class LocalizationFormatter
 
-			def initialize(detectableChiaIdMap, videoId, chiaVersionId)
-				@detectableChiaIdMap = detectableChiaIdMap
-				@videoId = videoId
-				@chiaVersionId = chiaVersionId
+			def initialize(chiaVersionId)
+				@detectableChiaIdMap = DataImporters::DetectableChiaIdMap.new(chiaVersionId)
 			end
 
-			def getFormatted(frameNumber, frameTime, chiaClsId, localization)
+			def getFormatted(localization)
+        # expect from python:
+        # localization = {
+        #   video_collection_id:, chia_version_id:, 
+        #   frame_number:, chia_class_id:, score:,
+        #   zdist_thresh:, scale:, x:, y:, w:, h:
+        # }
+
 				# Note: this is tied to schema in Localization class
 				localz = {
-					vi: @videoId,
-					ci: @chiaVersionId,
-					fn: frameNumber,
-					ft: frameTime,
+					vi: localization["video_id"].to_i,
+					ci: localization["chia_version_id"].to_i,
+					fn: localization["frame_number"].to_i,
+					# ft: frameTime,
 
-					di: @detectableChiaIdMap.getDetectableId(chiaClsId),
-					ps: localization["score"].to_f.round(2),
+					di: @detectableChiaIdMap.getDetectableId(localization["chia_class_id"]),
+					ps: localization["score"].to_f.round(3),
 					zd: localization["zdist_thresh"].to_f,
 					sl: localization["scale"].to_f,
-					x: localization["bbox"]["x"].to_i,
-					y: localization["bbox"]["y"].to_i,
-					w: localization["bbox"]["width"].to_i,
-					h: localization["bbox"]["height"].to_i
+					x: localization["x"].to_i,
+					y: localization["y"].to_i,
+					w: localization["w"].to_i,
+					h: localization["h"].to_i
 				}
 				return localz
 			end

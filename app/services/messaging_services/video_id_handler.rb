@@ -2,18 +2,20 @@ require 'json'
 
 module Services
   module MessagingServices
-    class VideoId
+    class VideoIdHandler
 
       def initialize
+        @hdr = Messaging::Headers
       end
 
-      def call(message)
-        # expect from python:
-        # {"video_collection_id": 1, "frame_number_start": 0, "frame_number_end": 1023}
+      def call(headers, message)
+        # no need to use headers for this case
+        # expect message from python:
+        # { video_id:, frame_number_start:, frame_number_end: }
         mHash = JSON.parse(message)
-        videoCollectionId = mHash["video_collection_id"].to_i
-        frameNumberStart = mHash["frame_number_start"].to_i
-        frameNumberEnd = mHash["frame_number_end"].to_i
+        videoCollectionId = mHash['video_id'].to_i
+        frameNumberStart = mHash['frame_number_start'].to_i
+        frameNumberEnd = mHash['frame_number_end'].to_i
 
         vc = VideoCollection.find(videoCollectionId)
         video = vc.videos
@@ -32,12 +34,13 @@ module Services
           video.update(video_url: videoURL)
         end
 
-        response = {
-          video_collection_id: videoCollectionId,
-          video_id: video.id,
-          video_url: video.video_url
+        responseHeaders = @hdr.getStatusSuccess()
+        responseMessage = {
+          video_id: videoCollectionId,
+          quanta_id: video.id,
+          quanta_url: video.video_url
         }
-        response.to_json
+        return responseHeaders, responseMessage.to_json
       end
 
     end
