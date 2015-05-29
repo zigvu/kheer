@@ -9,11 +9,12 @@ module Api
 				render json: {ack: 'ok'}.to_json
 			end
 
-			# GET api/v1/filters/video_data_map
-			def video_data_map
-				vdmp = Jsonifiers::Video::VideoDataMapParamsParser.new(params[:video_data_map])
-				vdmq = Jsonifiers::Video::VideoDataMapQuery.new(vdmp).run()
-				formatted = Jsonifiers::Video::VideoDataMapFormatter.new(vdmq).formatted()
+			# POST api/v1/filters/video_list
+			def video_list
+				filter = Jsonifiers::Filter::FilterParamsParser.new(params[:filter])
+				fql = Jsonifiers::Filter::LocalizationQuery.new(filter).run()
+				fqlVideoIds = fql.pluck(:video_id).uniq
+				formatted = Jsonifiers::Video::VideoListFormatter.new(fqlVideoIds).formatted()
 
 				render json: formatted.to_json
 			end

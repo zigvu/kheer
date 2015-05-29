@@ -32,6 +32,13 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   dataFullAnnotations: {:video_id => {:frame_number => {:detectable_id => [anno]}}}
     where anno: {chia_version_id:, x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
 
+  videoList: [
+    {
+      video_collection_id:, video_id:, video_url:, playback_frame_rate:, 
+      detection_frame_rate:, frame_number_start:, frame_number_end:, length:
+    }, 
+  ]
+
   videoDataMap: {:video_id => 
     {
       video_collection_id:, video_url:, playback_frame_rate:, 
@@ -59,6 +66,7 @@ ZIGVU.DataManager.Stores.DataStore = function() {
     annotation: undefined, localization: undefined, 
     alllist: undefined, decorations: undefined 
   };
+  this.videoList = undefined;
 
   this.dataSummary = undefined;
   this.dataFullLocalizations = undefined;
@@ -78,6 +86,7 @@ ZIGVU.DataManager.Stores.DataStore = function() {
       annotation: undefined, localization: undefined, 
       alllist: undefined, decorations: undefined 
     };
+    self.videoList = undefined;
 
     self.dataSummary = undefined;
     self.dataFullLocalizations = undefined;
