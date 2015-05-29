@@ -8,66 +8,66 @@ module Services
         @hdr = Messaging::Headers
         # {chia_version_id: DataImporters::Formatters::LocalizationFormatter}
         @formatters = {}
-        # {chia_version_id: {video_collection_id: DataImporters::MongoCollectionDumper}}
+        # {chia_version_id: {video_id: DataImporters::MongoCollectionDumper}}
         @dumpers = {}
       end
 
       def call(headers, message)
-        # the header will have video_collection_id and chia_version_id
-        videoCollectionId = @hdr.getPropsVideoId(headers)
+        # the header will have video_id and chia_version_id
+        videoId = @hdr.getPropsVideoId(headers)
         chiaVersionId = @hdr.getPropsChiaVersionId(headers)
 
         responseHeaders = nil
-        begin
+        # begin
           if @hdr.isVideoStorageStart?(headers)
-            startNewVideoStorage(videoCollectionId, chiaVersionId)
+            startNewVideoStorage(videoId, chiaVersionId)
           elsif @hdr.isVideoStorageEnd?(headers)
-            endExistingVideoStorage(videoCollectionId, chiaVersionId)
+            endExistingVideoStorage(videoId, chiaVersionId)
           elsif @hdr.isVideoStorageSave?(headers)
             localizations = JSON.parse(message)
-            addToExistingVideoStorage(videoCollectionId, chiaVersionId, localizations)
+            addToExistingVideoStorage(videoId, chiaVersionId, localizations)
           else
             raise "Unknown task headers"
           end
           responseHeaders = @hdr.getStatusSuccess()
-        rescue Exception => e
-          responseHeaders = @hdr.getStatusFailure(e.message)
-        end
+        # rescue Exception => e
+        #   responseHeaders = @hdr.getStatusFailure(e.message)
+        # end
 
         responseMessage = {
-          video_id: videoCollectionId,
+          video_id: videoId,
           chia_version_id: chiaVersionId
         }
         return responseHeaders, responseMessage.to_json
       end
 
-      def startNewVideoStorage(videoCollectionId, chiaVersionId)
+      def startNewVideoStorage(videoId, chiaVersionId)
         # create new formatter if doesn't exist yet
         @formatters[chiaVersionId] ||= DataImporters::Formatters::LocalizationFormatter.new(chiaVersionId)
         # create new dumper
         @dumpers[chiaVersionId] ||= {}
-        if @dumpers[chiaVersionId][videoCollectionId] == nil
-          @dumpers[chiaVersionId][videoCollectionId] = DataImporters::MongoCollectionDumper.new('Localization')
+        if @dumpers[chiaVersionId][videoId] == nil
+          @dumpers[chiaVersionId][videoId] = DataImporters::MongoCollectionDumper.new('Localization')
         else
-          raise "Data import for video_collection_id #{videoCollectionId} " + \
+          raise "Data import for video_id #{videoId} " + \
             "and chia_version_id #{chiaVersionId} already in progress"
         end
       end
 
-      def endExistingVideoStorage(videoCollectionId, chiaVersionId)
+      def endExistingVideoStorage(videoId, chiaVersionId)
         # finalize and delete the key for dumper
-        @dumpers[chiaVersionId][videoCollectionId].finalize()
-        @dumpers[chiaVersionId].delete(videoCollectionId)
+        @dumpers[chiaVersionId][videoId].finalize()
+        @dumpers[chiaVersionId].delete(videoId)
         # if no dumper currently uses formatter, delete that as well
         @formatters.delete(chiaVersionId) if @dumpers[chiaVersionId].keys.empty?
         # create indices
         Localization.no_timeout.create_indexes
       end
 
-      def addToExistingVideoStorage(videoCollectionId, chiaVersionId, localizations)
+      def addToExistingVideoStorage(videoId, chiaVersionId, localizations)
         localizations.each do |localization|
           formattedL = @formatters[chiaVersionId].getFormatted(localization)
-          @dumpers[chiaVersionId][videoCollectionId].add(formattedL)
+          @dumpers[chiaVersionId][videoId].add(formattedL)
         end
       end
 

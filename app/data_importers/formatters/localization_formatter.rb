@@ -9,7 +9,7 @@ module DataImporters
 			def getFormatted(localization)
         # expect from python:
         # localization = {
-        #   video_collection_id:, chia_version_id:, 
+        #   video_id:, chia_version_id:, 
         #   frame_number:, chia_class_id:, score:,
         #   zdist_thresh:, scale:, x:, y:, w:, h:
         # }

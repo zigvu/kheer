@@ -2,7 +2,7 @@ require 'json'
 
 module Services
   module MessagingServices
-    class VideoIdHandler
+    class ClipIdHandler
 
       def initialize
         @hdr = Messaging::Headers
@@ -13,32 +13,32 @@ module Services
         # expect message from python:
         # { video_id:, frame_number_start:, frame_number_end: }
         mHash = JSON.parse(message)
-        videoCollectionId = mHash['video_id'].to_i
+        videoId = mHash['video_id'].to_i
         frameNumberStart = mHash['frame_number_start'].to_i
         frameNumberEnd = mHash['frame_number_end'].to_i
 
-        vc = VideoCollection.find(videoCollectionId)
-        video = vc.videos
+        video = Video.find(videoId)
+        clip = video.clips
           .where(frame_number_start: frameNumberStart, frame_number_end: frameNumberEnd)
           .first
 
-        if video == nil
-          length = (frameNumberEnd - frameNumberStart + 1) * 1000.0 / vc.playback_frame_rate
-          video = vc.videos.create(
+        if clip == nil
+          length = (frameNumberEnd - frameNumberStart + 1) * 1000.0 / video.playback_frame_rate
+          clip = video.clips.create(
             length: length, 
             frame_number_start: frameNumberStart, 
             frame_number_end: frameNumberEnd
           )
           # get convention from python
-          videoURL = "/data/#{videoCollectionId}/videos/#{video.id}.mp4"
-          video.update(video_url: videoURL)
+          clipURL = "/data/#{videoId}/clips/#{clip.id}.mp4"
+          clip.update(clip_url: clipURL)
         end
 
         responseHeaders = @hdr.getStatusSuccess()
         responseMessage = {
-          video_id: videoCollectionId,
-          quanta_id: video.id,
-          quanta_url: video.video_url
+          video_id: videoId,
+          clip_id: clip.id,
+          clip_url: clip.clip_url
         }
         return responseHeaders, responseMessage.to_json
       end

@@ -1,0 +1,90 @@
+<h3>Video details</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Id</td>
+      <td><%= @video.id %></td>
+    </tr>
+    <tr>
+      <td>Title</td>
+      <td><%= @video.title %></td>
+    </tr>
+    <tr>
+      <td>Description</td>
+      <td><%= @video.description %></td>
+    </tr>
+    <tr>
+      <td>Comment</td>
+      <td><%= @video.comment %></td>
+    </tr>
+    <tr>
+      <td>Source type</td>
+      <td><%= @video.source_type %></td>
+    </tr>
+    <tr>
+      <td>Source url</td>
+      <td><%= @video.source_url %></td>
+    </tr>
+    <tr>
+      <td>Quality</td>
+      <td><%= @video.quality %></td>
+    </tr>
+    <tr>
+      <td>Format</td>
+      <td><%= @video.format %></td>
+    </tr>
+    <tr>
+      <td>Playback frame rate</td>
+      <td><%= @video.playback_frame_rate %></td>
+    </tr>
+    <tr>
+      <td>Detection frame rate</td>
+      <td><%= @video.detection_frame_rate %></td>
+    </tr>
+    <tr>
+      <td>Width</td>
+      <td><%= @video.width %></td>
+    </tr>
+    <tr>
+      <td>Height</td>
+      <td><%= @video.height %></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  <strong>Clips:</strong>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Length</th>
+        <th>URL</th>
+        <th>Frame Num Start</th>
+        <th>FrameNum End</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @video.clips.each do |clip| %>
+        <tr>
+          <td><%= clip.id %></td>
+          <td><%= clip.length %></td>
+          <td><%= clip.clip_url %></td>
+          <td><%= clip.frame_number_start %></td>
+          <td><%= clip.frame_number_end %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</p>
+
+
+<%= link_to 'Back', khajuri_data_videos_path, class: "button" %>

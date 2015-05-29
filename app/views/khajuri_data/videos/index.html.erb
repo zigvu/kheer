@@ -1,0 +1,35 @@
+<h3>Listing videos</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th># Clips | Show</th>
+      <th>Edit | Destroy</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @videos.each do |video| %>
+      <tr>
+        <td><%= video.id %></td>
+        <td><%= video.title %></td>
+        <td><%= video.description %></td>
+        <td>
+          <%= video.clips.count %> | 
+          <%= link_to 'Show', [:khajuri_data, video] %>
+        </td>
+        <td>
+          <%= link_to 'Edit', edit_khajuri_data_video_path(video) %> | 
+          <%= link_to 'Destroy', [:khajuri_data, video], method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Video', new_khajuri_data_video_path, class: "button"  %>

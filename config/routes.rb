@@ -32,7 +32,7 @@ Kheer::Application.routes.draw do
   end
 
   namespace :khajuri_data do
-    resources :video_collections
+    resources :videos
   end
 
   namespace :analysis do

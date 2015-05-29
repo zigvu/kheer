@@ -92,5 +92,3 @@ ZIGVU.Controller.AnnotationController = function() {
     displayJavascriptError('ZIGVU.Controller.AnnotationController -> ' + errorReason);
   };
 };
-
-

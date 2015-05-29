@@ -7,8 +7,8 @@ class ChiaVersion < ActiveRecord::Base
 	before_destroy :destroy_mongo_documents, prepend: true
 
 	# Mock a has_many relationship with Mongoid models
-	def patch_map
-		return PatchMap.where(chia_version_id: self.id).first
+	def color_map
+		return ColorMap.where(chia_version_id: self.id).first
 	end
 
 	def cell_map
@@ -17,7 +17,7 @@ class ChiaVersion < ActiveRecord::Base
 
 	private
     def destroy_mongo_documents
-      PatchMap.destroy_all(chia_version_id: self.id)
+      ColorMap.destroy_all(chia_version_id: self.id)
       CellMap.destroy_all(chia_version_id: self.id)
     end
 
