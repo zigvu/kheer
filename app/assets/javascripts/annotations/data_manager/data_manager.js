@@ -47,12 +47,6 @@ ZIGVU.DataManager.DataManager = function() {
   // ----------------------------------------------
   // General calls
 
-  this.getModifiedFrameNumber = function(videoId, frameNumber){
-    var detectionRate = self.dataStore.videoDataMap[videoId].detection_frame_rate;
-    var fn = (frameNumber - 1) - ((frameNumber - 1) % detectionRate) + 1;
-    return fn;
-  };
-
   this.createDetectableDecorations = function(){
     return self.annotationDataAccessor.createDetectableDecorations();
   };
@@ -63,12 +57,12 @@ ZIGVU.DataManager.DataManager = function() {
     return self.annotationDataAccessor.getDetectables();
   };
 
-  this.getAnno_annotations = function(videoId, frameNumber){
-    return self.annotationDataAccessor.getAnnotations(videoId, frameNumber);
+  this.getAnno_annotations = function(clipId, clipFN){
+    return self.annotationDataAccessor.getAnnotations(clipId, clipFN);
   };
 
-  this.setAnno_saveAnnotations = function(videoId, frameNumber, annotationObjs){
-    return self.annotationDataAccessor.saveAnnotations(videoId, frameNumber, annotationObjs);
+  this.setAnno_saveAnnotations = function(clipId, clipFN, annotationObjs){
+    return self.annotationDataAccessor.saveAnnotations(clipId, clipFN, annotationObjs);
   };
 
   this.getAnno_selectedAnnotationDetails = function(){
@@ -82,27 +76,32 @@ ZIGVU.DataManager.DataManager = function() {
   // ----------------------------------------------
   // Localization data
 
-  this.getData_heatmapDataPromise = function(videoId, frameNumber){
-    var fn = self.getModifiedFrameNumber(videoId, frameNumber);
-    return self.ajaxHandler.getHeatmapDataPromise(videoId, fn);
+  this.getData_heatmapDataPromise = function(clipId, clipFN){
+    var vfn = self.localizationDataAccessor.getTranslatedVideoIdVideoFN(clipId, clipFN);
+    var videoId = vfn.video_id;
+    var videoFN = vfn.video_fn;
+
+    return self.ajaxHandler.getHeatmapDataPromise(videoId, videoFN);
   };
 
-  this.getData_localizationsData = function(videoId, frameNumber){
-    var fn = self.getModifiedFrameNumber(videoId, frameNumber);
-    return self.localizationDataAccessor.getLocalizations(videoId, fn);
+  this.getData_localizationsData = function(clipId, clipFN){
+    return self.localizationDataAccessor.getLocalizations(clipId, clipFN);
   };
 
-  this.getData_allLocalizationsDataPromise = function(videoId, frameNumber){
-    var fn = self.getModifiedFrameNumber(videoId, frameNumber);
-    return self.ajaxHandler.getAllLocalizationsPromise(videoId, fn);
+  this.getData_allLocalizationsDataPromise = function(clipId, clipFN){
+    var vfn = self.localizationDataAccessor.getTranslatedVideoIdVideoFN(clipId, clipFN);
+    var videoId = vfn.video_id;
+    var videoFN = vfn.video_fn;
+
+    return self.ajaxHandler.getAllLocalizationsPromise(videoId, videoFN);
   };
 
   this.getData_chiaVersions = function(){
     return self.localizationDataAccessor.getChiaVersions();
   };
 
-  this.getData_videoDataMap = function(){
-    return self.localizationDataAccessor.getVideoDataMap();
+  this.getData_videoClipMap = function(){
+    return self.localizationDataAccessor.getVideoClipMap();
   };
 
   this.getData_dataSummary = function(){
@@ -119,8 +118,8 @@ ZIGVU.DataManager.DataManager = function() {
     return self.localizationDataAccessor.getLocalizationDetails(detId);
   };
 
-  this.getData_currentVideoState = function(videoId, frameNumber){
-    return self.localizationDataAccessor.getCurrentVideoState(videoId, frameNumber);
+  this.getData_currentVideoState = function(clipId, clipFN){
+    return self.localizationDataAccessor.getCurrentVideoState(clipId, clipFN);
   };
 
   // ----------------------------------------------
@@ -173,20 +172,20 @@ ZIGVU.DataManager.DataManager = function() {
   };
 
 
-  this.tChart_getNewPlayPosition = function(videoId, frameNumber, numOfFrames){
-    return self.timelineChartDataAccessor.getNewPlayPosition(videoId, frameNumber, numOfFrames);
+  this.tChart_getNewPlayPosition = function(clipId, clipFN, numOfFrames){
+    return self.timelineChartDataAccessor.getNewPlayPosition(clipId, clipFN, numOfFrames);
   };
 
-  this.tChart_getHitPlayPosition = function(videoId, frameNumber, forwardDirection){
-    return self.timelineChartDataAccessor.getHitPlayPosition(videoId, frameNumber, forwardDirection);
+  this.tChart_getHitPlayPosition = function(clipId, clipFN, forwardDirection){
+    return self.timelineChartDataAccessor.getHitPlayPosition(clipId, clipFN, forwardDirection);
   };
 
-  this.tChart_getCounter = function(videoId, frameNumber){
-    return self.timelineChartDataAccessor.getCounter(videoId, frameNumber);
+  this.tChart_getCounter = function(clipId, clipFN){
+    return self.timelineChartDataAccessor.getCounter(clipId, clipFN);
   };
 
-  this.tChart_getVideoIdFrameNumber = function(counter){
-    return self.timelineChartDataAccessor.getVideoIdFrameNumber(counter);
+  this.tChart_getClipIdClipFN = function(counter){
+    return self.timelineChartDataAccessor.getClipIdClipFN(counter);
   };
 
   this.tChart_getTimelineChartData = function(){

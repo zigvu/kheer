@@ -18,39 +18,64 @@ ZIGVU.DataManager.Accessors.AnnotationDataAccessor = function() {
   this.getDetectables = function(){
     return self.dataStore.detectables.annotation;
   };
+
+  // ----------------------------------------------
+  // video clip mapping
+  this.getVideoIdVideoFN = function(clipId, clipFN){
+    var clip = self.dataStore.videoClipMap.clipMap[clipId];
+    var videoId = clip.video_id;
+    var videoFN = clipFN + clip.clip_fn_start;
+    return { video_id: videoId, video_fn: videoFN };
+  };
   
   // ----------------------------------------------
   // annotaitons raw data
 
-  this.getAnnotations = function(videoId, frameNumber){
+  this.getAnnotations = function(clipId, clipFN){
+    var vfn = self.getVideoIdVideoFN(clipId, clipFN);
+    var videoId = vfn.video_id;
+    var videoFN = vfn.video_fn;
+
     var anno = self.dataStore.dataFullAnnotations;
-    if(anno[videoId] === undefined || anno[videoId][frameNumber] === undefined){ return []; }
-    return anno[videoId][frameNumber];
+    if(anno[videoId] === undefined || anno[videoId][videoFN] === undefined){ return []; }
+    return anno[videoId][videoFN];
   };
 
-  this.saveAnnotations = function(videoId, frameNumber, annotationObjs){
+  this.saveAnnotations = function(clipId, clipFN, annotationObjs){
+    var vfn = self.getVideoIdVideoFN(clipId, clipFN);
+    var videoId = vfn.video_id;
+    var videoFN = vfn.video_fn;
+
+    // put in video_id and video_fn for each object
+    _.each(annotationObjs.deleted_polys, function(ao){
+      _.extend(ao, { video_id: videoId, video_fn: videoFN });
+    });
+    _.each(annotationObjs.new_polys, function(ao){
+      _.extend(ao, { video_id: videoId, video_fn: videoFN });
+    });
+
     // update internal data structure
     var anno = self.dataStore.dataFullAnnotations;
     if(anno[videoId] === undefined){ anno[videoId] = {}; }
-    if(anno[videoId][frameNumber] === undefined){ anno[videoId][frameNumber] = {}; }
+    if(anno[videoId][videoFN] === undefined){ anno[videoId][videoFN] = {}; }
 
     // update - deleted annotations
     _.each(annotationObjs.deleted_polys, function(ao){
       var idx = -1;
-      _.find(anno[videoId][frameNumber][ao.detectable_id], function(a, i, l){
+      _.find(anno[videoId][videoFN][ao.detectable_id], function(a, i, l){
         if((a.x0 == ao.x0) && (a.y0 == ao.y0) && (a.x1 == ao.x1) && 
           (a.x2 == ao.x2) && (a.x3 == ao.x3)) { idx = i; return true; }
         return false;
       });
-      if(idx != -1){ anno[videoId][frameNumber][ao.detectable_id].splice(idx, 1); }
+      if(idx != -1){ anno[videoId][videoFN][ao.detectable_id].splice(idx, 1); }
     });
 
-    // update - deleted annotations
+    // update - new annotations
     _.each(annotationObjs.new_polys, function(ao){
-      if(anno[videoId][frameNumber][ao.detectable_id] === undefined){
-        anno[videoId][frameNumber][ao.detectable_id] = []; 
+      if(anno[videoId][videoFN][ao.detectable_id] === undefined){
+        anno[videoId][videoFN][ao.detectable_id] = []; 
       }
-      anno[videoId][frameNumber][ao.detectable_id].push(ao);
+      anno[videoId][videoFN][ao.detectable_id].push(ao);
     });
 
     // save to database

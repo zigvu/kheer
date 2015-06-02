@@ -81,9 +81,10 @@ ZIGVU.DataManager.AjaxHandler = function() {
       self.getPOSTRequestPromise(dataURL, dataParam)
         .then(function(data){
           self.dataStore.videoList = data.video_list;
-          // prettify length
+          // add pretty length
           _.each(self.dataStore.videoList, function(video){
-            video.pretty_length = self.dataStore.textFormatters.getReadableTime(video.length);
+            length = _.reduce(video.clips, function(memo, clip){ return memo + clip.length; }, 0)
+            video.pretty_length = self.dataStore.textFormatters.getReadableTime(length);
           });
           requestDefer.resolve(self.dataStore.videoList);
         })
@@ -187,7 +188,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return self.getPOSTRequestPromise(dataURL, dataParam);
   };
 
-  this.getHeatmapDataPromise = function(videoId, frameNumber){
+  this.getHeatmapDataPromise = function(videoId, videoFN){
     var chiaVersionId = self.filterStore.chiaVersionIdLocalization;
     var detectableId = self.filterStore.heatmap.detectable_id;
     var scale = self.filterStore.heatmap.scale;
@@ -197,7 +198,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
       heatmap: {
         chia_version_id: chiaVersionId,
         video_id: videoId,
-        frame_number: frameNumber,
+        video_fn: videoFN,
         detectable_id: detectableId,
         scale: scale
       }
@@ -206,7 +207,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return self.getGETRequestPromise(dataURL, dataParam);
   };
 
-  this.getAllLocalizationsPromise = function(videoId, frameNumber){
+  this.getAllLocalizationsPromise = function(videoId, videoFN){
     var requestDefer = Q.defer();
 
     var chiaVersionId = self.filterStore.chiaVersionIdLocalization;
@@ -217,7 +218,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
       localization: {
         chia_version_id: chiaVersionId,
         video_id: videoId,
-        frame_number: frameNumber,
+        video_fn: videoFN,
         zdist_thresh: zdistThresh
       }
     };
@@ -225,8 +226,8 @@ ZIGVU.DataManager.AjaxHandler = function() {
       .then(function(data){
         var localizations = [];
         if((data.localizations[videoId] !== undefined) && 
-          (data.localizations[videoId][frameNumber] !== undefined)){ 
-          localizations = data.localizations[videoId][frameNumber];
+          (data.localizations[videoId][videoFN] !== undefined)){ 
+          localizations = data.localizations[videoId][videoFN];
         }
         requestDefer.resolve(localizations);
       })

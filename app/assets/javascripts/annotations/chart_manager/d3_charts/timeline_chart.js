@@ -258,18 +258,18 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
   function updateVideoPlayerAfterBrush(counter){
     if(self.seekDisabled){ return; }
 
-    var videoIdFrameNumber = self.dataManager.tChart_getVideoIdFrameNumber(counter);
-    self.eventManager.fireFrameNavigateCallback(videoIdFrameNumber);
+    var clipIdClipFN = self.dataManager.tChart_getClipIdClipFN(counter);
+    self.eventManager.fireFrameNavigateCallback(clipIdClipFN);
   };
 
   // this is triggered from video player
   function updateChartFromVideoPlayer(args){
     if(self.seekDisabled){ return; }
 
-    var counter = self.dataManager.tChart_getCounter(args.video_id, args.frame_number);
+    var counter = self.dataManager.tChart_getCounter(args.clip_id, args.clip_fn);
     self.brushToCounter(counter);
 
-    console.log("Frame number: " + args.frame_number + ", counter: " + counter);
+    console.log("Frame number: " + args.clip_fn + ", counter: " + counter);
   };
 
   //------------------------------------------------

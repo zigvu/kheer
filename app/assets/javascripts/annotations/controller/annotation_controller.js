@@ -26,7 +26,7 @@ ZIGVU.Controller.AnnotationController = function() {
   // TODO: remove
   this.loadDataTest = function(){
     self.dataManager.filterStore.chiaVersionIdLocalization = 1;
-    self.dataManager.filterStore.chiaVersionIdAnnotation = 2;
+    self.dataManager.filterStore.chiaVersionIdAnnotation = 1;
     self.dataManager.filterStore.detectableIds = [1, 48, 49];
     self.dataManager.filterStore.localizations = {prob_scores: [0.9, 1.0], zdist_thresh: 0, scales: [0.7, 1.0]};
     self.dataManager.filterStore.heatmap.detectable_id = 48;
@@ -50,8 +50,8 @@ ZIGVU.Controller.AnnotationController = function() {
   this.loadVideos = function(){
     self.dataManager.ajaxHandler.getFullDataPromise()
       .then(function(){ 
-        var videoDataMap = self.dataManager.getData_videoDataMap();
-        var videoLoadPromise = self.videoPlayer.loadVideosPromise(videoDataMap);
+        var videoClipMap = self.dataManager.getData_videoClipMap();
+        var videoLoadPromise = self.videoPlayer.loadClipsPromise(videoClipMap);
 
         // as video is loading, work some more
         self.dataManager.createDetectableDecorations();

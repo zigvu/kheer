@@ -13,7 +13,7 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
   var divId_filterTable = "#filter-videos-table";
 
 
-  this.displayInput = function(allVideoList){
+  this.displayInput = function(orderedClipList){
     self.empty();
     var requestDefer = Q.defer();
 
@@ -21,13 +21,13 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
     var cancelButtonId = 'filter-video-list-cancel';
     var inputName = "filterVideoListIds";
     // convert data to a tabular form
-    var headerArr = ['Video Id', 'Video Collection Id', 'Length (h:m:s)', 'Select'];
-    var bodyArr = _.map(allVideoList, function(video){
+    var headerArr = ['Video Id', 'Video Title', 'Length (h:m:s)', 'Select'];
+    var bodyArr = _.map(orderedClipList, function(video){
       return [
         video.video_id, 
-        video.video_collection_id, 
+        video.title, 
         video.pretty_length, 
-        '<input type="radio" name="' + inputName + '" value="' 
+        '<input type="checkbox" name="' + inputName + '" value="' 
         + video.video_id + '" id="input-filter-video-ids">'
       ];
     });
@@ -39,9 +39,10 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
 
     // resolve promise on button clicks
     $('#' + submitButtonId).click(function(){
-      var videoId = $('input[name="' + inputName + '"]:checked', divId_filterTable).val();
-      // TODO: remove once we allow multiple selection - currently convert to array
-      if(videoId){ requestDefer.resolve({ status: true, data: [parseInt(videoId)] }); }
+      var videoIds = $('input[name="' + inputName + '"]:checked', divId_filterTable)
+        .map(function() { return parseInt(this.value); }).get();
+
+      if(videoIds.length > 0){ requestDefer.resolve({ status: true, data: videoIds }); }
     });
     $('#' + cancelButtonId).click(function(){
       requestDefer.resolve({ status: false, data: undefined });
@@ -53,9 +54,9 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
   this.displayInfo = function(videoList){
     self.empty();
     // convert data to a tabular form
-    var headerArr = ['Video Id', 'Video Collection Id', 'Length (h:m:s)'];
+    var headerArr = ['Video Id', 'Video Title', 'Length (h:m:s)'];
     var bodyArr = _.map(videoList, function(video){
-      return [video.video_id, video.video_collection_id, video.pretty_length];
+      return [video.video_id, video.title, video.pretty_length];
     });
 
     $(divId_filterTable).append(htmlGenerator.table(headerArr, bodyArr));

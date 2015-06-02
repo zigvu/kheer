@@ -15,16 +15,16 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
   this.dataManager = undefined;
 
   var polygons = [], selectedPolyId, polyIdCounter = 0;
-  var currentVideoId, currentFrameNumber;
+  var currentClipId, currentClipFN;
 
   this.annotationMode = false;
 
-  this.startAnnotation = function(videoId, frameNumber){
+  this.startAnnotation = function(clipId, clipFN){
     // if previously was annotating, save that annotation
     if(self.annotationMode){ self.endAnnotation(); }
     // new annotation
     self.annotationMode = true;
-    self.drawAnnotations(videoId, frameNumber);
+    self.drawAnnotations(clipId, clipFN);
   };
 
   this.endAnnotation = function(){
@@ -32,7 +32,7 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
 
     var polygonsToSave = self.getPolygonsToSave();
     if(polygonsToSave.deleted_polys.length > 0 || polygonsToSave.new_polys.length > 0){
-      self.dataManager.setAnno_saveAnnotations(currentVideoId, currentFrameNumber, polygonsToSave);
+      self.dataManager.setAnno_saveAnnotations(currentClipId, currentClipFN, polygonsToSave);
     }
     polygons = [];
     polyIdCounter = 0;
@@ -40,11 +40,11 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
     self.drawOnce();
   };
 
-  this.drawAnnotations = function(videoId, frameNumber){
-    currentVideoId = videoId;
-    currentFrameNumber = frameNumber;
+  this.drawAnnotations = function(clipId, clipFN){
+    currentClipId = clipId;
+    currentClipFN = clipFN;
 
-    var annotations = self.dataManager.getAnno_annotations(currentVideoId, currentFrameNumber);
+    var annotations = self.dataManager.getAnno_annotations(currentClipId, currentClipFN);
     _.each(annotations, function(anno, detectableId){
       _.each(anno, function(annoCoords){
         self.addPointCoords(annoCoords, detectableId);
@@ -71,13 +71,11 @@ ZIGVU.FrameDisplay.DrawAnnotations = function() {
 
   this.getPolygonsToSave = function(){
     var deletedPolyObjs = [], newPolyObjs = [];
-    var polyDecorations = { video_id: currentVideoId, frame_number: currentFrameNumber };
 
     _.map(polygons, function(poly){
       if(poly.isClosed()){ 
-        var newPoly = _.extend(poly.getPoints(), polyDecorations);
-        if(poly.isDeleted()){ deletedPolyObjs.push(newPoly); }
-        if(poly.isNew()){ newPolyObjs.push(newPoly); }
+        if(poly.isDeleted()){ deletedPolyObjs.push(poly.getPoints()); }
+        if(poly.isNew()){ newPolyObjs.push(poly.getPoints()); }
       }
     });
     return {deleted_polys: deletedPolyObjs, new_polys: newPolyObjs};

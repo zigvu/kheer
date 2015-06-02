@@ -13,8 +13,8 @@ module Api
 			def video_list
 				filter = Jsonifiers::Filter::FilterParamsParser.new(params[:filter])
 				fql = Jsonifiers::Filter::LocalizationQuery.new(filter).run()
-				fqlVideoIds = fql.pluck(:video_id).uniq
-				formatted = Jsonifiers::Video::VideoListFormatter.new(fqlVideoIds).formatted()
+				videoIdFrameNumberArr = fql.pluck(:video_id, :frame_number)
+				formatted = Jsonifiers::Video::VideoToClipMapper.new(videoIdFrameNumberArr).formatted()
 
 				render json: formatted.to_json
 			end
@@ -54,7 +54,7 @@ module Api
 			# GET api/v1/filters/color_map
 			def color_map
 				chiaVersionId = params[:chia_version_id]
-				colorMap = ::ChiaVersion.find(chiaVersionId).patch_map.color_map
+				colorMap = ::ChiaVersion.find(chiaVersionId).color_map.color_map
 				render json: {color_map: colorMap}.to_json
 			end
 
@@ -62,9 +62,7 @@ module Api
 			def cell_map
 				chiaVersionId = params[:chia_version_id]
 				cellMap = {}
-				::ChiaVersion.find(chiaVersionId).cell_map.cell_boxes.each do |cb|
-					cellMap[cb.cell_idx] = {x: cb.x, y: cb.y, w: cb.w, h: cb.h}
-				end
+				::ChiaVersion.find(chiaVersionId).cell_map.cell_map
 				render json: {cell_map: cellMap}.to_json
 			end
 

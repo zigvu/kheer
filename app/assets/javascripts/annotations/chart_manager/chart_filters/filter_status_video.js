@@ -22,14 +22,14 @@ ZIGVU.ChartManager.ChartFilters.FilterStatusVideo = function(htmlGenerator) {
 
 
   function updateStatusFromVideoPlayer(args){
-    var fs = self.dataManager.getData_currentVideoState(args.video_id, args.frame_number);
+    var fs = self.dataManager.getData_currentVideoState(args.clip_id, args.clip_fn);
 
-    $(divId_filterStatusVideoCollectionId).text(fs.video_collection_id);
-    $(divId_filterStatusVideoCollectionFrameNumber).text(fs.video_collection_frame_number);
-    $(divId_filterStatusVideoCollectionFrameTime).text(fs.video_collection_frame_time);
-    $(divId_filterStatusVideoQuantaId).text(fs.video_quanta_id);
-    $(divId_filterStatusVideoQuantaFrameNumber).text(fs.video_quanta_frame_number);
-    $(divId_filterStatusVideoQuantaFrameTime).text(fs.video_quanta_frame_time);
+    $(divId_filterStatusVideoCollectionId).text(fs.video_id);
+    $(divId_filterStatusVideoCollectionFrameNumber).text(fs.video_fn);
+    $(divId_filterStatusVideoCollectionFrameTime).text(fs.video_time);
+    $(divId_filterStatusVideoQuantaId).text(fs.clip_id);
+    $(divId_filterStatusVideoQuantaFrameNumber).text(fs.clip_fn);
+    $(divId_filterStatusVideoQuantaFrameTime).text(fs.clip_time);
   };
 
   this.empty = function(){ };

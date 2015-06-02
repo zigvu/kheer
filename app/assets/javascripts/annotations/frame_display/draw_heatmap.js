@@ -16,9 +16,9 @@ ZIGVU.FrameDisplay.DrawHeatmap = function() {
 
   var heatCell = new ZIGVU.FrameDisplay.Shapes.HeatCell();
 
-  this.drawHeatmap = function(videoId, frameNumber){
+  this.drawHeatmap = function(clipId, clipFN){
     self.clear();
-    self.dataManager.getData_heatmapDataPromise(videoId, frameNumber)
+    self.dataManager.getData_heatmapDataPromise(clipId, clipFN)
       .then(function(heatmapData){
         var cellMap = self.dataManager.getData_cellMap();
         var colorMap = self.dataManager.getData_colorMap();

@@ -57,11 +57,31 @@ ZIGVU.DataManager.Accessors.FilterAccessor = function() {
 
   this.setVideoSelectionIds = function(videoIds){
     self.filterStore.videoIds = videoIds;
-    // create videoDataMap in dataStore
-    self.dataStore.videoDataMap = {}
+    // populate videoClipMap
+    self.dataStore.videoClipMap.sortedVideoIds = [];
+    self.dataStore.videoClipMap.sortedClipIds = [];
+    self.dataStore.videoClipMap.clipIdToVideoId = {};
+    self.dataStore.videoClipMap.clipMap = {};
+
+    // short hand
+    var sortedVideoIds = self.dataStore.videoClipMap.sortedVideoIds;
+    var sortedClipIds = self.dataStore.videoClipMap.sortedClipIds;
+    var clipIdToVideoId = self.dataStore.videoClipMap.clipIdToVideoId;
+    var clipMap = self.dataStore.videoClipMap.clipMap;
+
+    // ASSUME: videoList is already sorted by rails
     _.each(self.dataStore.videoList, function(video){
-      if(_.contains(self.filterStore.videoIds, video.video_id)){
-        self.dataStore.videoDataMap[video.video_id] = video;
+      var videoId = video.video_id;
+      if(_.contains(self.filterStore.videoIds, videoId)){
+        sortedVideoIds.push(videoId);
+        _.each(video.clips, function(clip){
+          var clipId = clip.clip_id;
+          sortedClipIds.push(clipId);
+          clipIdToVideoId[clipId] = videoId;
+          // construct clip map
+          clipMap[clipId] = _.omit(video, ['clips', 'pretty_length']);
+          clipMap[clipId] = _.extend(clipMap[clipId], clip);
+        });
       }
     });
   };

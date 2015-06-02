@@ -26,24 +26,24 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
 
   dataSummary: {"Localization Count", "Annotation Count", "Video Count", "Frame Count"}
 
-  dataFullLocalizations: {:video_id => {:frame_number => {:detectable_id => [loclz]}}}
+  dataFullLocalizations: {:video_id => {:video_fn => {:detectable_id => [loclz]}}}
     where loclz: {zdist_thresh:, prob_score:, scale: , x:, y:, w:, h:}
 
-  dataFullAnnotations: {:video_id => {:frame_number => {:detectable_id => [anno]}}}
+  dataFullAnnotations: {:video_id => {:video_fn => {:detectable_id => [anno]}}}
     where anno: {chia_version_id:, x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
 
   videoList: [
-    {
-      video_collection_id:, video_id:, video_url:, playback_frame_rate:, 
-      detection_frame_rate:, frame_number_start:, frame_number_end:, length:
-    }, 
+    { video_id:, title:, playback_frame_rate:, detection_frame_rate:, 
+      clips: [{ clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length: }, ]
+    },
   ]
 
-  videoDataMap: {:video_id => 
-    {
-      video_collection_id:, video_url:, playback_frame_rate:, 
-      detection_frame_rate:, frame_number_start:, frame_number_end:
-    }
+  videoClipMap: {
+    sortedVideoIds: [], sortedClipIds: [], clipIdToVideoId: {:clip_id => :video_id},
+    clipMap: {:clip_id => {
+      video_id:, title:, playback_frame_rate:, detection_frame_rate:, 
+      clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length:
+    }}
   }
 
   colorMap: {:integer => 'rgb', }
@@ -51,8 +51,8 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   cellMap: {cell_idx: {x:, y:, w:, h:}, }
 
   tChartData: [{name:, color:, values: [{counter: score:}, ]}, ]
-  toCounterMap: {:video_id => {:frame_number => counter}}
-  fromCounterMap: {:counter => {video_id: , frame_number:}}
+  toCounterMap: {:clip_id => {:clip_fn => counter}}
+  fromCounterMap: {:counter => {clip_id: , clip_fn:}}
 
 */
 
@@ -71,7 +71,10 @@ ZIGVU.DataManager.Stores.DataStore = function() {
   this.dataSummary = undefined;
   this.dataFullLocalizations = undefined;
   this.dataFullAnnotations = undefined;
-  this.videoDataMap = undefined;
+  this.videoClipMap = {
+    sortedVideoIds: undefined, sortedClipIds: undefined, 
+    clipIdToVideoId: undefined, clipMap: undefined
+  };
   this.colorMap = undefined;
   this.cellMap = undefined;
 
@@ -92,7 +95,10 @@ ZIGVU.DataManager.Stores.DataStore = function() {
     self.dataFullLocalizations = undefined;
     self.dataFullAnnotations = undefined;
     
-    self.videoDataMap = undefined;
+    self.videoClipMap = {
+      sortedVideoIds: undefined, sortedClipIds: undefined, 
+      clipIdToVideoId: undefined, clipMap: undefined
+    };
     self.colorMap = undefined;
     self.cellMap = undefined;
 
