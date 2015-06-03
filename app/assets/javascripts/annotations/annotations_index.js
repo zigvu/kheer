@@ -5,14 +5,14 @@ $(".analysis_annotations.index").ready(function() {
   annotationController.register();
   annotationController.startFilter();
   annotationController.bindPageUnload();
-  annotationController.loadDataTest();
+  // annotationController.loadDataTest();
 });
 
 $(".analysis_annotations.temp").ready(function() {
-	annotationController = new ZIGVU.Controller.AnnotationController();
-	annotationController.register();
-	annotationController.startFilter();
-	annotationController.loadDataTest();
+	// annotationController = new ZIGVU.Controller.AnnotationController();
+	// annotationController.register();
+	// annotationController.startFilter();
+	// annotationController.loadDataTest();
 
   // videoFrameCanvas = document.getElementById("videoFrameCanvas");
   // videoFrameCanvasCTX = videoFrameCanvas.getContext("2d");

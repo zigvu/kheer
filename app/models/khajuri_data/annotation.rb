@@ -30,15 +30,15 @@ class Annotation
 
 	# index for faster traversal during ordering
 	# -------------------------------------------
-	index({ clip_id: 1 }, { background: true })
+	index({ video_id: 1 }, { background: true })
 	index({ chia_version_id: 1 }, { background: true })
 	index({ frame_number: 1 }, { background: true })
 
 	# convenience methods
 	# -------------------------------------------
 
-	def clip
-		return Clip.find(self.clip_id)
+	def video
+		return Video.find(self.video_id)
 	end
 
 	def chia_version
