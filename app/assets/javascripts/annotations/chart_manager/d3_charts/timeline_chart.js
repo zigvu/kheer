@@ -269,7 +269,7 @@ ZIGVU.ChartManager.D3Charts.TimelineChart = function() {
     var counter = self.dataManager.tChart_getCounter(args.clip_id, args.clip_fn);
     self.brushToCounter(counter);
 
-    console.log("Frame number: " + args.clip_fn + ", counter: " + counter);
+    console.log("Clip ID: " + args.clip_id + ", Clip FN: " + args.clip_fn + ", Counter: " + counter);
   };
 
   //------------------------------------------------

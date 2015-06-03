@@ -73,8 +73,6 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
       self.drawAnnotations.startAnnotation(currentPlayState.clip_id, currentPlayState.clip_fn);
       self.eventManager.firePaintFrameCallback(currentPlayState);
       updateTimelineChartCounter = 0;
-
-      console.log("Seek ended!");
     }
   };
 
@@ -123,8 +121,8 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.nextFrame = function(){ self.frameNavigate(1); };
   this.previousFrame = function(){ self.frameNavigate(-1); };
 
-  this.skipFewFramesForward = function(){ self.frameNavigate(10); };
-  this.skipFewFramesBack = function(){ self.frameNavigate(-10); };
+  this.skipFewFramesForward = function(){ self.frameNavigate(5); };
+  this.skipFewFramesBack = function(){ self.frameNavigate(-5); };
 
   // speed
   this.playFaster = function(){ 

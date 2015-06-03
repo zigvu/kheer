@@ -36,7 +36,7 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
 
 
   // ----------------------------------------------
-  // video clip mapping
+  // video <-> clip translation
   this.getVideoIdVideoFN = function(clipId, clipFN){
     var clip = self.dataStore.videoClipMap.clipMap[clipId];
     var videoId = clip.video_id;
@@ -99,7 +99,6 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
   // for video status
   this.getCurrentVideoState = function(clipId, clipFN){
     var clip = self.dataStore.videoClipMap.clipMap[clipId];
-    var videoId = clip.video_id;
     var videoFN = clipFN + clip.clip_fn_start;
 
     // prettyfiy times:
@@ -110,7 +109,8 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
 
     // return in format usable by display JS
     return {
-      video_id: videoId,
+      video_id: clip.video_id,
+      video_title: clip.title,
       video_fn: videoFN,
       video_time: videoFrameTime,
       clip_id: clipId,

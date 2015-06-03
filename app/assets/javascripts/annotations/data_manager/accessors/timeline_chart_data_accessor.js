@@ -64,8 +64,14 @@ ZIGVU.DataManager.Accessors.TimelineChartDataAccessor = function() {
   this.getNewPlayPosition = function(clipId, clipFN, numOfFrames){
     var counter = self.getCounter(clipId, clipFN);
     var newCounter = counter + numOfFrames;
-    if(newCounter < self.firstCounter){ newCounter = self.firstCounter; }
-    if(newCounter > self.lastCounter){ newCounter = self.lastCounter; }
+    // wrap around - since lastCounter is inclusive and firstCounter is 0,
+    // need to change index by 1
+    if(newCounter < self.firstCounter){ 
+      newCounter = self.lastCounter - (self.firstCounter - newCounter) + 1;
+    }
+    if(newCounter > self.lastCounter){ 
+      newCounter = self.firstCounter + (newCounter - self.lastCounter) - 1;
+    }
 
     return self.getClipIdClipFN(newCounter);
   };

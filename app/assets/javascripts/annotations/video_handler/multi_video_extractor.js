@@ -73,6 +73,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
         // restart from begining
         currentPlayState = 'seeking';
         self.setClipPromise(firstClipId, 0)
+          .then(function(){ return self.videoFrameObjects[currentClipId].vfe.playPromise(); })
           .then(function(){ currentPlayState = 'playing'; })
           .catch(function (errorReason) { self.err(errorReason); });
       } else {
@@ -96,12 +97,12 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
 
   this.getCurrentState = function(){
     var vfo = self.videoFrameObjects[currentClipId];
-    var currentClipFN = Math.round(currentClipTime * vfo.playback_frame_rate);
+    var clipFN = Math.round(currentClipTime * vfo.playback_frame_rate);
 
     return {
       play_state: currentPlayState,
       clip_id: currentClipId,
-      clip_fn: currentClipFN
+      clip_fn: clipFN
     };
   };
 
@@ -117,41 +118,53 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
         // else, we can go to next video
         currentPlayState = 'seeking';
         self.setClipPromise(nextClipId, 0)
+          .then(function(){ return self.videoFrameObjects[currentClipId].vfe.playPromise(); })
           .then(function(){ currentPlayState = 'playing'; })
           .catch(function (errorReason) { self.err(errorReason); });
       }
     }
   };
 
-  this.setClipPromise = function(clipId, clipTime){
-    currentClipId = clipId;
-    currentClipTime = clipTime;
-
-    var previousPlayState = currentPlayState;
-    currentPlayState = 'seeking';
-    var vfe = self.videoFrameObjects[currentClipId].vfe;
-    var sfp = vfe.seekFramePromise(currentClipTime)
-      .then(function(){ return vfe.playbackRatePromise(playbackSpeed); });
+  this.setClipPromise = function(clipId, clipFN){
+    var vfo = self.videoFrameObjects[clipId];
+    var clipTime = clipFN / vfo.playback_frame_rate;
+    var sfp = vfo.vfe.seekFramePromise(clipTime)
+      .then(function(ct){ 
+        currentClipId = clipId;
+        currentClipTime = ct;
+        return vfo.vfe.playbackRatePromise(playbackSpeed); 
+      });
 
     return sfp;
   };
 
   this.seekToClipIdClipFN = function(clipId, clipFN){
-    if(clipId != currentClipId){
-      // TBD
-    } else {
-      var vfo = self.videoFrameObjects[currentClipId];
-      currentClipTime = clipFN / vfo.playback_frame_rate;
-      if(currentClipTime < 0){ currentClipTime = 0; }
+    var vfo = self.videoFrameObjects[currentClipId];
+    var clipTime = clipFN / vfo.playback_frame_rate;
+    if(clipTime < 0){ clipTime = 0; }
 
-      currentPlayState = 'seeking';
+    currentPlayState = 'seeking';
+
+    if(clipId != currentClipId){
       if(vfo.vfe.isPlaying()){
         vfo.vfe.pausePromise()
-          .then(function(){ return vfo.vfe.seekFramePromise(currentClipTime); })
+          .then(function(){ return self.setClipPromise(clipId, clipFN); })
+          .then(function(){ currentPlayState = 'paused'; })
+          .catch(function (errorReason) { self.err(errorReason); });
+      } else {
+        self.setClipPromise(clipId, clipFN)
+          .then(function(){ currentPlayState = 'paused'; })
+          .catch(function (errorReason) { self.err(errorReason); });
+      }
+    } else {
+      // if within the same clip
+      if(vfo.vfe.isPlaying()){
+        vfo.vfe.pausePromise()
+          .then(function(){ return vfo.vfe.seekFramePromise(clipTime); })
           .then(function(ct){ currentClipTime = ct; currentPlayState = 'paused'; })
           .catch(function (errorReason) { self.err(errorReason); });
       } else {
-        vfo.vfe.seekFramePromise(currentClipTime)
+        vfo.vfe.seekFramePromise(clipTime)
           .then(function(ct){ currentClipTime = ct; currentPlayState = 'paused'; })
           .catch(function (errorReason) { self.err(errorReason); });
       }
