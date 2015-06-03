@@ -7,14 +7,13 @@ module Services
       end
 
       def getData(chiaVersionId, videoId, frameNumber, scale, detectableId)
-        videoCollectionId = Video.find(videoId).video_collection.id
         chiaClassId = ChiaVersionDetectable.where(chia_version_id: chiaVersionId)
           .where(detectable_id: detectableId).first.chia_detectable_id
 
         # syntax should match in
         # khajuri/messaging/handlers/HeatmapDataHandler.py
         request = {
-          video_id: videoCollectionId,
+          video_id: videoId,
           chia_version_id: chiaVersionId,
           frame_number: frameNumber,
           scale: scale,

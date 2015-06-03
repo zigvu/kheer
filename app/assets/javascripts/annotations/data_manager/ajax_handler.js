@@ -199,8 +199,8 @@ ZIGVU.DataManager.AjaxHandler = function() {
         chia_version_id: chiaVersionId,
         video_id: videoId,
         video_fn: videoFN,
-        detectable_id: detectableId,
-        scale: scale
+        scale: scale,
+        detectable_id: detectableId
       }
     };
 

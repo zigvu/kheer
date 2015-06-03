@@ -48,7 +48,7 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
 
   colorMap: {:integer => 'rgb', }
 
-  cellMap: {cell_idx: {x:, y:, w:, h:}, }
+  cellMap: {cell_idx: {x0:, y0:, x3:, y3:}, }
 
   tChartData: [{name:, color:, values: [{counter: score:}, ]}, ]
   toCounterMap: {:clip_id => {:clip_fn => counter}}

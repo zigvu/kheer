@@ -61,8 +61,7 @@ module Api
 			# GET api/v1/filters/cell_map
 			def cell_map
 				chiaVersionId = params[:chia_version_id]
-				cellMap = {}
-				::ChiaVersion.find(chiaVersionId).cell_map.cell_map
+				cellMap = ::ChiaVersion.find(chiaVersionId).cell_map.cell_map
 				render json: {cell_map: cellMap}.to_json
 			end
 
