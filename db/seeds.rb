@@ -7,7 +7,6 @@ Rails.cache.clear
 # imports
 load 'app/seed_helpers/intake_detectable_list.rb'
 load 'app/data_importers/create_maps.rb'
-load 'app/data_importers/import_score_folder.rb'
 
 # data files
 kheerSeed = Rails.root.join('public','data','kheerSeed').to_s
@@ -27,13 +26,14 @@ zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", p
 # chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
 # chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
 
-# chiaVersionId = 1; chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(chiaVersionId); chiaSerializer.resetSettings(); chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5]); chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+# pmf = DataImporters::CreateMaps.new(cellMapFile, colorMapFile)
+# pmf.saveToDb(firstChiaVersion)
 
 # idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
 # idl.saveToDb(firstChiaVersion.id)
 
-# pmf = DataImporters::CreateMaps.new(patchMapFile, cellMapFile, colorMapFile)
-# pmf.saveToDb(firstChiaVersion.id)
+# chiaVersionId = 1; chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(chiaVersionId); chiaSerializer.resetSettings(); chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5]); chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+
 
 # # so as not to re-create data each time, create copy that will
 # # get deleted after populating database

@@ -18,6 +18,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   this.filterChiaVersionsLocalization = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsLocalization(self.htmlGenerator);
   this.filterDetectables = new ZIGVU.ChartManager.ChartFilters.FilterDetectables(self.htmlGenerator);
   this.filterLocalizationSettings = new ZIGVU.ChartManager.ChartFilters.FilterLocalizationSettings(self.htmlGenerator);
+  this.filterVideoSelection = new ZIGVU.ChartManager.ChartFilters.FilterVideoSelection(self.htmlGenerator);
   this.filterChiaVersionsAnnotation = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsAnnotation(self.htmlGenerator);
   this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(self.htmlGenerator);
 
@@ -89,13 +90,34 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           var selectedLocalizationSettings = self.dataManager.getFilter_localizationSettings();
 
           self.filterLocalizationSettings.displayInfo(selectedLocalizationSettings);
-          self.getChiaVersionsAnnotation();
+          self.getVideoSelection();
         } else {
           self.reset();
           self.startFilter();
         }
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
+  };
+
+  this.getVideoSelection = function(){
+    self.dataManager.ajaxHandler.getAllVideoListPromise()
+      .then(function(allVideoList){
+        self.filterVideoSelection.show();
+        return self.filterVideoSelection.displayInput(allVideoList);
+      })
+      .then(function(response){
+        if(response.status){
+          self.dataManager.setFilter_videoSelectionIds(response.data);
+          var selectedVideos = self.dataManager.getFilter_videoSelections();
+
+          self.filterVideoSelection.displayInfo(selectedVideos);
+          self.getChiaVersionsAnnotation();
+        } else {
+          self.reset();
+          self.startFilter();
+        }
+      })
+      .catch(function (errorReason) { self.err(errorReason); });    
   };
 
   this.getChiaVersionsAnnotation = function(){
@@ -108,7 +130,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           var selectedChiaVersion = self.dataManager.getFilter_chiaVersionAnnotation();
 
           self.filterChiaVersionsAnnotation.displayInfo(selectedChiaVersion);
-          self.getDataLoader();
+          self.getDataSummaryLoader();
         } else {
           self.reset();
           self.startFilter();
@@ -117,7 +139,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
       .catch(function (errorReason) { self.err(errorReason); });    
   };
 
-  this.getDataLoader = function(){
+  this.getDataSummaryLoader = function(){
     self.dataManager.ajaxHandler.getDataSummaryPromise()
       .then(function(dataSummary){
         self.filterDataLoader.show();
@@ -141,6 +163,7 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
     self.filterChiaVersionsLocalization.hide();
     self.filterDetectables.hide();
     self.filterLocalizationSettings.hide();
+    self.filterVideoSelection.hide();
     self.filterChiaVersionsAnnotation.hide();
     self.filterDataLoader.hide();
 

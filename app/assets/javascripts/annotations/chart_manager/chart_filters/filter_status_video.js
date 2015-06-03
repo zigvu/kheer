@@ -13,23 +13,25 @@ ZIGVU.ChartManager.ChartFilters.FilterStatusVideo = function(htmlGenerator) {
 
   var divId_filterContainer = "#filter-status-video-container";
 
-  var divId_filterStatusVideoCollectionId = "#filter-status-video-collection-id";
-  var divId_filterStatusVideoCollectionFrameNumber = "#filter-status-video-collection-frame-number";
-  var divId_filterStatusVideoCollectionFrameTime = "#filter-status-video-collection-frame-time";
-  var divId_filterStatusVideoQuantaId = "#filter-status-video-quanta-id";
-  var divId_filterStatusVideoQuantaFrameNumber = "#filter-status-video-quanta-frame-number";
-  var divId_filterStatusVideoQuantaFrameTime = "#filter-status-video-quanta-frame-time";
+  var divId_filterStatusVideoId = "#filter-status-video-id";
+  var divId_filterStatusVideoTitle = "#filter-status-video-title";
+  var divId_filterStatusVideoFrameNumber = "#filter-status-video-fn";
+  var divId_filterStatusVideoFrameTime = "#filter-status-video-time";
+  var divId_filterStatusClipId = "#filter-status-clip-id";
+  var divId_filterStatusClipFrameNumber = "#filter-status-clip-fn";
+  var divId_filterStatusClipFrameTime = "#filter-status-clip-time";
 
 
   function updateStatusFromVideoPlayer(args){
-    var fs = self.dataManager.getData_currentVideoState(args.video_id, args.frame_number);
+    var fs = self.dataManager.getData_currentVideoState(args.clip_id, args.clip_fn);
 
-    $(divId_filterStatusVideoCollectionId).text(fs.video_collection_id);
-    $(divId_filterStatusVideoCollectionFrameNumber).text(fs.video_collection_frame_number);
-    $(divId_filterStatusVideoCollectionFrameTime).text(fs.video_collection_frame_time);
-    $(divId_filterStatusVideoQuantaId).text(fs.video_quanta_id);
-    $(divId_filterStatusVideoQuantaFrameNumber).text(fs.video_quanta_frame_number);
-    $(divId_filterStatusVideoQuantaFrameTime).text(fs.video_quanta_frame_time);
+    $(divId_filterStatusVideoId).text(fs.video_id);
+    $(divId_filterStatusVideoTitle).text(fs.video_title);
+    $(divId_filterStatusVideoFrameNumber).text(fs.video_fn);
+    $(divId_filterStatusVideoFrameTime).text(fs.video_time);
+    $(divId_filterStatusClipId).text(fs.clip_id);
+    $(divId_filterStatusClipFrameNumber).text(fs.clip_fn);
+    $(divId_filterStatusClipFrameTime).text(fs.clip_time);
   };
 
   this.empty = function(){ };

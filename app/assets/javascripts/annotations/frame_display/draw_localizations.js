@@ -17,13 +17,13 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
 
   var bbox = new ZIGVU.FrameDisplay.Shapes.Bbox();
 
-  this.drawLocalizations = function(videoId, frameNumber){
-    var localizations = self.dataManager.getData_localizationsData(videoId, frameNumber);
+  this.drawLocalizations = function(clipId, clipFN){
+    var localizations = self.dataManager.getData_localizationsData(clipId, clipFN);
     self.drawBboxes(localizations);
   };
 
-  this.drawAllLocalizations = function(videoId, frameNumber){
-    self.dataManager.getData_allLocalizationsDataPromise(videoId, frameNumber)
+  this.drawAllLocalizations = function(clipId, clipFN){
+    self.dataManager.getData_allLocalizationsDataPromise(clipId, clipFN)
       .then(function(localizations){
         self.drawBboxes(localizations);
       })

@@ -53,6 +53,8 @@ gem 'cache_digests'    # to expire view partials
 gem 'kgio', '~> 2.9.2' # makes dalli 20-30% faster as per dalli github page
 # document store
 gem "mongoid", "~> 4.0.0"
+gem "bunny" # for rabbitmq
+
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

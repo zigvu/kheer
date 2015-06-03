@@ -24,9 +24,9 @@ module Api
 			# GET api/v1/frames/heatmap_data
 			def heatmap_data
 				p = Jsonifiers::Heatmap::HeatmapParamsParser.new(params[:heatmap])
-				hde = Jsonifiers::Heatmap::HeatmapDataExtractor.new(
+				heatmapData = Services::MessagingServices::HeatmapData.new.getData(
 					p.chiaVersionId, p.videoId, p.frameNumber, p.scale, p.detectableId)
-				render json: hde.formatted().to_json
+				render json: heatmapData # <- already JSON
 			end
 		end
 	end

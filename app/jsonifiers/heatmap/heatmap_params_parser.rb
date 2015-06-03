@@ -11,7 +11,7 @@ module Jsonifiers
 				# expect: integer
 				@videoId = heatmapParams['video_id'].to_i if heatmapParams['video_id']
 				# expect: integer
-				@frameNumber = heatmapParams['frame_number'].to_i if heatmapParams['frame_number']
+				@frameNumber = heatmapParams['video_fn'].to_i if heatmapParams['video_fn']
 				# expect: float
 				@scale = heatmapParams['scale'].to_f if heatmapParams['scale']
 				# expect: integer

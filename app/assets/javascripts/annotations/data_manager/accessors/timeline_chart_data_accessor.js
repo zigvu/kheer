@@ -12,6 +12,10 @@ ZIGVU.DataManager.Accessors.TimelineChartDataAccessor = function() {
   this.dataStore = undefined;
   this.filterStore = undefined;
 
+  // first and last counter
+  this.firstCounter = undefined;
+  this.lastCounter = undefined;
+
   this.createChartData = function(localizationDataAccessor, filterAccessor){
     // initialize
     self.dataStore.tChartData = [];
@@ -19,11 +23,11 @@ ZIGVU.DataManager.Accessors.TimelineChartDataAccessor = function() {
     self.dataStore.fromCounterMap = {};
 
     // short hand
-    var vfcm = self.dataStore.toCounterMap;
-    var cvfm = self.dataStore.fromCounterMap;
+    var vf2cm = self.dataStore.toCounterMap;
+    var cm2vf = self.dataStore.fromCounterMap;
 
     var detectableIds = filterAccessor.getLocalizationDetectableIds();
-    var sortedVideoIds = localizationDataAccessor.getSortedVideoIds();
+    var sortedClipIds = self.dataStore.videoClipMap.sortedClipIds;
     
     // loop through all filtered detectables
     _.each(detectableIds, function(detId){
@@ -32,40 +36,52 @@ ZIGVU.DataManager.Accessors.TimelineChartDataAccessor = function() {
 
       // d3 chart data expectations
       var values = [], counter = 0;
-      var frameNumberStart, frameNumberEnd, maxProbScore;
-      _.each(sortedVideoIds, function(videoId){
-        frameNumberStart = localizationDataAccessor.getFrameNumberStart(videoId);
-        frameNumberEnd = localizationDataAccessor.getFrameNumberEnd(videoId);
+      var clipNumOfFrames, maxProbScore;
+      _.each(sortedClipIds, function(clipId){
+        var clip = self.dataStore.videoClipMap.clipMap[clipId];
+        clipNumOfFrames = clip.clip_fn_end - clip.clip_fn_start;
 
-        _.each(_.range(frameNumberStart, frameNumberEnd + 1), function(frameNumber){
+        // _.range is not inclusive
+        _.each(_.range(0, clipNumOfFrames + 1), function(clipFN){
 
           // max prob scores
-          maxProbScore = localizationDataAccessor.getMaxProbScore(videoId, frameNumber, detId);
+          maxProbScore = localizationDataAccessor.getMaxProbScore(clipId, clipFN, detId);
           values.push({counter: counter++, score: maxProbScore});
 
-          // create maps beteween videoId/frameNumber and counter
-          if(!vfcm[videoId]){ vfcm[videoId] = {}; }
-          if(!vfcm[videoId][frameNumber]){ vfcm[videoId][frameNumber] = counter - 1; }
-          if(!cvfm[counter - 1]){ cvfm[counter - 1] = {video_id: videoId, frame_number: frameNumber}; }
+          // create maps beteween clipId/clipFN and counter
+          if(!vf2cm[clipId]){ vf2cm[clipId] = {}; }
+          if(!vf2cm[clipId][clipFN]){ vf2cm[clipId][clipFN] = counter - 1; }
+          if(!cm2vf[counter - 1]){ cm2vf[counter - 1] = {clip_id: clipId, clip_fn: clipFN}; }
         });
       });
       self.dataStore.tChartData.push({name: name, color: color, values: values});
     });
+
+    self.firstCounter = _.first(self.dataStore.tChartData[0].values).counter;
+    self.lastCounter = _.last(self.dataStore.tChartData[0].values).counter;
   };
 
-  this.getNewPlayPosition = function(videoId, frameNumber, numOfFrames){
-    var counter = self.getCounter(videoId, frameNumber);
+  this.getNewPlayPosition = function(clipId, clipFN, numOfFrames){
+    var counter = self.getCounter(clipId, clipFN);
     var newCounter = counter + numOfFrames;
-    if(newCounter < _.first(self.dataStore.tChartData[0].values).counter){
-      newCounter = _.first(self.dataStore.tChartData[0].values).counter;
+    // wrap around - since lastCounter is inclusive and firstCounter is 0,
+    // need to change index by 1
+    if(newCounter < self.firstCounter){ 
+      newCounter = self.lastCounter - (self.firstCounter - newCounter) + 1;
     }
-    return self.getVideoIdFrameNumber(newCounter);
+    if(newCounter > self.lastCounter){ 
+      newCounter = self.firstCounter + (newCounter - self.lastCounter) - 1;
+    }
+
+    return self.getClipIdClipFN(newCounter);
   };
 
-  this.getHitPlayPosition = function(videoId, frameNumber, direction){
+  this.getHitPlayPosition = function(clipId, clipFN, direction){
     // direction == true if forward direction search
 
-    var curCounter = self.getCounter(videoId, frameNumber);
+    var curCounter = self.getCounter(clipId, clipFN);
+    // each class will have next hit at different positions - get the min/max
+    // position by traversing data for all classes
     var differentCounters = [];
     _.each(self.dataStore.tChartData, function(clsData){
       var values = clsData.values;
@@ -83,19 +99,18 @@ ZIGVU.DataManager.Accessors.TimelineChartDataAccessor = function() {
     if(differentCounters.length > 0){ 
       minMaxCounter = direction ? _.min(differentCounters) : _.max(differentCounters);
     } else {
-      var v = self.dataStore.tChartData[0].values;
-      minMaxCounter = direction ? _.last(v).counter : _.first(v).counter;
+      minMaxCounter = direction ? self.lastCounter : self.firstCounter;
     }
-    return self.getVideoIdFrameNumber(minMaxCounter);
+    return self.getClipIdClipFN(minMaxCounter);
   };
 
-  this.getCounter = function(videoId, frameNumber){
-    var counter = self.dataStore.toCounterMap[videoId][frameNumber];
-    if(!counter){ counter = _.first(self.dataStore.tChartData[0].values).counter; }
+  this.getCounter = function(clipId, clipFN){
+    var counter = self.dataStore.toCounterMap[clipId][clipFN];
+    if(!counter){ counter = self.firstCounter; }
     return counter;
   };
 
-  this.getVideoIdFrameNumber = function(counter){
+  this.getClipIdClipFN = function(counter){
     return self.dataStore.fromCounterMap[counter];
   };
 

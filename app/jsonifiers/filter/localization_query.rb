@@ -13,6 +13,7 @@ module Jsonifiers
 				applyLocalizationProbScores()
 				applyLocalizationZdistThresh()
 				applyLocalizationScales()
+				applyVideoIds()
 				return @query
 			end
 
@@ -48,6 +49,13 @@ module Jsonifiers
 				scales = @parsedFilter.localizationScales
 				if scales != nil and scales.count > 0
 					@query = @query.in(scale: scales)
+				end
+			end
+
+			def applyVideoIds()
+				videoIds = @parsedFilter.videoIds
+				if videoIds != nil and videoIds.count > 0
+					@query = @query.in(video_id: videoIds)
 				end
 			end
 

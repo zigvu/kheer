@@ -10,7 +10,7 @@ Kheer::Application.routes.draw do
       get 'filters/cell_map'
       post 'filters/filtered_summary'
       post 'filters/filtered_data'
-      get 'filters/video_data_map'
+      post 'filters/video_list'
       resources :filters, only: [:new]
 
       post 'frames/update_annotations'
@@ -32,7 +32,7 @@ Kheer::Application.routes.draw do
   end
 
   namespace :khajuri_data do
-    resources :video_collections
+    resources :videos
   end
 
   namespace :analysis do

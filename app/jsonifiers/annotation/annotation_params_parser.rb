@@ -38,7 +38,7 @@ module Jsonifiers
 					vi: a['video_id'].to_i,
 					ci: a['chia_version_id'].to_i,
 
-					fn: a['frame_number'].to_i,
+					fn: a['video_fn'].to_i,
 					#ft: a['frame_time'].to_f,
 					
 					di: a['detectable_id'].to_i,

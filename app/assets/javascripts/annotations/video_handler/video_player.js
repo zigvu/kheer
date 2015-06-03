@@ -24,8 +24,8 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   var isVideoPaused = false;
 
   // returns promise that will be resolved once all videos are loaded
-  this.loadVideosPromise = function(videoDataMap){ 
-    return self.multiVideoExtractor.loadVideosPromise(videoDataMap); 
+  this.loadClipsPromise = function(videoClipMap){ 
+    return self.multiVideoExtractor.loadClipsPromise(videoClipMap); 
   }
 
   this.enableControls = function(bool){
@@ -70,20 +70,18 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
       // schedule to run again in a short time
       setTimeout(function(){ self.paintUntilPaused(); }, 20);
     } else if(currentPlayState.play_state === 'paused'){
-      self.drawAnnotations.startAnnotation(currentPlayState.video_id, currentPlayState.frame_number);
+      self.drawAnnotations.startAnnotation(currentPlayState.clip_id, currentPlayState.clip_fn);
       self.eventManager.firePaintFrameCallback(currentPlayState);
       updateTimelineChartCounter = 0;
-
-      console.log("Seek ended!");
     }
   };
 
   // paint localizations
   this.paintFrameWithLocalization = function(){
     var currentPlayState = self.multiVideoExtractor.paintFrame();
-    self.drawLocalizations.drawLocalizations(currentPlayState.video_id, currentPlayState.frame_number);
+    self.drawLocalizations.drawLocalizations(currentPlayState.clip_id, currentPlayState.clip_fn);
     // TODO: not working right now
-    // self.drawAnnotations.drawAnnotations(currentPlayState.video_id, currentPlayState.frame_number);
+    // self.drawAnnotations.drawAnnotations(currentPlayState.clip_id, currentPlayState.clip_fn);
     // only clear heatmap here - paint in another function
     self.drawHeatmap.clear();
     return currentPlayState;
@@ -92,13 +90,13 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.paintHeatmap = function(){
     if(!isVideoPaused){ return; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
-    self.drawHeatmap.drawHeatmap(currentPlayState.video_id, currentPlayState.frame_number);
+    self.drawHeatmap.drawHeatmap(currentPlayState.clip_id, currentPlayState.clip_fn);
   };
 
   this.drawAllLocalizations = function(){
     if(!isVideoPaused){ return; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
-    self.drawLocalizations.drawAllLocalizations(currentPlayState.video_id, currentPlayState.frame_number);
+    self.drawLocalizations.drawAllLocalizations(currentPlayState.clip_id, currentPlayState.clip_fn);
   };
 
   //------------------------------------------------
@@ -123,8 +121,8 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   this.nextFrame = function(){ self.frameNavigate(1); };
   this.previousFrame = function(){ self.frameNavigate(-1); };
 
-  this.skipFewFramesForward = function(){ self.frameNavigate(10); };
-  this.skipFewFramesBack = function(){ self.frameNavigate(-10); };
+  this.skipFewFramesForward = function(){ self.frameNavigate(5); };
+  this.skipFewFramesBack = function(){ self.frameNavigate(-5); };
 
   // speed
   this.playFaster = function(){ 
@@ -155,9 +153,9 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
     if(!isVideoPaused){ isVideoPaused = true; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
     var newPlayPos = self.dataManager.tChart_getNewPlayPosition(
-      currentPlayState.video_id, currentPlayState.frame_number, numOfFrames);
+      currentPlayState.clip_id, currentPlayState.clip_fn, numOfFrames);
 
-    self.multiVideoExtractor.seekToVideoFrameNumber(newPlayPos.video_id, newPlayPos.frame_number);
+    self.multiVideoExtractor.seekToClipIdClipFN(newPlayPos.clip_id, newPlayPos.clip_fn);
     self.paintUntilPaused();
   };
 
@@ -165,9 +163,9 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
     if(!isVideoPaused){ isVideoPaused = true; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
     var newPlayPos = self.dataManager.tChart_getHitPlayPosition(
-      currentPlayState.video_id, currentPlayState.frame_number, forwardDirection);
+      currentPlayState.clip_id, currentPlayState.clip_fn, forwardDirection);
 
-    self.multiVideoExtractor.seekToVideoFrameNumber(newPlayPos.video_id, newPlayPos.frame_number);
+    self.multiVideoExtractor.seekToClipIdClipFN(newPlayPos.clip_id, newPlayPos.clip_fn);
     self.paintUntilPaused();
   }
 
@@ -176,7 +174,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
   function frameNavigateAfterBrush(args){
     if(!isVideoPaused){ isVideoPaused = true; }
 
-    self.multiVideoExtractor.seekToVideoFrameNumber(args.video_id, args.frame_number);
+    self.multiVideoExtractor.seekToClipIdClipFN(args.clip_id, args.clip_fn);
     self.paintUntilPaused();    
   };
 

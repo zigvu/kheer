@@ -70,6 +70,32 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return requestDefer.promise;
   };
 
+  this.getAllVideoListPromise = function(){
+    var dataURL = '/api/v1/filters/video_list';
+    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
+
+    var requestDefer = Q.defer();
+    if(self.filterStore.chiaVersionIdLocalization === undefined){
+      requestDefer.reject('ZIGVU.DataManager.AjaxHandler -> No chia version filter found');
+    } else {
+      self.getPOSTRequestPromise(dataURL, dataParam)
+        .then(function(data){
+          self.dataStore.videoList = data.video_list;
+          // add pretty length
+          _.each(self.dataStore.videoList, function(video){
+            length = _.reduce(video.clips, function(memo, clip){ return memo + clip.length; }, 0)
+            video.pretty_length = self.dataStore.textFormatters.getReadableTime(length);
+          });
+          requestDefer.resolve(self.dataStore.videoList);
+        })
+        .catch(function (errorReason) {
+          requestDefer.reject('ZIGVU.DataManager.AjaxHandler ->' + errorReason);
+        });
+    }
+
+    return requestDefer.promise;
+  };
+
   this.getDataSummaryPromise = function(){
     var dataURL = '/api/v1/filters/filtered_summary';
     var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
@@ -130,17 +156,6 @@ ZIGVU.DataManager.AjaxHandler = function() {
         .then(function(data){
           self.dataStore.detectables.alllist = data;
 
-          // get video data map
-          var videoIds = Object.keys(self.dataStore.dataFullLocalizations);
-          self.filterStore.videoIds = videoIds;
-
-          dataURL = '/api/v1/filters/video_data_map';
-          dataParam = {video_data_map: {video_ids: videoIds}};
-          return self.getGETRequestPromise(dataURL, dataParam)
-        })
-        .then(function(data){
-          self.dataStore.videoDataMap = data.video_data_map;
-
           // get color map
           dataURL = '/api/v1/filters/color_map';
           dataParam = {chia_version_id: self.filterStore.chiaVersionIdLocalization};
@@ -173,7 +188,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     return self.getPOSTRequestPromise(dataURL, dataParam);
   };
 
-  this.getHeatmapDataPromise = function(videoId, frameNumber){
+  this.getHeatmapDataPromise = function(videoId, videoFN){
     var chiaVersionId = self.filterStore.chiaVersionIdLocalization;
     var detectableId = self.filterStore.heatmap.detectable_id;
     var scale = self.filterStore.heatmap.scale;
@@ -183,16 +198,16 @@ ZIGVU.DataManager.AjaxHandler = function() {
       heatmap: {
         chia_version_id: chiaVersionId,
         video_id: videoId,
-        frame_number: frameNumber,
-        detectable_id: detectableId,
-        scale: scale
+        video_fn: videoFN,
+        scale: scale,
+        detectable_id: detectableId
       }
     };
 
     return self.getGETRequestPromise(dataURL, dataParam);
   };
 
-  this.getAllLocalizationsPromise = function(videoId, frameNumber){
+  this.getAllLocalizationsPromise = function(videoId, videoFN){
     var requestDefer = Q.defer();
 
     var chiaVersionId = self.filterStore.chiaVersionIdLocalization;
@@ -203,7 +218,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
       localization: {
         chia_version_id: chiaVersionId,
         video_id: videoId,
-        frame_number: frameNumber,
+        video_fn: videoFN,
         zdist_thresh: zdistThresh
       }
     };
@@ -211,8 +226,8 @@ ZIGVU.DataManager.AjaxHandler = function() {
       .then(function(data){
         var localizations = [];
         if((data.localizations[videoId] !== undefined) && 
-          (data.localizations[videoId][frameNumber] !== undefined)){ 
-          localizations = data.localizations[videoId][frameNumber];
+          (data.localizations[videoId][videoFN] !== undefined)){ 
+          localizations = data.localizations[videoId][videoFN];
         }
         requestDefer.resolve(localizations);
       })
