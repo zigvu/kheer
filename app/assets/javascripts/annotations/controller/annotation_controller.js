@@ -13,6 +13,7 @@ ZIGVU.Controller.AnnotationController = function() {
   this.chartManager = new ZIGVU.ChartManager.ChartManager();
   this.dataManager = new ZIGVU.DataManager.DataManager();
   this.videoPlayer = new ZIGVU.VideoHandler.VideoPlayer();
+  this.drawInfoOverlay = new ZIGVU.FrameDisplay.DrawInfoOverlay();
 
   this.startFilter = function(){
     self.videoPlayer.enableControls(false);
@@ -87,6 +88,10 @@ ZIGVU.Controller.AnnotationController = function() {
       .setDataManager(self.dataManager);
 
     self.videoPlayer
+      .setEventManager(self.eventManager)
+      .setDataManager(self.dataManager);
+
+    self.drawInfoOverlay
       .setEventManager(self.eventManager)
       .setDataManager(self.dataManager);
   };

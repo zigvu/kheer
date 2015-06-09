@@ -29,7 +29,8 @@ $chart-timeline-brush-color: $orange;
   #videoFrameCanvas{ z-index: 0; }
   #heatmapCanvas{ z-index: 1; opacity: 0.5; }
   #localizationCanvas{ z-index: 2; }
-  #annotationCanvas{ z-index: 3; }
+  #infoOverlayCanvas{ z-index: 3; opacity: 0.8; }
+  #annotationCanvas{ z-index: 4; }
 }
 
 // ------------------------------------

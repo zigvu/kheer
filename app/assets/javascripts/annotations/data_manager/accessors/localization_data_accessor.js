@@ -51,10 +51,17 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
     var videoFN = clipFN + clip.clip_fn_start;
 
     var detectionRate = clip.detection_frame_rate;
-    videoFN = (videoFN - 1) - ((videoFN - 1) % detectionRate) + 1;
+    var efn = self.dataStore.firstEvaluatedVideoFn;
+    videoFN = (videoFN - efn) - ((videoFN - efn) % detectionRate) + efn;
     return { video_id: videoId, video_fn: videoFN };
   };
 
+  this.isEvaluatedFrame = function(clipId, videoFN){
+    var clip = self.dataStore.videoClipMap.clipMap[clipId];
+    var detectionRate = clip.detection_frame_rate;
+    var efn = self.dataStore.firstEvaluatedVideoFn;
+    return (((videoFN - efn) % detectionRate) == 0);
+  };
 
   // ----------------------------------------------
   // localization raw data
@@ -97,9 +104,15 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
   };
   //------------------------------------------------
   // for video status
-  this.getCurrentVideoState = function(clipId, clipFN){
+  this.getVideoState = function(currentPlayState){
+    var clipId = currentPlayState.clip_id;
+    var clipFN = currentPlayState.clip_fn;
+    var extractedClipFN = currentPlayState.extracted_clip_fn;
+    if(extractedClipFN === undefined){ extractedClipFN = clipFN; }
+
     var clip = self.dataStore.videoClipMap.clipMap[clipId];
     var videoFN = clipFN + clip.clip_fn_start;
+    var extractedVideoFN = extractedClipFN + clip.clip_fn_start;
 
     // prettyfiy times:
     var videoFrameTime = self.dataStore.textFormatters.getReadableTime(
@@ -107,16 +120,23 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
     var clipFrameTime = self.dataStore.textFormatters.getReadableTime(
       1000.0 * clipFN / clip.playback_frame_rate);
 
+    self.dataStore.videoState.previous = _.clone(self.dataStore.videoState.current);
+
     // return in format usable by display JS
-    return {
+    self.dataStore.videoState.current = {
       video_id: clip.video_id,
       video_title: clip.title,
       video_fn: videoFN,
       video_time: videoFrameTime,
       clip_id: clipId,
       clip_fn: clipFN,
-      clip_time: clipFrameTime
+      clip_time: clipFrameTime,
+      extracted_clip_fn: extractedClipFN,
+      extracted_video_fn: extractedVideoFN,
+      is_evaluated_frame: self.isEvaluatedFrame(clipId, videoFN)
     };
+
+    return self.dataStore.videoState;
   };
 
   //------------------------------------------------

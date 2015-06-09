@@ -11,6 +11,8 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   [Note: Ruby style hash (:keyname => value) implies that raw id are used as keys of objects.
   JS style hash implies that (keyname: value) text are used as keys of objects.]
 
+  firstEvaluatedVideoFn: int
+
   chiaVersions: [
     {id:, name:, description:, settings: {zdistThresh: [zdistValues, ], scales: [scale, ]}},
   ]
@@ -54,12 +56,16 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   toCounterMap: {:clip_id => {:clip_fn => counter}}
   fromCounterMap: {:counter => {clip_id: , clip_fn:}}
 
+  videoState = {current:, previous:}
 */
 
 ZIGVU.DataManager.Stores.DataStore = function() {
   var self = this;
   this.colorCreator = new ZIGVU.Helpers.ColorCreator();
   this.textFormatters = new ZIGVU.Helpers.TextFormatters();
+
+  // TODO: get from config
+  this.firstEvaluatedVideoFn = 1
 
   this.chiaVersions = undefined;
   this.detectables = { 
@@ -83,6 +89,9 @@ ZIGVU.DataManager.Stores.DataStore = function() {
   this.toCounterMap = undefined;
   this.fromCounterMap = undefined;
 
+  // video state
+  this.videoState = {current: undefined, previous: undefined};
+
   this.reset = function(){
     self.chiaVersions = undefined;
     self.detectables = { 
@@ -105,5 +114,7 @@ ZIGVU.DataManager.Stores.DataStore = function() {
     self.tChartData = undefined;
     self.toCounterMap = undefined;
     self.fromCounterMap = undefined;
+
+    self.videoState = {current: undefined, previous: undefined};
   };
 };

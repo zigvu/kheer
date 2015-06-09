@@ -118,8 +118,9 @@ ZIGVU.DataManager.DataManager = function() {
     return self.localizationDataAccessor.getLocalizationDetails(detId);
   };
 
-  this.getData_currentVideoState = function(clipId, clipFN){
-    return self.localizationDataAccessor.getCurrentVideoState(clipId, clipFN);
+  // we get currentPlayState from multiVideoExtractor
+  this.getData_videoState = function(currentPlayState){
+    return self.localizationDataAccessor.getVideoState(currentPlayState);
   };
 
   // ----------------------------------------------

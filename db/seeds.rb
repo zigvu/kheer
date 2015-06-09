@@ -20,45 +20,22 @@ videoURL = "#{kheerSeed}/stitched_video_localized.mp4"
 # Create users
 zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
 
-# # Create chia version, detectables and patch map
-# firstChiaVersion = ChiaVersion.create(name: "50 Class: Seed Model", description: "Using data annotated outside of kheer", comment: "Seed model after negative mining of annotated patches")
-# chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(firstChiaVersion)
-# chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
-# chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+# Create chia version, detectables and patch map
+firstChiaVersion = ChiaVersion.create(name: "50 Class: Seed Model", description: "Using data annotated outside of kheer", comment: "Seed model after negative mining of annotated patches")
+chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(firstChiaVersion)
+chiaSerializer.addSettingsZdistThresh([0, 2.0, 4.0])
+chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
 
-# pmf = DataImporters::CreateMaps.new(cellMapFile, colorMapFile)
-# pmf.saveToDb(firstChiaVersion)
+createdMaps = DataImporters::CreateMaps.new(cellMapFile, colorMapFile)
+createdMaps.saveToDb(firstChiaVersion)
 
-# idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
-# idl.saveToDb(firstChiaVersion.id)
+idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
+idl.saveToDb(firstChiaVersion.id)
 
-# chiaVersionId = 1; chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(chiaVersionId); chiaSerializer.resetSettings(); chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5]); chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+# put in avoid class in detectable
+avoidDet = Detectable.create(name: "_AVOID_", pretty_name: "_AVOID_", description: "")
+firstChiaVersion.chia_version_detectables.create(detectable_id: avoidDet.id)
 
-
-# # so as not to re-create data each time, create copy that will
-# # get deleted after populating database
-# scoreFolderCopy = "#{kheerSeed}/json_for_kheer_copy"
-# videoURLCopy = "#{kheerSeed}/stitched_video_localized_copy.mp4"
-# FileUtils.mkdir_p(scoreFolderCopy)
-# FileUtils.cp_r("#{scoreFolder}/.", scoreFolderCopy)
-# FileUtils.cp(videoURL, videoURLCopy)
-
-# # Create video data
-# firstVideoCollection = VideoCollection.create(title: "Stitched VIdeo", description: "Sticthed video test", comment: "Video from stitching frames from training data", source_type: "zigvu", source_url: "http://zigvu.com", quality: "High", format: "mp4", playback_frame_rate: 25.0, detection_frame_rate: 5.0, width: 1280, height: 720)
-# scoreFolderReader = DataImporters::ScoreFolderReader.new(scoreFolderCopy)
-# firstVideo = DataImporters::ImportVideoFile.new(scoreFolderReader, firstVideoCollection, videoURLCopy).create()
-# importScoreFolder = DataImporters::ImportScoreFolder.new(scoreFolderReader, firstVideo, firstChiaVersion)
-# importScoreFolder.saveToDb()
-
-# # create second chia version for annotation
-# secondChiaVersion = ChiaVersion.create(name: "50 Class: First retrain", description: "First round of annotation", comment: "Used only stitched video for annotation")
-# chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(secondChiaVersion)
-# chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
-# chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
-
-# idl = SeedHelpers::IntakeDetectableList.new(logoListFile)
-# idl.saveToDb(secondChiaVersion.id)
-
-# pmf = DataImporters::CreateMaps.new(patchMapFile, cellMapFile, colorMapFile)
-# pmf.saveToDb(secondChiaVersion.id)
+# create first video
+video = Video.create(title: "Stitched Video", description: "Sticthed video test", comment: "Video from stitching frames from training data", source_type: "zigvu", source_url: "http://zigvu.com", quality: "High", format: "mp4", playback_frame_rate: 25.0, detection_frame_rate: 5.0, width: 1280, height: 720)
 

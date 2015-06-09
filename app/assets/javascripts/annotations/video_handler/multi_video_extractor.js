@@ -102,6 +102,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     return {
       play_state: currentPlayState,
       clip_id: currentClipId,
+      // extracted_clip_fn: unknown --> this to be supplied in video_player.js
       clip_fn: clipFN
     };
   };
