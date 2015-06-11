@@ -3,7 +3,7 @@ ZIGVU.ChartManager = ZIGVU.ChartManager || {};
 ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 
 /*
-  Filter to select scales
+  Filter to display current video position
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterStatusVideo = function(htmlGenerator) {

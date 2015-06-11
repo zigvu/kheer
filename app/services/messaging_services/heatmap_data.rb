@@ -7,8 +7,15 @@ module Services
       end
 
       def getData(chiaVersionId, videoId, frameNumber, scale, detectableId)
-        chiaClassId = ChiaVersionDetectable.where(chia_version_id: chiaVersionId)
-          .where(detectable_id: detectableId).first.chia_detectable_id
+        chiaVersionDetectable = ChiaVersionDetectable.where(chia_version_id: chiaVersionId)
+          .where(detectable_id: detectableId).first
+        if chiaVersionDetectable == nil
+          return {scores: []}.to_json
+        end
+        chiaClassId = chiaVersionDetectable.chia_detectable_id
+        if chiaClassId == nil
+          return {scores: []}.to_json
+        end
 
         # syntax should match in
         # khajuri/messaging/handlers/HeatmapDataHandler.py

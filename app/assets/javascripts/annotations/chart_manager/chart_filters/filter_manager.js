@@ -22,10 +22,8 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   this.filterChiaVersionsAnnotation = new ZIGVU.ChartManager.ChartFilters.FilterChiaVersionsAnnotation(self.htmlGenerator);
   this.filterDataLoader = new ZIGVU.ChartManager.ChartFilters.FilterDataLoader(self.htmlGenerator);
 
-  this.filterFrameScales = new ZIGVU.ChartManager.ChartFilters.FilterFrameScales(self.htmlGenerator);
-  this.filterFrameZdistThresh = new ZIGVU.ChartManager.ChartFilters.FilterFrameZdistThresh(self.htmlGenerator);
-
   this.filterStatusVideo = new ZIGVU.ChartManager.ChartFilters.FilterStatusVideo(self.htmlGenerator);
+  this.filterStatusFrame = new ZIGVU.ChartManager.ChartFilters.FilterStatusFrame(self.htmlGenerator);
 
   this.startFilter = function(){
     self.filterStartButton.displayInput(undefined)
@@ -46,9 +44,6 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           var selectedChiaVersion = self.dataManager.getFilter_chiaVersionLocalization();
 
           self.filterChiaVersionsLocalization.displayInfo(selectedChiaVersion);
-          self.filterFrameScales.displayInput(selectedChiaVersion.settings.scales);
-          self.filterFrameZdistThresh.displayInput(selectedChiaVersion.settings.zdistThresh);
-
           self.getLocalizationDetectables();
         } else {
           self.reset();
@@ -90,6 +85,10 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
           var selectedLocalizationSettings = self.dataManager.getFilter_localizationSettings();
 
           self.filterLocalizationSettings.displayInfo(selectedLocalizationSettings);
+          // set frame filter states
+          self.dataManager.getFilter_cycleScales();
+          self.dataManager.getFilter_cycleZdists();
+
           self.getVideoSelection();
         } else {
           self.reset();
@@ -179,15 +178,16 @@ ZIGVU.ChartManager.ChartFilters.FilterManager = function() {
   // set relations
   this.setEventManager = function(em){
     self.eventManager = em;
-    self.filterFrameScales.setEventManager(self.eventManager);
-    self.filterFrameZdistThresh.setEventManager(self.eventManager);
     self.filterStatusVideo.setEventManager(self.eventManager);
+    self.filterStatusFrame.setEventManager(self.eventManager);
+
     return self;
   };
 
   this.setDataManager = function(dm){
     self.dataManager = dm;
     self.filterStatusVideo.setDataManager(self.dataManager);
+    self.filterStatusFrame.setDataManager(self.dataManager);
     return self;
   };
 

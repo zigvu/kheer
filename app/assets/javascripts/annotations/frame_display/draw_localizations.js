@@ -14,6 +14,7 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
 
   this.dataManager = undefined;
   var localizationDrawn = false;
+  var allLocalizationDrawn = false;
 
   var bbox = new ZIGVU.FrameDisplay.Shapes.Bbox();
 
@@ -23,9 +24,15 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
   };
 
   this.drawAllLocalizations = function(clipId, clipFN){
+    // cycle through scales array if all localizations already drawn
+    if(allLocalizationDrawn){
+      self.dataManager.getFilter_cycleZdists();
+    }
+
     self.dataManager.getData_allLocalizationsDataPromise(clipId, clipFN)
       .then(function(localizations){
         self.drawBboxes(localizations);
+        allLocalizationDrawn = true;
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };
@@ -46,6 +53,7 @@ ZIGVU.FrameDisplay.DrawLocalizations = function() {
       // clear existing content
       self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
       localizationDrawn = false;
+      allLocalizationDrawn = false;
     }
   };
 

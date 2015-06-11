@@ -11,11 +11,8 @@ load 'app/data_importers/create_maps.rb'
 # data files
 kheerSeed = Rails.root.join('public','data','kheerSeed').to_s
 logoListFile =  "#{kheerSeed}/logo_list.csv"
-patchMapFile = "#{kheerSeed}/patch_map.json"
 cellMapFile = "#{kheerSeed}/cell_map.json"
 colorMapFile = "#{kheerSeed}/color_map.json"
-scoreFolder = "#{kheerSeed}/json_for_kheer"
-videoURL = "#{kheerSeed}/stitched_video_localized.mp4"
 
 # Create users
 zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')

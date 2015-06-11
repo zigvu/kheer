@@ -12,7 +12,7 @@ module Jsonifiers
 				# expect: integer
 				@frameNumber = localizationParams['video_fn'].to_i if localizationParams['video_fn']
 				# expect: float
-				@zdistThresh = localizationParams['zdist_thresh'].to_i if localizationParams['zdist_thresh']
+				@zdistThresh = localizationParams['zdist_thresh'].to_f if localizationParams['zdist_thresh']
 			end
 
 		end

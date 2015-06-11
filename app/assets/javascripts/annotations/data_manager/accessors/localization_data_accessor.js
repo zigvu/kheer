@@ -102,9 +102,14 @@ ZIGVU.DataManager.Accessors.LocalizationDataAccessor = function() {
   this.getColorMap = function(){
     return self.dataStore.colorMap;
   };
+  
   //------------------------------------------------
   // for video status
   this.getVideoState = function(currentPlayState){
+    // Note: The return keys here have to match in following files:
+    // annotations/chart_manager/chart_filters/filter_status_video.js
+    // annotations/frame_display/draw_info_overlay.js
+
     var clipId = currentPlayState.clip_id;
     var clipFN = currentPlayState.clip_fn;
     var extractedClipFN = currentPlayState.extracted_clip_fn;

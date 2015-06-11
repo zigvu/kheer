@@ -36,7 +36,8 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
 
   videoList: [
     { video_id:, title:, playback_frame_rate:, detection_frame_rate:, 
-      clips: [{ clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length: }, ]
+      clips: [{ clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length: }, ],
+      pretty_length:
     },
   ]
 
@@ -57,6 +58,10 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   fromCounterMap: {:counter => {clip_id: , clip_fn:}}
 
   videoState = {current:, previous:}
+    where current/previous is difned in file: 
+    annotations/data_manager/accessors/localization_data_accessor.js -> getVideoState()
+
+  selectedChiaVersionSettings = {zdistThresh: [zdistValues, ], scales: [scale, ]}
 */
 
 ZIGVU.DataManager.Stores.DataStore = function() {
@@ -89,8 +94,10 @@ ZIGVU.DataManager.Stores.DataStore = function() {
   this.toCounterMap = undefined;
   this.fromCounterMap = undefined;
 
-  // video state
+  // current states
   this.videoState = {current: undefined, previous: undefined};
+
+  this.selectedChiaVersionSettings = undefined;
 
   this.reset = function(){
     self.chiaVersions = undefined;
@@ -116,5 +123,7 @@ ZIGVU.DataManager.Stores.DataStore = function() {
     self.fromCounterMap = undefined;
 
     self.videoState = {current: undefined, previous: undefined};
+
+    self.selectedChiaVersionSettings = undefined;
   };
 };
