@@ -64,6 +64,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
       var settings = _.find(self.dataStore.chiaVersions, function(chiaVersion){
         return chiaVersion.id == self.filterStore.chiaVersionIdLocalization; 
       }).settings;
+      self.dataStore.selectedChiaVersionSettings = settings;
       requestDefer.resolve(settings);
     }
 
@@ -72,7 +73,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
 
   this.getAllVideoListPromise = function(){
     var dataURL = '/api/v1/filters/video_list';
-    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
+    var dataParam = {filter: self.getFilterState()};
 
     var requestDefer = Q.defer();
     if(self.filterStore.chiaVersionIdLocalization === undefined){
@@ -95,10 +96,9 @@ ZIGVU.DataManager.AjaxHandler = function() {
 
     return requestDefer.promise;
   };
-
   this.getDataSummaryPromise = function(){
     var dataURL = '/api/v1/filters/filtered_summary';
-    var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
+    var dataParam = {filter: self.getFilterState()};
 
     var requestDefer = Q.defer();
     if(self.filterStore === undefined){
@@ -126,7 +126,7 @@ ZIGVU.DataManager.AjaxHandler = function() {
     } else {
       // get full data
       var dataURL = '/api/v1/filters/filtered_data';
-      var dataParam = {filter: self.filterStore.getCurrentFilterParams()};
+      var dataParam = {filter: self.getFilterState()};
       self.getPOSTRequestPromise(dataURL, dataParam)
         .then(function(data){
           self.dataStore.dataFullLocalizations = data.localizations;
@@ -266,6 +266,18 @@ ZIGVU.DataManager.AjaxHandler = function() {
       }
     });
     return requestDefer.promise;
+  };
+
+  // helper to get filter state
+  this.getFilterState = function(){
+    // Note: The return keys here have to match in following files:
+    // app/Jsonifiers::Filter::FilterParamsParser
+    var filters = {};
+    filters['chia_version_id'] = self.filterStore.chiaVersionIdLocalization;
+    filters['detectable_ids'] = self.filterStore.detectableIds;
+    filters['localization_scores'] = self.filterStore.localizations;
+    filters['video_ids'] = self.filterStore.videoIds;
+    return filters;
   };
 
   // set relations

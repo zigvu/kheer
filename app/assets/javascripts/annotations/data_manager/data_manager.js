@@ -74,15 +74,18 @@ ZIGVU.DataManager.DataManager = function() {
   };
 
   // ----------------------------------------------
-  // Localization data
+  // Heatmap data
 
-  this.getData_heatmapDataPromise = function(clipId, clipFN){
+  this.heatmap_getHeatmapDataPromise = function(clipId, clipFN){
     var vfn = self.localizationDataAccessor.getTranslatedVideoIdVideoFN(clipId, clipFN);
     var videoId = vfn.video_id;
     var videoFN = vfn.video_fn;
 
     return self.ajaxHandler.getHeatmapDataPromise(videoId, videoFN);
   };
+
+  // ----------------------------------------------
+  // Localization data
 
   this.getData_localizationsData = function(clipId, clipFN){
     return self.localizationDataAccessor.getLocalizations(clipId, clipFN);
@@ -118,8 +121,10 @@ ZIGVU.DataManager.DataManager = function() {
     return self.localizationDataAccessor.getLocalizationDetails(detId);
   };
 
-  this.getData_currentVideoState = function(clipId, clipFN){
-    return self.localizationDataAccessor.getCurrentVideoState(clipId, clipFN);
+  // we get currentPlayState from 
+  // annotations/video_handler/multi_video_extractor.js
+  this.getData_videoState = function(currentPlayState){
+    return self.localizationDataAccessor.getVideoState(currentPlayState);
   };
 
   // ----------------------------------------------
@@ -161,6 +166,19 @@ ZIGVU.DataManager.DataManager = function() {
   };
   this.getFilter_videoSelections = function(){
     return self.filterAccessor.getVideoSelections();
+  };
+
+  this.getFilter_cycleScales = function(){
+    self.filterAccessor.cycleScales();
+    self.eventManager.fireStatusFrameCallback({});
+  };
+  this.getFilter_cycleZdists = function(){
+    self.filterAccessor.cycleZdists();
+    self.eventManager.fireStatusFrameCallback({});
+  };
+
+  this.getFilter_getFrameFilterState = function(){
+    return self.filterAccessor.getFrameFilterState();
   };
 
   // ----------------------------------------------
@@ -212,8 +230,6 @@ ZIGVU.DataManager.DataManager = function() {
   this.setEventManager = function(em){
     self.eventManager = em;
     self.eventManager.addAnnoListSelectedCallback(updateAnnoListSelected);
-    self.eventManager.addScaleSelectedCallback(updateScaleSelected);
-    self.eventManager.addZdistThreshSelectedCallback(updateZdistThreshSelected);
     return self;
   };
 

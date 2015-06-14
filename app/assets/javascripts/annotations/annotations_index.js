@@ -9,10 +9,10 @@ $(".analysis_annotations.index").ready(function() {
 });
 
 $(".analysis_annotations.temp").ready(function() {
-	// annotationController = new ZIGVU.Controller.AnnotationController();
-	// annotationController.register();
-	// annotationController.startFilter();
-	// annotationController.loadDataTest();
+	annotationController = new ZIGVU.Controller.AnnotationController();
+	annotationController.register();
+	annotationController.startFilter();
+	annotationController.loadDataTest();
 
   // videoFrameCanvas = document.getElementById("videoFrameCanvas");
   // videoFrameCanvasCTX = videoFrameCanvas.getContext("2d");
@@ -80,4 +80,16 @@ $(".analysis_annotations.temp").ready(function() {
   // 	bboxShape.draw(localizationCanvasCTX, bbox, 'Adidas', 'rgba(0,255,255,0.8)');
 	 //  poly.draw(annotationCanvasCTX);
   // }, false);
+
+  // var img = new Image();
+  // img.src = '/data/test_img_out.png';
+  // canvas = document.getElementById('videoFrameCanvas');
+  // ctx = canvas.getContext('2d');
+  // img.onload = function() {
+  //   ctx.drawImage(img, 0, 0);
+  //   img.style.display = 'none';
+  //   fne = new ZIGVU.VideoHandler.FrameNumberExtractor(ctx);
+  //   draw = new ZIGVU.FrameDisplay.DrawInfoOverlay();
+  // };
+
 });

@@ -3,7 +3,7 @@ ZIGVU.ChartManager = ZIGVU.ChartManager || {};
 ZIGVU.ChartManager.ChartFilters = ZIGVU.ChartManager.ChartFilters || {};
 
 /*
-  Filter to select scales
+  Filter to display current video position
 */
 
 ZIGVU.ChartManager.ChartFilters.FilterStatusVideo = function(htmlGenerator) {
@@ -23,15 +23,15 @@ ZIGVU.ChartManager.ChartFilters.FilterStatusVideo = function(htmlGenerator) {
 
 
   function updateStatusFromVideoPlayer(args){
-    var fs = self.dataManager.getData_currentVideoState(args.clip_id, args.clip_fn);
+    var vs = self.dataManager.getData_videoState(args).current;
 
-    $(divId_filterStatusVideoId).text(fs.video_id);
-    $(divId_filterStatusVideoTitle).text(fs.video_title);
-    $(divId_filterStatusVideoFrameNumber).text(fs.video_fn);
-    $(divId_filterStatusVideoFrameTime).text(fs.video_time);
-    $(divId_filterStatusClipId).text(fs.clip_id);
-    $(divId_filterStatusClipFrameNumber).text(fs.clip_fn);
-    $(divId_filterStatusClipFrameTime).text(fs.clip_time);
+    $(divId_filterStatusVideoId).text(vs.video_id);
+    $(divId_filterStatusVideoTitle).text(vs.video_title);
+    $(divId_filterStatusVideoFrameNumber).text(vs.video_fn  + ' / ' + vs.extracted_video_fn);
+    $(divId_filterStatusVideoFrameTime).text(vs.video_time);
+    $(divId_filterStatusClipId).text(vs.clip_id);
+    $(divId_filterStatusClipFrameNumber).text(vs.clip_fn + ' / ' + vs.extracted_clip_fn);
+    $(divId_filterStatusClipFrameTime).text(vs.clip_time);
   };
 
   this.empty = function(){ };

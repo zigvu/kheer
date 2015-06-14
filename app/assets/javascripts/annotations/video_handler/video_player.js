@@ -13,6 +13,7 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
 
   this.eventManager = undefined;
   this.dataManager = undefined;
+  this.frameNumberExtractor = new ZIGVU.VideoHandler.FrameNumberExtractor(self.renderCTX);
   this.drawLocalizations = new ZIGVU.FrameDisplay.DrawLocalizations();
   this.drawAnnotations = new ZIGVU.FrameDisplay.DrawAnnotations();
   this.drawHeatmap = new ZIGVU.FrameDisplay.DrawHeatmap();
@@ -71,8 +72,8 @@ ZIGVU.VideoHandler.VideoPlayer = function() {
       setTimeout(function(){ self.paintUntilPaused(); }, 20);
     } else if(currentPlayState.play_state === 'paused'){
       self.drawAnnotations.startAnnotation(currentPlayState.clip_id, currentPlayState.clip_fn);
+      currentPlayState.extracted_clip_fn = self.frameNumberExtractor.getCurrentFrameNumber();
       self.eventManager.firePaintFrameCallback(currentPlayState);
-      updateTimelineChartCounter = 0;
     }
   };
 

@@ -39,15 +39,6 @@ ZIGVU.DataManager.Stores.FilterStore = function() {
   this.currentAnnotationDetId = undefined;
   this.heatmap = {scale: undefined, detectable_id: undefined, zdist_thresh: undefined};
 
-  this.getCurrentFilterParams = function(){
-    var currentFilters = {};
-    currentFilters['chia_version_id'] = self.chiaVersionIdLocalization;
-    currentFilters['detectable_ids'] = self.detectableIds;
-    currentFilters['localization_scores'] = self.localizations;
-    currentFilters['video_ids'] = self.videoIds;
-    return currentFilters;
-  };
-
   this.reset = function(){
     self.chiaVersionIdLocalization = undefined;
     self.chiaVersionIdAnnotation = undefined;

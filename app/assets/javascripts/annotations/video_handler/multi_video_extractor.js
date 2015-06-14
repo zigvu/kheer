@@ -102,6 +102,7 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     return {
       play_state: currentPlayState,
       clip_id: currentClipId,
+      // extracted_clip_fn: unknown --> this to be supplied in video_player.js
       clip_fn: clipFN
     };
   };
@@ -144,7 +145,6 @@ ZIGVU.VideoHandler.MultiVideoExtractor = function(renderCTX) {
     if(clipTime < 0){ clipTime = 0; }
 
     currentPlayState = 'seeking';
-
     if(clipId != currentClipId){
       if(vfo.vfe.isPlaying()){
         vfo.vfe.pausePromise()

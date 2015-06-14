@@ -13,7 +13,7 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
   var divId_filterTable = "#filter-videos-table";
 
 
-  this.displayInput = function(orderedClipList){
+  this.displayInput = function(allVideoList){
     self.empty();
     var requestDefer = Q.defer();
 
@@ -21,12 +21,13 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
     var cancelButtonId = 'filter-video-list-cancel';
     var inputName = "filterVideoListIds";
     // convert data to a tabular form
-    var headerArr = ['Video Id', 'Video Title', 'Length (h:m:s)', 'Select'];
-    var bodyArr = _.map(orderedClipList, function(video){
+    var headerArr = ['Video Id', 'Video Title', 'Length (h:m:s)', '# Clips', 'Select'];
+    var bodyArr = _.map(allVideoList, function(video){
       return [
         video.video_id, 
         video.title, 
         video.pretty_length, 
+        video.clips.length, 
         '<input type="checkbox" name="' + inputName + '" value="' 
         + video.video_id + '" id="input-filter-video-ids">'
       ];
@@ -54,9 +55,9 @@ ZIGVU.ChartManager.ChartFilters.FilterVideoSelection = function(htmlGenerator) {
   this.displayInfo = function(videoList){
     self.empty();
     // convert data to a tabular form
-    var headerArr = ['Video Id', 'Video Title', 'Length (h:m:s)'];
+    var headerArr = ['Video Id', 'Video Title', 'Length (h:m:s)', '# Clips'];
     var bodyArr = _.map(videoList, function(video){
-      return [video.video_id, video.title, video.pretty_length];
+      return [video.video_id, video.title, video.pretty_length, video.clips.length];
     });
 
     $(divId_filterTable).append(htmlGenerator.table(headerArr, bodyArr));

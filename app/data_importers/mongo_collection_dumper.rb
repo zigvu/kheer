@@ -4,7 +4,7 @@ module DataImporters
 		def initialize(mongoCollectionName)
 			@mongoCollection = mongoCollectionName.constantize
 			@itemArr = []
-			@mongoBatchInsertSize = 10
+			@mongoBatchInsertSize = 100
 		end
 
 		def add(item)

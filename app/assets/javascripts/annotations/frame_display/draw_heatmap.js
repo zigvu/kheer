@@ -17,18 +17,26 @@ ZIGVU.FrameDisplay.DrawHeatmap = function() {
   var heatCell = new ZIGVU.FrameDisplay.Shapes.HeatCell();
 
   this.drawHeatmap = function(clipId, clipFN){
+    // cycle through scales array if heatmap already drawn
+    if(heatmapDrawn){
+      self.dataManager.getFilter_cycleScales();
+    }
     self.clear();
-    self.dataManager.getData_heatmapDataPromise(clipId, clipFN)
+    self.dataManager.heatmap_getHeatmapDataPromise(clipId, clipFN)
       .then(function(heatmapData){
+        scores = heatmapData.scores;
+        if(scores.length > 0){
         var cellMap = self.dataManager.getData_cellMap();
         var colorMap = self.dataManager.getData_colorMap();
 
-        _.each(heatmapData.scores, function(score, idx, list){
-          var cell = cellMap[idx];
-          var color = colorMap[score];
+          _.each(cellMap, function(cell, idx, list){
+            var color = colorMap[scores[parseInt(idx)]];
           heatCell.draw(self.ctx, cell, color);
         });
         heatmapDrawn = true;
+        } else {
+          console.log("Heatmap data not available");
+        }
       })
       .catch(function (errorReason) { self.err(errorReason); }); 
   };

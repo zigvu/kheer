@@ -11,6 +11,7 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   [Note: Ruby style hash (:keyname => value) implies that raw id are used as keys of objects.
   JS style hash implies that (keyname: value) text are used as keys of objects.]
 
+  firstEvaluatedVideoFn: int
   chiaVersions: [
     {id:, name:, description:, settings: {zdistThresh: [zdistValues, ], scales: [scale, ]}},
   ]
@@ -34,7 +35,8 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
 
   videoList: [
     { video_id:, title:, playback_frame_rate:, detection_frame_rate:, 
-      clips: [{ clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length: }, ]
+      clips: [{ clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length: }, ],
+      pretty_length:
     },
   ]
 
@@ -54,6 +56,11 @@ ZIGVU.DataManager.Stores = ZIGVU.DataManager.Stores || {};
   toCounterMap: {:clip_id => {:clip_fn => counter}}
   fromCounterMap: {:counter => {clip_id: , clip_fn:}}
 
+  videoState = {current:, previous:}
+    where current/previous is difned in file: 
+    annotations/data_manager/accessors/localization_data_accessor.js -> getVideoState()
+
+  selectedChiaVersionSettings = {zdistThresh: [zdistValues, ], scales: [scale, ]}
 */
 
 ZIGVU.DataManager.Stores.DataStore = function() {
@@ -61,6 +68,8 @@ ZIGVU.DataManager.Stores.DataStore = function() {
   this.colorCreator = new ZIGVU.Helpers.ColorCreator();
   this.textFormatters = new ZIGVU.Helpers.TextFormatters();
 
+  // TODO: get from config
+  this.firstEvaluatedVideoFn = 1
   this.chiaVersions = undefined;
   this.detectables = { 
     annotation: undefined, localization: undefined, 
@@ -82,6 +91,10 @@ ZIGVU.DataManager.Stores.DataStore = function() {
   this.tChartData = undefined;
   this.toCounterMap = undefined;
   this.fromCounterMap = undefined;
+  // current states
+  this.videoState = {current: undefined, previous: undefined};
+
+  this.selectedChiaVersionSettings = undefined;
 
   this.reset = function(){
     self.chiaVersions = undefined;
@@ -105,5 +118,8 @@ ZIGVU.DataManager.Stores.DataStore = function() {
     self.tChartData = undefined;
     self.toCounterMap = undefined;
     self.fromCounterMap = undefined;
+    self.videoState = {current: undefined, previous: undefined};
+
+    self.selectedChiaVersionSettings = undefined;
   };
 };

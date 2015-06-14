@@ -90,6 +90,35 @@ ZIGVU.DataManager.Accessors.FilterAccessor = function() {
       return _.contains(self.filterStore.videoIds, video.video_id);
     });
   };
+
+  this.cycleScales = function(){
+    var scales = self.dataStore.selectedChiaVersionSettings.scales;
+    var curScale = self.filterStore.heatmap.scale;
+    if(curScale === undefined){
+      self.filterStore.heatmap.scale = scales[0];
+    } else {
+      self.filterStore.heatmap.scale = scales[(_.indexOf(scales, curScale) + 1) % scales.length];
+    }
+    return self.filterStore.heatmap.scale;
+  };
+  this.cycleZdists = function(){
+    var zdists = self.dataStore.selectedChiaVersionSettings.zdistThresh;
+    var curZdist = self.filterStore.heatmap.zdist_thresh;
+    if(curZdist === undefined){
+      self.filterStore.heatmap.zdist_thresh = zdists[0];
+    } else {
+      self.filterStore.heatmap.zdist_thresh = zdists[(_.indexOf(zdists, curZdist) + 1) % zdists.length];
+    }
+    return self.filterStore.heatmap.zdist_thresh;
+  };
+
+  this.getFrameFilterState = function(){
+    // Note: The return keys here have to match in following files:
+    // annotations/chart_manager/chart_filters/filter_status_frame.js
+    return { 
+      heatmap: self.filterStore.heatmap
+    };
+  };
   //------------------------------------------------
   // set relations
   this.setFilterStore = function(fs){
