@@ -2,14 +2,33 @@
 # @author: Evan
 
 # define names
-amqp_url = ENV.keys.include?("AMQP_URL") ? ENV.fetch("AMQP_URL") : nil
-heatmap_data_request = 'vm2.kheer.development.heatmap_rpc.request'
-heatmap_data_response = 'vm2.kheer.development.heatmap_rpc.response'
-clip_id_request = 'vm2.kheer.development.clip_id.request'
-localization_request = 'vm2.kheer.development.localization.request'
+# if rabbit is connected to localhost, leaving amqp_url to nil is fine
+amqp_url = nil
+log_request = nil
+clip_id_request = nil
+heatmap_data_request = nil
+heatmap_data_response = nil
+localization_request = nil
 
+if Rails.env.production?
+  log_request = 'production.log'
+  clip_id_request = 'production.clip_id.request'
+  heatmap_data_request = 'production.heatmap.request'
+  heatmap_data_response = 'production.heatmap.response'
+  localization_request = 'production.localization.request'
+elsif Rails.env.development?
+  log_request = 'development.log'
+  clip_id_request = 'development.clip_id.request'
+  heatmap_data_request = 'development.heatmap.request'
+  heatmap_data_response = 'development.heatmap.response'
+  localization_request = 'development.localization.request'
+else
+  raise "No queue set up for non development/production environments"
+end
+    
 bunnyConnection = Messaging::BunnyConnection.new(amqp_url).connection
-HEATMAPDATA_RPC = Messaging::RpcClient.new(bunnyConnection, heatmap_data_request, heatmap_data_response)
+HEATMAPDATA_RPC = Messaging::RpcClient.new(
+    bunnyConnection, heatmap_data_request, heatmap_data_response)
 
 clipIdHandler = Services::MessagingServices::ClipIdHandler.new()
 Messaging::RpcServer.new(bunnyConnection, clip_id_request, clipIdHandler).start
