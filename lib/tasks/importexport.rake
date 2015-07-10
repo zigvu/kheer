@@ -11,6 +11,7 @@ namespace :importexport do
     annotationFolder = ENV['annotation_folder']
     if (chiaVersionId == nil) or (annotationFolder == nil)
       puts "Usage: rake importexport:import_annotation chia_version_id=<id> annotation_folder=<folder>"
+      puts "Note: Currently, only annotations exported from kheer can be imported"
       puts "Warning: This WILL NOT overwrite any annotation already present in database"
       puts "Exiting"
     else

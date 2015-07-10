@@ -19,7 +19,7 @@ module DataImporters
 			names = []
 
 			Rails.logger.debug { "annotationFolderReader : Sorting files prior to import" }
-			Dir.glob("#{annotationFolder}/*.json") do |jsonFile|
+			Dir.glob("#{annotationFolder}/**/*.json") do |jsonFile|
 				jsonFileHash = JSON.load(File.open(jsonFile))
 				chiaVersionId = jsonFileHash['chia_version_id'].to_i
 				chiaVersionIds << chiaVersionId if not chiaVersionIds.include?(chiaVersionId)

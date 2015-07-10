@@ -16,9 +16,9 @@ module DataExporters
 			::Annotation.where(chia_version_id: @chiaVersionId).where(active: true)
 				.group_by{|a1| a1.video_id}.each do |videoId, a2|
 				
-				vCol = Video.find(videoId).video_collection
-				width = vCol.width
-				height = vCol.height
+				video = Video.find(videoId)
+				width = video.width
+				height = video.height
 
 				vidAnnoOutFolder = "#{@outputFolder}/#{videoId}/annotations"
 				FileUtils::mkdir_p(vidAnnoOutFolder)
@@ -39,7 +39,7 @@ module DataExporters
 					end
 				end
 				File.open(frameIdsFilename, "w") do |f|
-					f.write(frameIds.to_s[1..-2].gsub(/,/, ''))
+					f.write(frameIds.to_s[1..-2].gsub(/,/, '') + "\n")
 				end
 			end
 			true
