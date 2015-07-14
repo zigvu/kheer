@@ -60,4 +60,20 @@ namespace :importexport do
     end
   end
 
+  desc "Export annotations associated with a particular chia version id for chia"
+  task export_annotation_for_chia: :environment do
+    chiaVersionId = ENV['chia_version_id']
+    outputFolder = ENV['output_folder']
+    avoidLabel = ENV['avoid_label']
+    if (chiaVersionId == nil) or (outputFolder == nil) or (avoidLabel == nil)
+      puts "Usage: rake importexport:export_annotation_for_chia chia_version_id=<id> output_folder=<folder> avoid_label=<label>"
+      puts "Exiting"
+    else
+      puts "Start exporting annotations"
+      ea = DataExporters::ExportAnnotationsForChia.new(chiaVersionId.to_i, outputFolder, avoidLabel)
+      ea.export()
+      puts "Done exporting annotations"
+    end
+  end
+
 end
