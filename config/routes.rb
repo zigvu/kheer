@@ -36,9 +36,17 @@ Kheer::Application.routes.draw do
   end
 
   namespace :analysis do
-    resources :annotations, only: [:index] do
+    resources :minings do
+      member do
+        get 'set/:set_id' => 'minings#mine', as: :mine
+      end
     end
+    resources :setup_mining
+    resources :annotations, only: [:index]
     get 'annotations/temp'
+
+
+    get 'metrics/video_details'
   end
 
   devise_for :users

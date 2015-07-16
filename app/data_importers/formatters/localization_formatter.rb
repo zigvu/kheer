@@ -4,6 +4,7 @@ module DataImporters
 
 			def initialize(chiaVersionId)
 				@detectableChiaIdMap = DataImporters::DetectableChiaIdMap.new(chiaVersionId)
+				@videoClipMap = DataImporters::VideoClipMap.new
 			end
 
 			def getFormatted(localization)
@@ -18,6 +19,7 @@ module DataImporters
 				localz = {
 					vi: localization["video_id"].to_i,
 					ci: localization["chia_version_id"].to_i,
+					cl: @videoClipMap.getClipId(localization["video_id"].to_i, localization["frame_number"].to_i),
 					fn: localization["frame_number"].to_i,
 					# ft: frameTime,
 

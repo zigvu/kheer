@@ -1,10 +1,11 @@
 module Analysis
   class AnnotationsController < ApplicationController
-  	# GET /annotations/index
+  	# GET /analysis/annotations/index
     def index
     end
 
     def temp
     end
+
   end
 end

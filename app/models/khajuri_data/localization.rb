@@ -5,6 +5,7 @@ class Localization
 	# -------------------------------------------
 	field :vi, as: :video_id, type: Integer
 	field :ci, as: :chia_version_id, type: Integer
+	field :cl, as: :clip_id, type: Integer
 
 	field :fn, as: :frame_number, type: Integer
 	field :ft, as: :frame_time, type: Integer

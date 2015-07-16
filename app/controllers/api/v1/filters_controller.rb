@@ -4,11 +4,6 @@ module Api
 
 			before_filter :ensure_json_format
 
-			# unused
-			def new
-				render json: {ack: 'ok'}.to_json
-			end
-
 			# POST api/v1/filters/video_list
 			def video_list
 				filter = Jsonifiers::Filter::FilterParamsParser.new(params[:filter])
