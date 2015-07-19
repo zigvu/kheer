@@ -6,7 +6,7 @@ module Metrics
 				@chiaVersionId = chiaVersionId
 				@clipIds = videoIds.map{ |vId| Video.find(vId).clips.pluck(:id) }.flatten
 				@videoIds = videoIds
-	      @zdistDetId = getZdistDetId(detIdZdists)
+	      @zdistDetId = Metrics::Analysis::ZdistValuesConsolidator.new(detIdZdists).zdistDetId
 
 	      @clipSetSize = 5
 	      @videoClipMap = DataImporters::VideoClipMap.new
@@ -62,18 +62,6 @@ module Metrics
 					end
 				end
 				clipIdLocCount.sort_by{ |l| l[:loc_count] }.reverse
-			end
-
-			# to minimze database access, group detIds with common
-			# zdist values
-			def getZdistDetId(detIdZdists)
-				zdistDetId = {}
-				detIdZdists.each do |detId, zdist|
-					next if zdist == -1
-					zdistDetId[zdist] ||= []
-					zdistDetId[zdist] << detId.to_i
-				end
-				zdistDetId
 			end
 
 		end

@@ -1,7 +1,7 @@
 module Analysis
   class SetupMiningController < ApplicationController
     include Wicked::Wizard
-    steps :chia_version, :videos, :zdist_threshs, :create_sets
+    steps :chia_version, :videos, :zdist_threshs, :smart_filters, :create_sets
 
     before_action :set_mining, only: [:show, :update]
     before_action :set_steps_ll, only: [:show, :update]
@@ -14,6 +14,8 @@ module Analysis
         serveVideos
       when :zdist_threshs
         serveZDistThreshs
+      when :smart_filters
+        serveSmartFilters
       when :create_sets
         serveCreateSets
       end
@@ -28,6 +30,8 @@ module Analysis
         handleVideos
       when :zdist_threshs
         handleZDistThreshs
+      when :smart_filters
+        handleSmartFilters
       when :create_sets
         handleCreateSets
       end
@@ -88,6 +92,13 @@ module Analysis
           zdist_threshs: zdistThreshs,
           clip_sets: clipSets
         )
+      end
+
+      def serveSmartFilters
+      end
+      def handleSmartFilters
+        spatialIntersectionThresh = params[:spatial_intersection_thresh].to_f
+        @mining.update(smart_filter: {spatial_intersection_thresh: spatialIntersectionThresh})
       end
 
       def serveCreateSets

@@ -2,20 +2,16 @@ Kheer::Application.routes.draw do
 
   namespace :api, :defaults => {:format => :json} do
     namespace :v1 do
-      
-      get 'filters/detectables'
-      get 'filters/detectable_details'
-      get 'filters/chia_versions'
-      get 'filters/color_map'
-      get 'filters/cell_map'
-      post 'filters/filtered_summary'
-      post 'filters/filtered_data'
-      post 'filters/video_list'
-      resources :filters, only: [:new]
 
       post 'frames/update_annotations'
       get 'frames/localization_data'
       get 'frames/heatmap_data'
+
+      get 'minings/show'
+      get 'minings/full_localizations'
+      get 'minings/full_annotations'
+      get 'minings/color_map'
+      get 'minings/cell_map'
     end
   end
 

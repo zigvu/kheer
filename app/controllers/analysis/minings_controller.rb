@@ -4,6 +4,7 @@ module Analysis
 
     # GET /minings/:id/mine/:set_id
     def mine
+      @miningId = @mining.id
       @setId = params['set_id'].to_i
     end
 

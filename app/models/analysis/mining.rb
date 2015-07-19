@@ -21,6 +21,9 @@ class Mining
 	# format
 	# {setId: [{video_id:, :clip_id, :loc_count, fn_count:, fn_visited_count:}, ]}
 	field :cs, as: :clip_sets, type: Hash
+	# format
+	# {spatial_intersection_thresh:, }
+	field :sf, as: :smart_filter, type: Hash
 
 	# index for faster traversal during ordering
 	# -------------------------------------------

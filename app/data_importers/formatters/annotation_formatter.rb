@@ -5,12 +5,14 @@ module DataImporters
 			def initialize(detectableClsNameMap, chiaVersionId)
 				@detectableClsNameMap = detectableClsNameMap
 				@chiaVersionId = chiaVersionId
+				@videoClipMap = DataImporters::VideoClipMap.new
 			end
 
 			def getFormatted(videoId, frameNumber, frameTime, clsName, annotation)
 				# Note: this is tied to schema in Annotation class
 				anno = {
 					vi: videoId,
+					cl: @videoClipMap.getClipId(videoId, frameNumber),
 					ci: @chiaVersionId,
 					fn: frameNumber,
 					ft: frameTime,
