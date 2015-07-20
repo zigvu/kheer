@@ -16,6 +16,16 @@
 </p>
 
 <p>
+  <strong>ZDist Thresholds:</strong>
+  <%= @chiaSerializer.getSettingsZdistThresh %>
+</p>
+
+<p>
+  <strong>Scales:</strong>
+  <%= @chiaSerializer.getSettingsScales %>
+</p>
+
+<p>
   <strong>Detectables:</strong>
   <%= render 'detectables_show_table' %>
   <%= link_to 'Associate new detectable', all_addable_detectables_chia_data_chia_version_path(@chia_version), class: "button" %>

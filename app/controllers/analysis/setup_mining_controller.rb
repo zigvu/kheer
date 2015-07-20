@@ -66,7 +66,11 @@ module Analysis
       def serveVideos
         @chiaVersionIdLoc = @mining.chia_version_id_loc
         @videoIds = @mining.video_ids || []
-        @videos = ::Video.all
+
+        kjVIds = KheerJob.where(state: States::KheerJobState.new(nil).successProcess)
+            .where(chia_version_id: @chiaVersionIdLoc)
+            .pluck(:video_id)
+        @videos = ::Video.where(id: kjVIds)
       end
       def handleVideos
         videoIds = params[:video_ids].map{ |v| v.to_i }

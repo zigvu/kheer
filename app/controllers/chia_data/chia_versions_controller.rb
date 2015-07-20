@@ -12,6 +12,7 @@ module ChiaData
     # GET /chia_versions/1
     # GET /chia_versions/1.json
     def show
+      @chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
       @chia_versions = ::ChiaVersion.all - [@chia_version]
       @chiaVersionDetectables = @chia_version
         .chia_version_detectables
@@ -40,8 +41,10 @@ module ChiaData
             cellMapFile = "#{kheerSeed}/cell_map.json"
             colorMapFile = "#{kheerSeed}/color_map.json"
             chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
-            chiaSerializer.addSettingsZdistThresh([0, 1.5, 2.5, 4.5])
-            chiaSerializer.addSettingsScales([0.4, 0.7, 1.0, 1.3, 1.6])
+            zDistThreshs = params["zDistThreshs"][1..-2].split(",").map{ |s| s.to_f }
+            chiaSerializer.addSettingsZdistThresh(zDistThreshs)
+            scales = params["scales"][1..-2].split(",").map{ |s| s.to_f }
+            chiaSerializer.addSettingsScales(scales)
 
             pmf = DataImporters::CreateMaps.new(cellMapFile, colorMapFile)
             pmf.saveToDb(@chia_version)

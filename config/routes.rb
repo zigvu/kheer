@@ -29,6 +29,7 @@ Kheer::Application.routes.draw do
 
   namespace :khajuri_data do
     resources :videos
+    resources :kheer_jobs
   end
 
   namespace :analysis do

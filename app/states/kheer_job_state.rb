@@ -1,16 +1,15 @@
 module States
 	# States:
-	# new - brand new mining session
-	# completeSetup - set up is complete
-	# working - analyst is working on mining session
-	# completeWorking - analyst finished working on session
-	# deleted - all secondary data for this session can be reclaimed
-	class MiningState < States::StateCommon
+	# new - new kheer job
+	# startProcess - processing of kheer job started
+	# successProcess - processing of kheer job succeeded
+	# failProcess - processing of kheer job failed
+	class KheerJobState < States::StateCommon
 
-		@@possibleStates = [:new, :completeSetup, :working, :completeWorking, :deleted]
+		@@possibleStates = [:new, :startProcess, :successProcess, :failProcess]
 
-		def initialize(mining)
-			super(mining, :state) if mining != nil
+		def initialize(kheerJob)
+			super(kheerJob, :state) if kheerJob != nil
 		end
 
 		# No way to share class variables in Ruby - so duplicate

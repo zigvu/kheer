@@ -1,0 +1,29 @@
+<h3>Listing Kheer Jobs</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Video</th>
+      <th>Chia version</th>
+      <th>State</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @kheer_jobs.each do |kheer_job| %>
+      <tr>
+        <td><%= kheer_job.video_id %></td>
+        <td><%= kheer_job.chia_version_id %></td>
+        <td><%= kheer_job.state %></td>
+        <td><%= link_to 'Show', [:khajuri_data, kheer_job] %></td>
+        <td><%= link_to 'Destroy', [:khajuri_data, kheer_job], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Kheer job', new_khajuri_data_kheer_job_path, class: "button" %>
