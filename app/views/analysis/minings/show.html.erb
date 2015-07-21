@@ -1,0 +1,10 @@
+<h3><%= @mining.name %></h3>
+
+<% if @isNewSession %>
+  <%= link_to 'Setup mining', analysis_setup_mining_path(:chia_version, mining_id: @mining.id), class: "button" %>
+<% else %>
+  <%= render 'mine_tracking' %>
+  <%= render 'mine_details' %>
+<% end %>
+
+<%= link_to 'Back', analysis_minings_path, class: "button" %>

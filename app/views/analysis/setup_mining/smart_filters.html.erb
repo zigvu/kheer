@@ -1,0 +1,30 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Create Sets</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+  <table>
+    <tbody>
+      <tr>
+        <td>Spatial Intersection (Needs to be between [0,1])</td>
+        <td><%= text_field_tag 'spatial_intersection_thresh', '0.8' %></td>
+      </tr>
+    </tbody>
+  </table>
+  <%= render 'common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->

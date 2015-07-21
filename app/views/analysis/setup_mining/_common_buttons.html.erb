@@ -1,0 +1,12 @@
+<div class="row">
+  <div class="small-2 columns">
+    <% if @prev_step == nil %>
+      <%= link_to 'Back', analysis_mining_path(@mining), class: "button" %>
+    <% else %>
+      <%= link_to 'Back', wizard_path(@prev_step), class: "button" %>
+    <% end %>
+  </div>
+  <div class="small-2 columns small-offset-8">
+    <%= submit_tag 'Next', :class => "button" %>
+  </div>
+</div>

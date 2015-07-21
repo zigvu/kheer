@@ -1,0 +1,46 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Videos</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Details</th>
+        <th>Select</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @videos.each do |video| %>
+        <tr>
+          <td><%= video.id %></td>
+          <td><%= video.title %></td>
+          <td>
+            <%= link_to 'Analysis Details', analysis_metrics_video_details_path(chia_version_id: @chiaVersionIdLoc, video_id: video.id), target: "_blank" %>
+          </td>
+          <% isButChecked = @videoIds.include?(video.id) %>
+          <td><%= check_box_tag 'video_ids[]', video.id, checked = isButChecked %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render 'common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->

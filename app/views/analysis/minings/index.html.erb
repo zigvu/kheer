@@ -1,0 +1,31 @@
+<h3>Listing minings</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>User</th>
+      <th>State</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @minings.each do |mining| %>
+      <tr>
+        <td><%= mining.name %></td>
+        <td><%= mining.user.email %></td>
+        <td><%= mining.state %></td>
+        <td><%= link_to 'Show', analysis_mining_path(mining) %></td>
+        <td><%= link_to 'Edit', edit_analysis_mining_path(mining) %></td>
+        <td><%= link_to 'Destroy', [:analysis, mining], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Mining', new_analysis_mining_path, class: "button" %>

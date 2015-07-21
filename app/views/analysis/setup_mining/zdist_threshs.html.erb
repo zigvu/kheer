@@ -1,0 +1,47 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Select ZDist</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Det Id</th>
+        <th>Det Name</th>
+        <th>Select ZDist</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @metricsVideoDetails.each do |mvd| %>
+        <tr>
+          <td><%= mvd[:det_id] %></td>
+          <td><%= mvd[:det_name] %></td>
+          <td>
+            <% zdistsForSelect = @metricsVideo.zdistThreshs.each_with_index.collect{ |z, i| ["#{z} (#{mvd[:num_locs][i]})", z] }.unshift(["Ignore", -1]) %>
+            <% selectedZDist = @zdistThreshs[mvd[:det_id].to_s] || -1 %>
+            <%= select_tag "det_ids[#{mvd[:det_id]}]", options_for_select(zdistsForSelect, selectedZDist) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= render 'common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->

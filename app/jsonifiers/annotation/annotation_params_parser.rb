@@ -5,6 +5,8 @@ module Jsonifiers
 			attr_accessor :annotationsDeleted, :annotationsNew
 
 			def initialize(annotationParams)
+				@videoClipMap = DataImporters::VideoClipMap.new
+
 				# format of what js gives
 				# {
 				# 		{ deleted_polys: {annotationId: poly, } },
@@ -36,6 +38,7 @@ module Jsonifiers
 				# Note: this is tied to schema in Annotation class
 				annotation = {
 					vi: a['video_id'].to_i,
+					cl: @videoClipMap.getClipId(a['video_id'].to_i, a['video_fn'].to_i),
 					ci: a['chia_version_id'].to_i,
 
 					fn: a['video_fn'].to_i,

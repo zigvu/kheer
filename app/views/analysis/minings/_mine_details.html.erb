@@ -1,0 +1,71 @@
+<!-- BEGIN: Mine details -->
+<table>
+  <tbody>
+    <tr>
+      <td width="20%">Id</td>
+      <td><%= @mining.id %></td>
+    </tr>
+    <tr>
+      <td>Name</td>
+      <td><%= @mining.name %></td>
+    </tr>
+    <tr>
+      <td>User</td>
+      <td><%= @mining.user.email %></td>
+    </tr>
+    <tr>
+      <td>Description</td>
+      <td><%= @mining.description %></td>
+    </tr>
+    <tr>
+      <td>Localization ChiaVersion</td>
+      <td><%= "#{@mining.chiaVersionLoc.id} (#{@mining.chiaVersionLoc.name})" %></td>
+    </tr>
+    <tr>
+      <td>Annotation ChiaVersion</td>
+      <td><%= "#{@mining.chiaVersionAnno.id} (#{@mining.chiaVersionAnno.name})" %></td>
+    </tr>
+    <% if @setId %>
+      <tr>
+        <td>Set Id</td>
+        <td><%= @setId %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <td>Detectable Id</td>
+      <td>Detectable Name</td>
+      <td>Zdist</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @mining.zdist_threshs.each do |detId, zDist| %>
+      <% next if zDist == -1 %>
+      <% det = ::Detectable.find(detId.to_i) %>
+      <tr>
+        <td><%= det.id %></td>
+        <td><%= det.name %></td>
+        <td><%= zDist %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <td colspan="2">Smart Filter</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Spatial intersection threshold</td>
+      <td><%= @mining.smart_filter[:spatial_intersection_thresh] %></td>
+    </tr>
+  </tbody>
+</table>
+<!-- END: Mine details -->

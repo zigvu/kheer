@@ -1,0 +1,16 @@
+<%= simple_form_for([:khajuri_data, @kheer_job]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :video_id do %>
+      <%= f.select :video_id, ::Video.all.map { |v| [v.title, v.id] }, include_blank: true %>
+    <% end %>
+    <%= f.input :chia_version_id do %>
+      <%= f.select :chia_version_id, ::ChiaVersion.all.map { |c| [c.name, c.id] }, include_blank: true %>
+    <% end %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

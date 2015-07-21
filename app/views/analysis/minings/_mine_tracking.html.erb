@@ -1,0 +1,29 @@
+<!-- BEGIN: Mine tracking -->
+<table>
+  <thead>
+    <tr>
+      <th>Set #</th>
+      <th># Videos</th>
+      <th># Clips</th>
+      <th># Localizations</th>
+      <th># Frames</th>
+      <th>Progress %</th>
+      <th>Mine</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @clipSets.each do |idx, clipSet| %>
+      <tr>
+        <td><%= idx %></td>
+        <td><%= clipSet.map{ |c| c[:video_id] }.uniq.count %></td>
+        <td><%= clipSet.count %></td>
+        <td><%= clipSet.map{ |c| c[:loc_count] }.sum %></td>
+        <td><%= clipSet.map{ |c| c[:fn_count] }.sum %></td>
+        <td>TBD</td>
+        <td><%= link_to 'Load', mine_analysis_mining_path(id: @mining.id, set_id: idx), target: "_blank" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<!-- END: Mine tracking -->
