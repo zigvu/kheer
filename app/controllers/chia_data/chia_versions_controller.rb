@@ -26,6 +26,9 @@ module ChiaData
 
     # GET /chia_versions/1/edit
     def edit
+      chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
+      @zDistThreshs = chiaSerializer.getSettingsZdistThresh.to_s
+      @scales = chiaSerializer.getSettingsScales.to_s
     end
 
     # POST /chia_versions
@@ -66,7 +69,15 @@ module ChiaData
     def update
       respond_to do |format|
         if @chia_version.update(chia_version_params)
-          format.html { redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully updated.' }
+          format.html { 
+            chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
+            zDistThreshs = params["zDistThreshs"][1..-2].split(",").map{ |s| s.to_f }
+            chiaSerializer.replaceSettingsZdistThresh(zDistThreshs)
+            scales = params["scales"][1..-2].split(",").map{ |s| s.to_f }
+            chiaSerializer.replaceSettingsScales(scales)
+
+            redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully updated.' 
+          }
           format.json { head :no_content }
         else
           format.html { render action: 'edit' }

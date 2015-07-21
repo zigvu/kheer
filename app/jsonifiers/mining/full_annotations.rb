@@ -12,9 +12,7 @@ module Jsonifiers
       def generateQueries
         queries = []
         # get all annotations for clips in set
-        queries << ::Annotation.where(active: true)
-            .where(chia_version_id: @chiaVersionId)
-            .in(clip_id: @clipIds)
+        queries << ::Annotation.where(active: true).in(clip_id: @clipIds)
         queries
      end
 
