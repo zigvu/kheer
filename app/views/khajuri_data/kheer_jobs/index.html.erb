@@ -3,6 +3,7 @@
 <table>
   <thead>
     <tr>
+      <th>Id</th>
       <th>Video</th>
       <th>Chia version</th>
       <th>State</th>
@@ -14,6 +15,7 @@
   <tbody>
     <% @kheer_jobs.each do |kheer_job| %>
       <tr>
+        <td><%= kheer_job.id %></td>
         <td><%= kheer_job.video_id %></td>
         <td><%= kheer_job.chia_version_id %></td>
         <td><%= kheer_job.state %></td>
