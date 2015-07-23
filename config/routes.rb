@@ -33,16 +33,15 @@ Kheer::Application.routes.draw do
   end
 
   namespace :analysis do
+    namespace :mining_setup do
+      resources :zdist_finder
+    end
+
     resources :minings do
       member do
         get 'set/:set_id' => 'minings#mine', as: :mine
       end
     end
-    resources :setup_mining
-    resources :annotations, only: [:index]
-    get 'annotations/temp'
-
-
     get 'metrics/video_details'
   end
 

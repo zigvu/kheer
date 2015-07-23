@@ -1,9 +1,9 @@
-module Analysis
-  class SetupMiningController < ApplicationController
+module Analysis::MiningSetup
+  class ZdistFinderController < ApplicationController
     include Wicked::Wizard
-    steps :chia_version, :videos, :zdist_threshs, :smart_filters, :create_sets
+    before_action :set_steps
+    before_action :setup_wizard
 
-    before_action :set_mining, only: [:show, :update]
     before_action :set_steps_ll, only: [:show, :update]
 
     def show
@@ -52,7 +52,7 @@ module Analysis
       def serveChiaVersion
         @chiaVersionIdLoc = @mining.chia_version_id_loc
         @chiaVersionIdAnno = @mining.chia_version_id_anno
-        @chia_versions = ::ChiaVersion.all
+        @chiaVersions = ::ChiaVersion.all
       end
       def handleChiaVersion
         chiaVersionIdLoc = params[:chia_version_id_loc].to_i
@@ -80,7 +80,7 @@ module Analysis
       def serveZDistThreshs
         chiaVersionIdLoc = @mining.chia_version_id_loc
         videoIds = @mining.video_ids
-        @zdistThreshs = @mining.zdist_threshs || {}
+        @zdistThreshs = @mining.md_zdist_finder.zdist_threshs || {}
 
         @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
         @metricsVideoDetails = @metricsVideo.getDetails
@@ -90,19 +90,18 @@ module Analysis
         videoIds = @mining.video_ids
 
         zdistThreshs = Hash[params[:det_ids].map{ |d,z| [d.to_i, z.to_f] }]
+        @mining.md_zdist_finder.update(zdist_threshs: zdistThreshs)
+
         clipSetCreator = ::Metrics::Analysis::ClipSetCreator.new(chiaVersionIdLoc, videoIds, zdistThreshs)
         clipSets = clipSetCreator.getClipSets
-        @mining.update(
-          zdist_threshs: zdistThreshs,
-          clip_sets: clipSets
-        )
+        @mining.update(clip_sets: clipSets)
       end
 
       def serveSmartFilters
       end
       def handleSmartFilters
         spatialIntersectionThresh = params[:spatial_intersection_thresh].to_f
-        @mining.update(smart_filter: {spatial_intersection_thresh: spatialIntersectionThresh})
+        @mining.md_zdist_finder.update(smart_filter: {spatial_intersection_thresh: spatialIntersectionThresh})
       end
 
       def serveCreateSets
@@ -114,9 +113,10 @@ module Analysis
       end
 
       # Use callbacks to share common setup or constraints between actions.
-      def set_mining
+      def set_steps
         session[:mining_id] ||= params[:mining_id]
         @mining = ::Mining.find(session[:mining_id])
+        self.steps = [:chia_version, :videos, :zdist_threshs, :smart_filters, :create_sets]
       end
 
       def set_steps_ll

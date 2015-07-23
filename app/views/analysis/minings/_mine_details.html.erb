@@ -6,16 +6,20 @@
       <td><%= @mining.id %></td>
     </tr>
     <tr>
+      <td>Type</td>
+      <td><%= @mining.mtype %></td>
+    </tr>
+    <tr>
       <td>Name</td>
       <td><%= @mining.name %></td>
     </tr>
     <tr>
-      <td>User</td>
-      <td><%= @mining.user.email %></td>
-    </tr>
-    <tr>
       <td>Description</td>
       <td><%= @mining.description %></td>
+    </tr>
+    <tr>
+      <td>User</td>
+      <td><%= @mining.user.email %></td>
     </tr>
     <tr>
       <td>Localization ChiaVersion</td>
@@ -33,39 +37,7 @@
     <% end %>
   </tbody>
 </table>
-
-<table>
-  <thead>
-    <tr>
-      <td>Detectable Id</td>
-      <td>Detectable Name</td>
-      <td>Zdist</td>
-    </tr>
-  </thead>
-  <tbody>
-    <% @mining.zdist_threshs.each do |detId, zDist| %>
-      <% next if zDist == -1 %>
-      <% det = ::Detectable.find(detId.to_i) %>
-      <tr>
-        <td><%= det.id %></td>
-        <td><%= det.name %></td>
-        <td><%= zDist %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<table>
-  <thead>
-    <tr>
-      <td colspan="2">Smart Filter</td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Spatial intersection threshold</td>
-      <td><%= @mining.smart_filter[:spatial_intersection_thresh] %></td>
-    </tr>
-  </tbody>
-</table>
+<% if States::MiningType.new(@mining).isZdistFinder? %>
+  <%= render 'mine_details_zdist_finder' %>
+<% end %>
 <!-- END: Mine details -->

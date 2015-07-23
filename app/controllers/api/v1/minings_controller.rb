@@ -7,32 +7,32 @@ module Api
 
 			# GET api/v1/minings/show
 			def show
-				m = Jsonifiers::Mining::SetDetails.new(@miningId, @setId)
+				m = @mTypeModule::SetDetails.new(@mining, @setId)
 				render json: m.formatted.to_json
 			end
 
 			# GET api/v1/minings/full_localizations
 			def full_localizations
-				m = Jsonifiers::Mining::FullLocalizations.new(@miningId, @setId)
+				m = @mTypeModule::FullLocalizations.new(@mining, @setId)
 				render json: m.formatted.to_json
 			end
 
 			# GET api/v1/minings/full_annotations
 			def full_annotations
-				m = Jsonifiers::Mining::FullAnnotations.new(@miningId, @setId)
+				m = @mTypeModule::FullAnnotations.new(@mining, @setId)
 				render json: m.formatted.to_json
 			end
 
 			# GET api/v1/filters/color_map
 			def color_map
-				chiaVersion = ::Mining.find(@miningId).chiaVersionLoc
+				chiaVersion = @mining.chiaVersionLoc
 				colorMap = chiaVersion.color_map.color_map
 				render json: colorMap.to_json
 			end
 
 			# GET api/v1/filters/cell_map
 			def cell_map
-				chiaVersion = ::Mining.find(@miningId).chiaVersionLoc
+				chiaVersion = @mining.chiaVersionLoc
 				cellMap = chiaVersion.cell_map.cell_map
 				render json: cellMap.to_json
 			end
@@ -40,8 +40,12 @@ module Api
 			private
 	      # Use callbacks to share common setup or constraints between actions.
 	      def set_mining
-					@miningId = params['mining_id']
+					miningId = params['mining_id']
 					@setId = params['set_id']
+					@mining = ::Mining.find(miningId)
+					if States::MiningType.new(@mining).isZdistFinder?
+						@mTypeModule = Jsonifiers::Mining::ZdistFinder
+					end
 	      end
 
 		end

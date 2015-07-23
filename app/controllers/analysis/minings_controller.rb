@@ -67,7 +67,7 @@ module Analysis
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def mining_params
-        params.require(:mining).permit(:name, :description)
+        params.require(:mining).permit(:name, :description, :mtype)
       end
   end
 end

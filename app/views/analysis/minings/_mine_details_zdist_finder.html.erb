@@ -1,0 +1,36 @@
+<!-- BEGIN: Mine zdist_finder -->
+<table>
+  <thead>
+    <tr>
+      <td>Detectable Id</td>
+      <td>Detectable Name</td>
+      <td>Zdist</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @mining.md_zdist_finder.zdist_threshs.each do |detId, zDist| %>
+      <% next if zDist == -1 %>
+      <% det = ::Detectable.find(detId.to_i) %>
+      <tr>
+        <td><%= det.id %></td>
+        <td><%= det.name %></td>
+        <td><%= zDist %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <td colspan="2">Smart Filter</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Spatial intersection threshold</td>
+      <td><%= @mining.md_zdist_finder.smart_filter[:spatial_intersection_thresh] %></td>
+    </tr>
+  </tbody>
+</table>
+<!-- END: Mine zdist_finder -->
