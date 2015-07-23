@@ -11,7 +11,8 @@
 
 <!-- BEGIN: Content -->
 <%= form_tag wizard_path, :method => :put do %>
-  <%= render 'analysis/mining_setup/common/all_chia_versions_table', tableTitle: 'For Localization', radioTagName: 'chia_version_id_loc', selectedChiaVersionId: @chiaVersionIdLoc %>
+  <%= render 'analysis/mining_setup/common/all_chia_versions_table', tableTitle: 'For Primary Localization', radioTagName: 'chia_version_id_loc', selectedChiaVersionId: @chiaVersionIdLoc %>
+  <%= render 'analysis/mining_setup/common/all_chia_versions_table', tableTitle: 'For Secondary Localization', radioTagName: 'chia_version_id_sec', selectedChiaVersionId: @chiaVersionIdSec %>
   <%= render 'analysis/mining_setup/common/all_chia_versions_table', tableTitle: 'For Annotation', radioTagName: 'chia_version_id_anno', selectedChiaVersionId: @chiaVersionIdAnno %>
   <%= render 'analysis/mining_setup/common/common_buttons' %>
 <% end %>

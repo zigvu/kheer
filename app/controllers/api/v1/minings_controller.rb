@@ -7,7 +7,7 @@ module Api
 
 			# GET api/v1/minings/show
 			def show
-				m = @mTypeModule::SetDetails.new(@mining, @setId)
+				m = Jsonifiers::Mining::Common::SetDetails.new(@mining, @setId)
 				render json: m.formatted.to_json
 			end
 
@@ -19,7 +19,7 @@ module Api
 
 			# GET api/v1/minings/full_annotations
 			def full_annotations
-				m = @mTypeModule::FullAnnotations.new(@mining, @setId)
+				m = Jsonifiers::Mining::Common::FullAnnotations.new(@mining, @setId)
 				render json: m.formatted.to_json
 			end
 
@@ -45,6 +45,8 @@ module Api
 					@mining = ::Mining.find(miningId)
 					if States::MiningType.new(@mining).isZdistFinder?
 						@mTypeModule = Jsonifiers::Mining::ZdistFinder
+			    elsif States::MiningType.new(@mining).isChiaVersionComparer?
+						@mTypeModule = Jsonifiers::Mining::ChiaVersionComparer
 					end
 	      end
 

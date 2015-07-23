@@ -1,18 +1,23 @@
-
 <!-- BEGIN: Layout -->
 <%= render :layout => 'analysis/mining_setup/common/outershell' do %>
   <div class="row">
     <div class="small-12 columns">
       <div class="filter-panel">
         <div class="filter-title clearfix">
-          <div class="text left">Select ChiaVersions</div>
+          <div class="text left">Create Sets</div>
         </div>
         <div class="filter-content">
 
 <!-- BEGIN: Content -->
 <%= form_tag wizard_path, :method => :put do %>
-  <%= render 'analysis/mining_setup/common/all_chia_versions_table', tableTitle: 'For Localization', radioTagName: 'chia_version_id_loc', selectedChiaVersionId: @chiaVersionIdLoc %>
-  <%= render 'analysis/mining_setup/common/all_chia_versions_table', tableTitle: 'For Annotation', radioTagName: 'chia_version_id_anno', selectedChiaVersionId: @chiaVersionIdAnno %>
+  <table>
+    <tbody>
+      <tr>
+        <td>Spatial Intersection (Needs to be between [0,1])</td>
+        <td><%= text_field_tag 'spatial_intersection_thresh', '0.8' %></td>
+      </tr>
+    </tbody>
+  </table>
   <%= render 'analysis/mining_setup/common/common_buttons' %>
 <% end %>
 <!-- END: Content -->
@@ -20,6 +25,6 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>  
 <% end %>
 <!-- END: Layout -->

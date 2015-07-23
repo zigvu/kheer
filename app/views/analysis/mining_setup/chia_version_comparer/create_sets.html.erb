@@ -4,37 +4,35 @@
     <div class="small-12 columns">
       <div class="filter-panel">
         <div class="filter-title clearfix">
-          <div class="text left">Select ZDist</div>
+          <div class="text left">Create Sets</div>
         </div>
         <div class="filter-content">
 
 <!-- BEGIN: Content -->
 <%= form_tag wizard_path, :method => :put do %>
-
   <table>
     <thead>
       <tr>
-        <th>Det Id</th>
-        <th>Det Name</th>
-        <th>Select ZDist</th>
+        <th>Set #</th>
+        <th># Videos</th>
+        <th># Clips</th>
+        <th># Localizations</th>
+        <th># Frames</th>
       </tr>
     </thead>
 
     <tbody>
-      <% @metricsVideoDetails.each do |mvd| %>
+      <% @clipSets.each do |idx, clipSet| %>
         <tr>
-          <td><%= mvd[:det_id] %></td>
-          <td><%= mvd[:det_name] %></td>
-          <td>
-            <% zdistsForSelect = @metricsVideo.zdistThreshs.each_with_index.collect{ |z, i| ["#{z.to_f} (#{mvd[:num_locs][i]})", z.to_f] }.unshift(["Ignore", -1.0]) %>
-            <% selectedZDist = @zdistThreshs[mvd[:det_id].to_s] %>
-            <%= select_tag "det_ids[#{mvd[:det_id]}]", options_for_select(zdistsForSelect, selectedZDist) %>
-          </td>
+          <td><%= idx %></td>
+          <td><%= clipSet.map{ |c| c[:video_id] }.uniq.count %></td>
+          <td><%= clipSet.count %></td>
+          <td><%= clipSet.map{ |c| c[:loc_count] }.sum %></td>
+          <td><%= clipSet.map{ |c| c[:fn_count] }.sum %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
   <%= render 'analysis/mining_setup/common/common_buttons' %>
 <% end %>
 <!-- END: Content -->

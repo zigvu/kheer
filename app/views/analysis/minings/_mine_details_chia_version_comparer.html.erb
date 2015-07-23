@@ -4,16 +4,18 @@
     <tr>
       <td>Detectable Id</td>
       <td>Detectable Name</td>
-      <td>Zdist</td>
+      <td>Primary Chia Version Zdist</td>
+      <td>Secondary Chia Version Zdist</td>
     </tr>
   </thead>
   <tbody>
-    <% @mining.md_zdist_finder.zdist_threshs.each do |detId, zDist| %>
+    <% @mining.md_chia_version_comparer.zdist_threshs_loc.each do |detId, zDist| %>
       <% det = ::Detectable.find(detId.to_i) %>
       <tr>
         <td><%= det.id %></td>
         <td><%= det.name %></td>
         <td><%= zDist %></td>
+        <td><%= @mining.md_chia_version_comparer.zdist_threshs_loc[detId] %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,7 +30,7 @@
   <tbody>
     <tr>
       <td>Spatial intersection threshold</td>
-      <td><%= @mining.md_zdist_finder.smart_filter[:spatial_intersection_thresh] %></td>
+      <td><%= @mining.md_chia_version_comparer.smart_filter[:spatial_intersection_thresh] %></td>
     </tr>
   </tbody>
 </table>

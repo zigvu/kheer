@@ -39,5 +39,7 @@
 </table>
 <% if States::MiningType.new(@mining).isZdistFinder? %>
   <%= render 'mine_details_zdist_finder' %>
+<% elsif States::MiningType.new(@mining).isChiaVersionComparer? %>
+  <%= render 'mine_details_chia_version_comparer' %>
 <% end %>
 <!-- END: Mine details -->

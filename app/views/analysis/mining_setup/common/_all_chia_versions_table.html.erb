@@ -16,7 +16,7 @@
           <td><%= chia_version.id %></td>
           <td><%= chia_version.name %></td>
           <td><%= chia_version.description %></td>
-          <% isButChecked = (@chiaVersionId == chia_version.id) %>
+          <% isButChecked = (selectedChiaVersionId == chia_version.id) %>
           <td><%= radio_button_tag radioTagName, chia_version.id, checked = isButChecked %></td>
         </tr>
       <% end %>

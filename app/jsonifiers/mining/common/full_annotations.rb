@@ -1,11 +1,10 @@
-module Jsonifiers::Mining::ZdistFinder
+module Jsonifiers::Mining::Common
   class FullAnnotations
 
     def initialize(mining, setId)
       @mining = mining
       clipSet = @mining.clip_sets[setId.to_s]
       @clipIds = clipSet.map{ |cs| cs["clip_id"].to_i }
-      @chiaVersionId = @mining.chia_version_id_anno
     end
 
     def generateQueries

@@ -4,7 +4,7 @@
     <div class="small-12 columns">
       <div class="filter-panel">
         <div class="filter-title clearfix">
-          <div class="text left">Select ZDist</div>
+          <div class="text left">Select ZDist for Secondary Localization</div>
         </div>
         <div class="filter-content">
 
@@ -22,12 +22,13 @@
 
     <tbody>
       <% @metricsVideoDetails.each do |mvd| %>
+        <% next if @zdistThreshsLoc[mvd[:det_id].to_s] == nil %>
         <tr>
           <td><%= mvd[:det_id] %></td>
           <td><%= mvd[:det_name] %></td>
           <td>
-            <% zdistsForSelect = @metricsVideo.zdistThreshs.each_with_index.collect{ |z, i| ["#{z.to_f} (#{mvd[:num_locs][i]})", z.to_f] }.unshift(["Ignore", -1.0]) %>
-            <% selectedZDist = @zdistThreshs[mvd[:det_id].to_s] %>
+            <% zdistsForSelect = @metricsVideo.zdistThreshs.each_with_index.collect{ |z, i| ["#{z.to_f} (#{mvd[:num_locs][i]})", z.to_f] } %>
+            <% selectedZDist = @zdistThreshsLoc[mvd[:det_id].to_s] %>
             <%= select_tag "det_ids[#{mvd[:det_id]}]", options_for_select(zdistsForSelect, selectedZDist) %>
           </td>
         </tr>

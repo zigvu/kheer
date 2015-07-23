@@ -35,6 +35,7 @@ Kheer::Application.routes.draw do
   namespace :analysis do
     namespace :mining_setup do
       resources :zdist_finder
+      resources :chia_version_comparer
     end
 
     resources :minings do

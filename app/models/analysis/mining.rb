@@ -30,6 +30,8 @@ class Mining
   def createMiningData
     if States::MiningType.new(self).isZdistFinder?
       self.create_md_zdist_finder
+    elsif States::MiningType.new(self).isChiaVersionComparer?
+      self.create_md_chia_version_comparer
     end
   end
 
@@ -51,4 +53,5 @@ class Mining
 
   # data for mining is embedded in one of the sub documents
   embeds_one :md_zdist_finder
+  embeds_one :md_chia_version_comparer
 end

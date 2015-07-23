@@ -32,7 +32,7 @@ Mining.FrameDisplay.Shapes.Bbox = function() {
   this.draw = function(ctx, bbox, detName){
     var x = bbox.x, y = bbox.y, w = bbox.w, h = bbox.h;
     var name = detName, score = bbox.prob_score;
-    var scaleZDist = bbox.scale + ' : ' + bbox.zdist_thresh;
+    var scaleZDist = bbox.chia_version_id + ' : ' + bbox.scale + ' : ' + bbox.zdist_thresh;
 
     // all text hang from x,y
     ctx.textBaseline = "hanging";

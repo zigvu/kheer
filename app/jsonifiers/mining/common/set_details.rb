@@ -1,14 +1,20 @@
-module Jsonifiers::Mining::ZdistFinder
+module Jsonifiers::Mining::Common
   class SetDetails
 
     def initialize(mining, setId)
       @mining = mining
       @clipSet = @mining.clip_sets[setId.to_s]
-      @selectedDetIds = @mining.md_zdist_finder.zdist_threshs.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
 
       @chiaVersionIdLoc = @mining.chia_version_id_loc
       @chiaVersionIdAnno = @mining.chia_version_id_anno
-      @smartFilter = @mining.md_zdist_finder.smart_filter
+
+      if States::MiningType.new(mining).isZdistFinder?
+        @selectedDetIds = @mining.md_zdist_finder.zdist_threshs.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
+        @smartFilter = @mining.md_zdist_finder.smart_filter
+      elsif States::MiningType.new(mining).isChiaVersionComparer?
+        @selectedDetIds = @mining.md_chia_version_comparer.zdist_threshs_loc.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
+        @smartFilter = @mining.md_chia_version_comparer.smart_filter
+      end
     end
 
     def getChiaVersionFormatted(chiaVersionId)

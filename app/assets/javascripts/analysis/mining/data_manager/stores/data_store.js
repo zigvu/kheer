@@ -36,7 +36,10 @@ Mining.DataManager.Stores = Mining.DataManager.Stores || {};
     <clip>: {clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length:}
 
   dataFullLocalizations: {:video_id => {:video_fn => {:detectable_id => [loclz]}}}
-    where loclz: {zdist_thresh:, prob_score:, spatial_intersection:, scale:, x:, y:, w:, h:}
+    where loclz: {
+      chia_version_id:, zdist_thresh:, prob_score:, 
+      spatial_intersection:, scale:, x:, y:, w:, h:
+    }
 
   dataFullAnnotations: {:video_id => {:video_fn => {:detectable_id => [anno]}}}
     where anno: {chia_version_id:, x0:, y0:, x1:, y1:, x2:, y2:, x3:, y3}
