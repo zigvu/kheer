@@ -41,5 +41,7 @@
   <%= render 'mine_details_zdist_finder' %>
 <% elsif States::MiningType.new(@mining).isChiaVersionComparer? %>
   <%= render 'mine_details_chia_version_comparer' %>
+<% elsif States::MiningType.new(@mining).isZdistDifferencer? %>
+  <%= render 'mine_details_zdist_differencer' %>
 <% end %>
 <!-- END: Mine details -->
