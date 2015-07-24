@@ -7,7 +7,7 @@ module Metrics
         @videoIds = mining.video_ids
         detIdZdists = mining.md_zdist_finder.zdist_threshs
 
-        @clipIds = @videoIds.map{ |vId| Video.find(vId).clips.pluck(:id) }.flatten
+        @clipIds = ::Clip.where(video_id: @videoIds).pluck(:id)
         @zdistDetId = Metrics::Analysis::ZdistValuesConsolidator.new(detIdZdists).zdistDetId
 
         @clipSetSize = 5

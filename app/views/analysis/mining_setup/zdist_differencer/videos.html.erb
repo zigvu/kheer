@@ -4,38 +4,36 @@
     <div class="small-12 columns">
       <div class="filter-panel">
         <div class="filter-title clearfix">
-          <div class="text left">Select ZDist for Secondary Localization</div>
+          <div class="text left">Videos</div>
         </div>
         <div class="filter-content">
 
 <!-- BEGIN: Content -->
 <%= form_tag wizard_path, :method => :put do %>
-
   <table>
     <thead>
       <tr>
-        <th>Det Id</th>
-        <th>Det Name</th>
-        <th>Select ZDist</th>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Details</th>
+        <th>Select</th>
       </tr>
     </thead>
 
     <tbody>
-      <% @metricsVideoDetails.each do |mvd| %>
-        <% next if @zdistThreshsLoc[mvd[:det_id].to_s] == nil %>
+      <% @videos.each do |video| %>
         <tr>
-          <td><%= mvd[:det_id] %></td>
-          <td><%= mvd[:det_name] %></td>
+          <td><%= video.id %></td>
+          <td><%= video.title %></td>
           <td>
-            <% zdistsForSelect = @metricsVideo.zdistThreshs.each_with_index.collect{ |z, i| ["#{z.to_f} (#{mvd[:num_locs][i]})", z.to_f] } %>
-            <% selectedZDist = @zdistThreshs[mvd[:det_id].to_s] %>
-            <%= select_tag "det_ids[#{mvd[:det_id]}]", options_for_select(zdistsForSelect, selectedZDist) %>
+            <%= link_to 'Analysis Details', analysis_metrics_video_details_path(chia_version_id: @chiaVersionIdLoc, video_id: video.id), target: "_blank" %>
           </td>
+          <% isButChecked = @videoIds.include?(video.id) %>
+          <td><%= check_box_tag 'video_ids[]', video.id, checked = isButChecked %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
   <%= render 'analysis/mining_setup/common/common_buttons' %>
 <% end %>
 <!-- END: Content -->

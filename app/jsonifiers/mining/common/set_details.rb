@@ -14,6 +14,9 @@ module Jsonifiers::Mining::Common
       elsif States::MiningType.new(mining).isChiaVersionComparer?
         @selectedDetIds = @mining.md_chia_version_comparer.zdist_threshs_loc.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
         @smartFilter = @mining.md_chia_version_comparer.smart_filter
+      elsif States::MiningType.new(mining).isZdistDifferencer?
+        @selectedDetIds = @mining.md_zdist_differencer.zdist_threshs_pri.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
+        @smartFilter = @mining.md_zdist_differencer.smart_filter
       end
     end
 

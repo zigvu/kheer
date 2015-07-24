@@ -38,17 +38,19 @@ module Api
 			end
 
 			private
-	      # Use callbacks to share common setup or constraints between actions.
-	      def set_mining
+				# Use callbacks to share common setup or constraints between actions.
+				def set_mining
 					miningId = params['mining_id']
 					@setId = params['set_id']
 					@mining = ::Mining.find(miningId)
 					if States::MiningType.new(@mining).isZdistFinder?
 						@mTypeModule = Jsonifiers::Mining::ZdistFinder
-			    elsif States::MiningType.new(@mining).isChiaVersionComparer?
+					elsif States::MiningType.new(@mining).isChiaVersionComparer?
 						@mTypeModule = Jsonifiers::Mining::ChiaVersionComparer
+					elsif States::MiningType.new(@mining).isZdistDifferencer?
+						@mTypeModule = Jsonifiers::Mining::ZdistDifferencer
 					end
-	      end
+				end
 
 		end
 	end

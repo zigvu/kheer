@@ -1,5 +1,5 @@
 module Analysis::MiningSetup
-  class ChiaVersionComparerController < ApplicationController
+  class ZdistDifferencerController < ApplicationController
     include Wicked::Wizard
     before_action :set_steps
     before_action :setup_wizard
@@ -12,8 +12,8 @@ module Analysis::MiningSetup
         serveChiaVersion
       when :videos
         serveVideos
-      when :zdist_threshs_loc
-        serveZDistThreshsLoc
+      when :zdist_threshs_pri
+        serveZDistThreshsPri
       when :zdist_threshs_sec
         serveZDistThreshsSec
       when :smart_filters
@@ -30,8 +30,8 @@ module Analysis::MiningSetup
         handleChiaVersion
       when :videos
         handleVideos
-      when :zdist_threshs_loc
-        handleZDistThreshsLoc
+      when :zdist_threshs_pri
+        handleZDistThreshsPri
       when :zdist_threshs_sec
         handleZDistThreshsSec
       when :smart_filters
@@ -55,34 +55,25 @@ module Analysis::MiningSetup
     private
       def serveChiaVersion
         @chiaVersionIdLoc = @mining.chia_version_id_loc
-        @chiaVersionIdSec = @mining.md_chia_version_comparer.chia_version_id_sec
         @chiaVersionIdAnno = @mining.chia_version_id_anno
         @chiaVersions = ::ChiaVersion.all
       end
       def handleChiaVersion
         chiaVersionIdLoc = params[:chia_version_id_loc].to_i
-        chiaVersionIdSec = params[:chia_version_id_sec].to_i
         chiaVersionIdAnno = params[:chia_version_id_anno].to_i
         @mining.update(
           chia_version_id_loc: chiaVersionIdLoc,
           chia_version_id_anno: chiaVersionIdAnno
         )
-        @mining.md_chia_version_comparer.update(
-          chia_version_id_sec: chiaVersionIdSec
-        )
       end
 
       def serveVideos
         @chiaVersionIdLoc = @mining.chia_version_id_loc
-        @chiaVersionIdSec = @mining.md_chia_version_comparer.chia_version_id_sec
         @videoIds = @mining.video_ids || []
 
-        kjVIdsLoc = KheerJob.where(state: States::KheerJobState.new(nil).successProcess)
-            .where(chia_version_id: @chiaVersionIdLoc).pluck(:video_id)
-        kjVIdsSec = KheerJob.where(state: States::KheerJobState.new(nil).successProcess)
-            .where(chia_version_id: @chiaVersionIdSec).pluck(:video_id)
-        # intersection
-        kjVIds = kjVIdsLoc & kjVIdsSec
+        kjVIds = KheerJob.where(state: States::KheerJobState.new(nil).successProcess)
+            .where(chia_version_id: @chiaVersionIdLoc)
+            .pluck(:video_id)
         @videos = ::Video.where(id: kjVIds)
       end
       def handleVideos
@@ -90,38 +81,35 @@ module Analysis::MiningSetup
         @mining.update(video_ids: videoIds)
       end
 
-      def serveZDistThreshsLoc
+      def serveZDistThreshsPri
         chiaVersionIdLoc = @mining.chia_version_id_loc
         videoIds = @mining.video_ids
-        @zdistThreshs = @mining.md_chia_version_comparer.zdist_threshs_loc || {}
+        @zdistThreshs = @mining.md_zdist_differencer.zdist_threshs_pri || {}
 
         @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
         @metricsVideoDetails = @metricsVideo.getDetails
       end
-      def handleZDistThreshsLoc
-        chiaVersionIdLoc = @mining.chia_version_id_loc
-        videoIds = @mining.video_ids
-
+      def handleZDistThreshsPri
         zd = params[:det_ids].map{ |d,z| [d.to_i, z.to_f] if z.to_f > -1 } - [nil]
         zdistThreshs = Hash[zd]
-        @mining.md_chia_version_comparer.update(zdist_threshs_loc: zdistThreshs)
+        @mining.md_zdist_differencer.update(zdist_threshs_pri: zdistThreshs)
       end
 
       def serveZDistThreshsSec
-        chiaVersionIdSec = @mining.md_chia_version_comparer.chia_version_id_sec
+        chiaVersionIdLoc = @mining.chia_version_id_loc
         videoIds = @mining.video_ids
-        @zdistThreshsLoc = @mining.md_chia_version_comparer.zdist_threshs_loc
-        @zdistThreshs = @mining.md_chia_version_comparer.zdist_threshs_sec || {}
+        @zdistThreshsPri = @mining.md_zdist_differencer.zdist_threshs_pri
+        @zdistThreshs = @mining.md_zdist_differencer.zdist_threshs_sec || {}
 
-        @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdSec, videoIds)
+        @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
         @metricsVideoDetails = @metricsVideo.getDetails
       end
       def handleZDistThreshsSec
         zd = params[:det_ids].map{ |d,z| [d.to_i, z.to_f] if z.to_f > -1 } - [nil]
         zdistThreshs = Hash[zd]
-        @mining.md_chia_version_comparer.update(zdist_threshs_sec: zdistThreshs)
+        @mining.md_zdist_differencer.update(zdist_threshs_sec: zdistThreshs)
 
-        clipSets = ::Metrics::Analysis::Mining::ChiaVersionComparerClipSet.new(@mining).getClipSets
+        clipSets = ::Metrics::Analysis::Mining::ZdistDifferencerClipSet.new(@mining).getClipSets
         @mining.update(clip_sets: clipSets)
       end
 
@@ -129,7 +117,7 @@ module Analysis::MiningSetup
       end
       def handleSmartFilters
         spatialIntersectionThresh = params[:spatial_intersection_thresh].to_f
-        @mining.md_chia_version_comparer.update(smart_filter: {spatial_intersection_thresh: spatialIntersectionThresh})
+        @mining.md_zdist_differencer.update(smart_filter: {spatial_intersection_thresh: spatialIntersectionThresh})
       end
 
       def serveCreateSets
@@ -144,7 +132,7 @@ module Analysis::MiningSetup
       def set_steps
         session[:mining_id] ||= params[:mining_id]
         @mining = ::Mining.find(session[:mining_id])
-        self.steps = [:chia_version, :videos, :zdist_threshs_loc, :zdist_threshs_sec, :smart_filters, :create_sets]
+        self.steps = [:chia_version, :videos, :zdist_threshs_pri, :zdist_threshs_sec, :smart_filters, :create_sets]
       end
 
       def set_steps_ll

@@ -1,4 +1,4 @@
-module Jsonifiers::Mining::ZdistFinder
+module Jsonifiers::Mining::ZdistDifferencer
   class FullLocalizations
 
     def initialize(mining, setId)
@@ -8,10 +8,10 @@ module Jsonifiers::Mining::ZdistFinder
       @videoIds = Clip.where(id: @clipIds).pluck(:video_id).uniq.sort
 
       @chiaVersionId = @mining.chia_version_id_loc
+      @detIdZdistsPri = mining.md_zdist_differencer.zdist_threshs_pri
+      @detIdZdistsSec = mining.md_zdist_differencer.zdist_threshs_sec
 
-      @locIntersector = Metrics::Analysis::Mining::ZdistFinderIntersector.new
-      @zdistDetIds = Metrics::Analysis::ZdistValuesConsolidator.new(
-        @mining.md_zdist_finder.zdist_threshs).zdistDetId
+      @locIntersector = Metrics::Analysis::Mining::ZdistDifferencerIntersector.new
     end
 
     def generateQueries
@@ -19,12 +19,13 @@ module Jsonifiers::Mining::ZdistFinder
       # since frame numbers are not uniq across videos, we have to partition
       # by video id first
       @videoIds.each do |videoId|
-        @zdistDetIds.each do |zdist, detIds|
+        @detIdZdistsPri.each do |detId, zdistPri|
+          zdistSec = @detIdZdistsSec[detId]
           queries << ::Localization.in(clip_id: @clipIds)
               .where(video_id: videoId)
               .where(chia_version_id: @chiaVersionId)
-              .in(detectable_id: detIds)
-              .where(zdist_thresh: zdist)
+              .where(detectable_id: detId)
+              .in(zdist_thresh: [zdistPri, zdistSec])
         end
       end
       queries
@@ -54,7 +55,7 @@ module Jsonifiers::Mining::ZdistFinder
       chia_version_id = loclz.chia_version_id
       zdist_thresh = loclz.zdist_thresh
       prob_score = loclz.prob_score
-      spatial_intersection = intersections[loclz.id]
+      spatial_intersection = 1 - intersections[loclz.id]
       scale = loclz.scale
       x = loclz.x
       y = loclz.y

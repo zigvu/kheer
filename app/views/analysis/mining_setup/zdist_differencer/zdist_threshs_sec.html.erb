@@ -22,7 +22,7 @@
 
     <tbody>
       <% @metricsVideoDetails.each do |mvd| %>
-        <% next if @zdistThreshsLoc[mvd[:det_id].to_s] == nil %>
+        <% next if @zdistThreshsPri[mvd[:det_id].to_s] == nil %>
         <tr>
           <td><%= mvd[:det_id] %></td>
           <td><%= mvd[:det_name] %></td>

@@ -2,10 +2,10 @@ module States
 	# Type:
 	# zdistFinder - find zdist for a class by looking for FP confusions
 	# chiaVersionComparer - compare performance of two chia versions in same frame
-	# multiDetFinder - find frames with multiple selected detectables
+	# zdistDifferencer - find detectables that have localizations in one zdist but not in another
 	class MiningType < States::StateCommon
 
-		@@possibleStates = [:zdistFinder, :chiaVersionComparer, :multiDetFinder]
+		@@possibleStates = [:zdistFinder, :chiaVersionComparer, :zdistDifferencer]
 
 		def initialize(mining)
 			super(mining, :mtype) if mining != nil

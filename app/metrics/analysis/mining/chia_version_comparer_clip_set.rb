@@ -10,7 +10,7 @@ module Metrics
         @detIdZdistsLoc = mining.md_chia_version_comparer.zdist_threshs_loc
         @detIdZdistsSec = mining.md_chia_version_comparer.zdist_threshs_sec
 
-        @clipIds = @videoIds.map{ |vId| Video.find(vId).clips.pluck(:id) }.flatten
+        @clipIds = ::Clip.where(video_id: @videoIds).pluck(:id)
 
         @clipSetSize = 5
       end
