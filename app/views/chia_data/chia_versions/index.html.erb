@@ -6,6 +6,7 @@
       <th>Id</th>
       <th>Name</th>
       <th>Description</th>
+      <th># Annotations</th>
       <th># Detectables | Edit</th>
       <th>Edit | Destroy</th>
     </tr>
@@ -17,6 +18,10 @@
         <td><%= chia_version.id %></td>
         <td><%= chia_version.name %></td>
         <td><%= chia_version.description %></td>
+        <td>
+          <%= link_to 'Show', show_annotations_chia_data_chia_version_path(chia_version) %>
+          (<%= ::Annotation.where(chia_version_id: chia_version.id).count %>)
+        </td>
         <td>
           <%= chia_version.chia_version_detectables.count %> |
           <%= link_to 'Edit', [:chia_data, chia_version] %>

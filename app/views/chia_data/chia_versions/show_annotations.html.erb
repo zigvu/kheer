@@ -1,0 +1,25 @@
+<h3>Show annotations: <%= @chia_version.name %></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Chia Id</th>
+      <th>Pretty name</th>
+      <th>Annotation Count</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chiaVersionDetectables.each do |cvd| %>
+      <tr>
+        <td><%= cvd.detectable.id %></td>
+        <td><%= cvd.chia_detectable_id %></td>
+        <td><%= cvd.detectable.pretty_name %></td>
+        <td><%= ::Annotation.where(chia_version_id: @chia_version.id).where(detectable_id: cvd.detectable.id).count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Back', chia_data_chia_versions_path, class: "button" %>

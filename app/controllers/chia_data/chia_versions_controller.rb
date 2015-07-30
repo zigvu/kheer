@@ -1,7 +1,7 @@
 module ChiaData
   class ChiaVersionsController < ApplicationController
-    before_action :set_chia_version, only: [:show, :edit, :update, :destroy, 
-      :all_addable_detectables, :add_detectables]
+    before_action :set_chia_version, only: [:show, :show_annotations, :edit, 
+      :update, :destroy, :all_addable_detectables, :add_detectables]
 
     # GET /chia_versions
     # GET /chia_versions.json
@@ -14,6 +14,13 @@ module ChiaData
     def show
       @chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
       @chia_versions = ::ChiaVersion.all - [@chia_version]
+      @chiaVersionDetectables = @chia_version
+        .chia_version_detectables
+        .order(:chia_detectable_id => :asc)
+    end
+
+    # GET /chia_versions/1/show_annotations
+    def show_annotations
       @chiaVersionDetectables = @chia_version
         .chia_version_detectables
         .order(:chia_detectable_id => :asc)

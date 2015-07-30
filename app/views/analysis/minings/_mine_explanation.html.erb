@@ -1,0 +1,34 @@
+<!-- BEGIN: Mine explanation -->
+<table>
+  <thead>
+    <tr>
+      <td width="150px">Mining Type</td>
+      <td>Explanation</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>zdistFinder</td>
+      <td>
+        See all localization of select detectables at particular zdist values. This type does NOT filter based on spatial intersection - instead choosing to show those intersections as visual feature in the timeline graph. This is the most-basic type of filtering and shows the maximum amount of data. This is useful for FP and FN mining but not so much for cross-class confusions.
+      </td>
+    </tr>
+    <tr>
+      <td>chiaVersionComparer</td>
+      <td>
+        Compare performance of one or more detectables at selected zdists, across chia versions. Such analysis might give us an early indication of whether the model is getting better for that detectable (e.g., if reducing zdist slightly doesn't significantly change output bboxes across chia versions, then we can assume the model has gotten better.)
+      </td>
+    </tr>
+      <td>zdistDifferencer</td>
+      <td>
+        See all localizations for a detectable that appears in one zdist but not in another (higher) zdist. This is useful for FN mining since a detectable that is seen at zdist 0 but not in zdist 4 for example, is a good FN example. However, at present, due to presence of large cross-class confusion, this modality is not very effective for FN mining.
+      </td>
+    </tr>
+      <td>confusionFinder</td>
+      <td>
+        See all localizations where two detectable "confuse" with each other at some zdist, scale and intersection threshold. Confusion is determined by the amount of intersection - an intersection of 0 means that the bbox of detectables doesn't touch each other and an overlap of 1 means the bbox completely overlap for at least one detectable involved. This tool is useful for cross-class mining and figuring out which detectable is performing acceptably at what zdist.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<!-- END: Mine explanation -->

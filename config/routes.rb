@@ -25,6 +25,7 @@ Kheer::Application.routes.draw do
         get 'all_addable_detectables'
         get 'list_detectables'
         get 'add_detectables'
+        get 'show_annotations'
       end
     end
   end

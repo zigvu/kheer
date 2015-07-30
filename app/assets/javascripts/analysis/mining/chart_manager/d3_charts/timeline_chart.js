@@ -274,6 +274,17 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
     console.log("Clip ID: " + args.clip_id + ", Clip FN: " + args.clip_fn + ", Counter: " + counter);
   };
 
+  // change background color
+  var isBackgroundColorWhite = true;
+  $("#d3-video-timeline-chart-background-color-button").click(function(){
+    if(isBackgroundColorWhite){
+      $('#d3-video-timeline-chart rect.bg-rect').css('fill', 'black');
+    } else {
+      $('#d3-video-timeline-chart rect.bg-rect').css('fill', 'white');
+    }
+    isBackgroundColorWhite = !isBackgroundColorWhite;
+  });
+
   //------------------------------------------------
   // set relations
   this.setEventManager = function(em){
