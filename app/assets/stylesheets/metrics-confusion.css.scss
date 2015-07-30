@@ -1,0 +1,31 @@
+@import 'foundation_and_overrides';
+
+
+.filter-selection-scroll-container{
+  height: 100px;
+  overflow-y: scroll;
+}
+
+#d3-heatmap-chart {
+  rect.bordered {
+    stroke: #bbb;
+    stroke-width:1px;   
+  }
+  rect.bordered:hover {
+    stroke: #f00;
+    stroke-width:1px;   
+  }
+
+  text.mono {
+    font-size: 9pt;
+    font-family: verdana;
+    fill: #aaa;
+  }
+
+  text.mono:hover {
+    font-size: 12pt;
+    font-family: verdana;
+    fill: #aaa;
+    font-weight: bold;
+  }
+}

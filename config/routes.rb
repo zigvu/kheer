@@ -12,6 +12,8 @@ Kheer::Application.routes.draw do
       get 'minings/full_annotations'
       get 'minings/color_map'
       get 'minings/cell_map'
+
+      get 'minings/confusion'
     end
   end
 
@@ -37,6 +39,7 @@ Kheer::Application.routes.draw do
       resources :zdist_finder
       resources :chia_version_comparer
       resources :zdist_differencer
+      resources :confusion_finder
     end
 
     resources :minings do

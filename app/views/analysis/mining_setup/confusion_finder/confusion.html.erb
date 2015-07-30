@@ -1,0 +1,147 @@
+<script type="text/javascript">
+  // window.chiaVersionId = '<%= "#{@chiaVersionId}" %>';
+  // window.videoIds = <%= raw @videoIds.to_json %>;
+  window.miningId = '<%= "#{@mining.id}" %>';
+  window.isInConfusionPage = true;
+</script>
+
+<div class="row">
+  <div class="small-12 columns">
+    <h3>Mining Setup: <%= @mining.name %></h3>
+  </div>
+</div>
+
+<!-- BEGIN: Selection -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="filter-panel">
+      <div class="filter-title clearfix">
+        <div class="text left">Filter Selection</div>
+      </div>
+      <div class="filter-content">
+<form>
+  <table>
+    <thead>
+      <tr>
+        <th>Row Detectable Zdist</th>
+        <th>Row Detectable Scale</th>
+        <th>Col Detectable Zdist</th>
+        <th>Col Detectable Scale</th>
+        <th>Intersection Threshold</th>
+        <th>Update Heatmap</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <%= select_tag "priZdistThresh", options_for_select(@zdistThreshs) %>
+        </td>
+        <td>
+          <div class="filter-selection-scroll-container">
+            <% @scales.each do |scale| %>
+              <label>
+                <%= check_box_tag 'priScales', scale, checked = true %>
+                <%= scale %>
+              </label>
+            <% end %>
+          </div>
+        </td>
+        <td>
+          <%= select_tag "secZdistThresh", options_for_select(@zdistThreshs) %>
+        </td>
+        <td>
+          <div class="filter-selection-scroll-container">
+            <% @scales.each do |scale| %>
+              <label>
+                <%= check_box_tag 'secScales', scale, checked = true %>
+                <%= scale %>
+              </label>
+            <% end %>
+          </div>
+        </td>
+        <td>
+          <div class="filter-selection-scroll-container">
+            <% @intThreshs.each_with_index do |intThresh, idx| %>
+              <label>
+                <%= check_box_tag 'intThreshs', intThresh, checked = (idx == 0) %>
+                <%= intThresh %>
+              </label>
+            <% end %>
+          </div>
+        </td>
+        <td>
+          <div id="heatmap-submit" class="button success">Submit</div>
+        </td>
+      </tr>
+      <tr>
+        <td>Max num of localizations (100%)</td>
+        <td><div id="maxNumOfLocalizations">0</div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+      </div>
+    </div>
+  </div>
+</div>  
+<!-- END: Selection -->
+
+<!-- BEGIN: Heatmap -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="filter-panel">
+      <div class="filter-title clearfix">
+        <div class="text left">Cross-class Confusion</div>
+      </div>
+      <div class="filter-content">
+
+<div id="d3-heatmap-chart"></div>
+
+      </div>
+    </div>
+  </div>
+</div>  
+<!-- END: Heatmap -->
+
+<!-- BEGIN: Selected cell details -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="filter-panel">
+      <div class="filter-title clearfix">
+        <div class="text left">Selected localizations</div>
+      </div>
+      <div class="filter-content">
+
+<table>
+  <thead>
+    <tr>
+      <th>Row Detectable</th>
+      <th>Row Detectable Zdist</th>
+      <th>Row Detectable Scales</th>
+      <th>Col Detectable</th>
+      <th>Col Detectable Zdist</th>
+      <th>Col Detectable Scales</th>
+      <th>Intersection Thresholds</th>
+      <th># Localizations</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+  <tbody id="heatmap-cell-selected-details"></tbody>
+</table>
+
+      </div>
+    </div>
+  </div>
+</div>  
+<!-- END: Selected cell details -->
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+  <%= hidden_field_tag 'current_filters', '', {id: 'current_filters'} %>
+  <%= render 'analysis/mining_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->

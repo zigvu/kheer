@@ -96,7 +96,7 @@ module Analysis::MiningSetup
         @zdistThreshs = @mining.md_chia_version_comparer.zdist_threshs_loc || {}
 
         @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
-        @metricsVideoDetails = @metricsVideo.getDetails
+        @metricsVideoDetails = @metricsVideo.getSummaryCounts
       end
       def handleZDistThreshsLoc
         chiaVersionIdLoc = @mining.chia_version_id_loc
@@ -114,7 +114,7 @@ module Analysis::MiningSetup
         @zdistThreshs = @mining.md_chia_version_comparer.zdist_threshs_sec || {}
 
         @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdSec, videoIds)
-        @metricsVideoDetails = @metricsVideo.getDetails
+        @metricsVideoDetails = @metricsVideo.getSummaryCounts
       end
       def handleZDistThreshsSec
         zd = params[:det_ids].map{ |d,z| [d.to_i, z.to_f] if z.to_f > -1 } - [nil]

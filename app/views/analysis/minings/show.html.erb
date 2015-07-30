@@ -7,6 +7,8 @@
     <%= link_to 'Setup mining', analysis_mining_setup_chia_version_comparer_path(Wicked::FIRST_STEP, mining_id: @mining.id), class: "button" %>
   <% elsif States::MiningType.new(@mining).isZdistDifferencer? %>
     <%= link_to 'Setup mining', analysis_mining_setup_zdist_differencer_path(Wicked::FIRST_STEP, mining_id: @mining.id), class: "button" %>
+  <% elsif States::MiningType.new(@mining).isConfusionFinder? %>
+    <%= link_to 'Setup mining', analysis_mining_setup_confusion_finder_path(Wicked::FIRST_STEP, mining_id: @mining.id), class: "button" %>
   <% end %>
 <% else %>
   <%= render 'mine_tracking' %>

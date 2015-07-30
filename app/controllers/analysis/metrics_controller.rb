@@ -7,7 +7,8 @@ module Analysis
       @videoId = params['video_id'].to_i
 
       @metricsVideo = ::Metrics::Analysis::VideosDetails.new(@chiaVersionId, [@videoId])
-      @metricsVideoDetails = @metricsVideo.getDetails
+      @metricsVideoDetails = @metricsVideo.getSummaryCounts
     end
+
   end
 end

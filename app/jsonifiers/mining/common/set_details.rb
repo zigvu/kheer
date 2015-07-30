@@ -8,15 +8,19 @@ module Jsonifiers::Mining::Common
       @chiaVersionIdLoc = @mining.chia_version_id_loc
       @chiaVersionIdAnno = @mining.chia_version_id_anno
 
-      if States::MiningType.new(mining).isZdistFinder?
+      if States::MiningType.new(@mining).isZdistFinder?
         @selectedDetIds = @mining.md_zdist_finder.zdist_threshs.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
         @smartFilter = @mining.md_zdist_finder.smart_filter
-      elsif States::MiningType.new(mining).isChiaVersionComparer?
+      elsif States::MiningType.new(@mining).isChiaVersionComparer?
         @selectedDetIds = @mining.md_chia_version_comparer.zdist_threshs_loc.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
         @smartFilter = @mining.md_chia_version_comparer.smart_filter
-      elsif States::MiningType.new(mining).isZdistDifferencer?
+      elsif States::MiningType.new(@mining).isZdistDifferencer?
         @selectedDetIds = @mining.md_zdist_differencer.zdist_threshs_pri.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
         @smartFilter = @mining.md_zdist_differencer.smart_filter
+      elsif States::MiningType.new(@mining).isConfusionFinder?
+        ff = @mining.md_confusion_finder.confusion_filters[:filters]
+        @selectedDetIds = ff.map { |f| [f[:pri_det_id], f[:sec_det_id]] }.flatten.uniq.sort
+        @smartFilter = ff.map { |f| f[:selected_filters][:int_threshs] }.flatten.uniq.min
       end
     end
 

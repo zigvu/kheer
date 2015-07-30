@@ -83,7 +83,7 @@ module Analysis::MiningSetup
         @zdistThreshs = @mining.md_zdist_finder.zdist_threshs || {}
 
         @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
-        @metricsVideoDetails = @metricsVideo.getDetails
+        @metricsVideoDetails = @metricsVideo.getSummaryCounts
       end
       def handleZDistThreshs
         zd = params[:det_ids].map{ |d,z| [d.to_i, z.to_f] if z.to_f > -1 } - [nil]

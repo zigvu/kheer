@@ -1,27 +1,28 @@
 module Metrics
 	module Analysis
-		class KheerJobSummary
+		class SummaryCounts
 
 			def initialize(kheerJob)
 				@kheerJob = kheerJob
 				@chiaVersion = @kheerJob.chia_version
-				@videoId = @kheerJob.video_id
+				@video = @kheerJob.video
+		    @intersectionThreshs = ::KheerJob.intersection_threshs
 
 				cvs = Serializers::ChiaVersionSettingsSerializer.new(@chiaVersion)
 	      @zdistThreshs = cvs.getSettingsZdistThresh
 			end
 
-			def summaryCounts
+			def getSummaryCounts
 				if @kheerJob.summary_counts == nil
 					sumCnt = {}
 					@chiaVersion.chia_version_detectables.each do |cvd|
 						det = cvd.detectable
-						numAnno = Annotation.where(video_id: @videoId)
+						numAnno = ::Annotation.where(video_id: @video.id)
 								.where(chia_version_id: @chiaVersion.id)
 								.where(detectable_id: det.id).count
 						numLocs = []
 						@zdistThreshs.each do |zdistThresh|
-							numLocs << Localization.where(video_id: @videoId)
+							numLocs << ::Localization.where(video_id: @video.id)
 									.where(chia_version_id: @chiaVersion.id)
 									.where(detectable_id: det.id)
 									.where(zdist_thresh: zdistThresh).count

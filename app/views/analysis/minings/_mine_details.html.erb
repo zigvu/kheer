@@ -43,5 +43,7 @@
   <%= render 'mine_details_chia_version_comparer' %>
 <% elsif States::MiningType.new(@mining).isZdistDifferencer? %>
   <%= render 'mine_details_zdist_differencer' %>
+<% elsif States::MiningType.new(@mining).isConfusionFinder? %>
+  <%= render 'mine_details_confusion_finder' %>
 <% end %>
 <!-- END: Mine details -->

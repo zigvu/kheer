@@ -1,0 +1,31 @@
+<!-- BEGIN: Mine confusion_finder -->
+<table>
+  <thead>
+    <tr>
+      <th>Pri Detectable</th>
+      <th>Pri Detectable Zdist</th>
+      <th>Pri Detectable Scales</th>
+      <th>Sec Detectable</th>
+      <th>Sec Detectable Zdist</th>
+      <th>Sec Detectable Scales</th>
+      <th>Intersection Thresholds</th>
+      <th># Localizations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @mining.md_confusion_finder.confusion_filters[:filters].each do |f| %>
+      <tr>
+        <td><%= "#{::Detectable.find(f[:pri_det_id]).pretty_name} [#{f[:pri_det_id]}]" %></td>
+        <td><%= f[:selected_filters][:pri_zdist] %></td>
+        <td><%= f[:selected_filters][:pri_scales] %></td>
+        <td><%= "#{::Detectable.find(f[:sec_det_id]).pretty_name} [#{f[:sec_det_id]}]" %></td>
+        <td><%= f[:selected_filters][:sec_zdist] %></td>
+        <td><%= f[:selected_filters][:sec_scales] %></td>
+        <td><%= f[:selected_filters][:int_threshs] %></td>
+        <td><%= f[:number_of_localizations] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<!-- END: Mine confusion_finder -->

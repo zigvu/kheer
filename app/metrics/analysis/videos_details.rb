@@ -6,6 +6,7 @@ module Metrics
 
 			def initialize(chiaVersionId, videoIds)
 				@chiaVersion = ::ChiaVersion.find(chiaVersionId)
+				@detectables = ::Detectable.where(id: @chiaVersion.chia_version_detectables.pluck(:detectable_id))
 				
 				@kheerJobs = []
 				videoIds.each do |vId|
@@ -16,10 +17,57 @@ module Metrics
 	      @zdistThreshs = cvs.getSettingsZdistThresh
 			end
 
-			def getDetails
+			def getConfusionMatrix(priZdist, priScales, secZdist, secScales, intThreshs)
+				@kheerJobs.each do |kheerJob|
+					if kheerJob.kheer_job_summaries.count == 0
+						# compute and save summary
+						Metrics::Analysis::ConfusionMatrix.new(kheerJob).computeAndSaveConfusions
+					end
+				end
+				kheerJobIds = @kheerJobs.map{ |kj| kj.id }
+				# run query across all kheer job summaries
+				confMats = ::KheerJobSummary.in(kheer_job_id: kheerJobIds)
+						.where(pri_zdist_thresh: priZdist)
+						.in(pri_scale: priScales)
+						.where(sec_zdist_thresh: secZdist)
+						.in(sec_scale: secScales)
+						.in(int_thresh: intThreshs)
+						.pluck(:confusion_matrix)
+
+				retArr = []
+				maxConfCount = 1
+				# structure:
+				# [{name:, row:, col:, value: count:}, ]
+				@detectables.each_with_index do |detRow, rowIdx|
+					@detectables.each_with_index do |detCol, colIdx|
+
+						confCount = 0
+						confMats.each do |confMat|
+							confCount += confMat[detRow.id.to_s][detCol.id.to_s]
+						end # confMats
+
+						# puts "[#{detRow.id}][#{detCol.id}] : #{confCount}" if confCount > 0
+						retArr << {
+							name: "#{detRow.pretty_name} [#{detRow.id}] :: #{detCol.pretty_name} [#{detCol.id}]",
+							row: rowIdx,
+							col: colIdx,
+							value: 0,
+							count: confCount
+						}
+						maxConfCount = [maxConfCount, confCount].max
+
+					end # detCol
+				end # detRow
+				retArr.each do |ra|
+					ra[:value] = (1.0 * ra[:count] / maxConfCount).round(3)
+				end
+				retArr
+			end
+
+			def getSummaryCounts
 				summaryCount = {}
 				@kheerJobs.each do |kheerJob|
-					sc = Metrics::Analysis::KheerJobSummary.new(kheerJob).summaryCounts
+					sc = Metrics::Analysis::SummaryCounts.new(kheerJob).getSummaryCounts
 					sc.each do |detId, counts|
 						if summaryCount[detId] == nil
 							summaryCount[detId] = counts

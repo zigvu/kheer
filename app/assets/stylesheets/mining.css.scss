@@ -176,28 +176,3 @@ $chart-timeline-brush-color: $orange;
   //   shape-rendering: crispedges;
   // }
 }
-
-
-#spinner-overlay {
-  position: absolute;
-  top:0;
-  left:0;
-  min-width:400px;
-  min-height:400px;
-  z-index:998;
-  background-color: $black;
-
-  opacity: .8;
-  display: none;
-
-  border-radius: 10px;
-}
-
-#spinner-popup {
-  position: absolute;
-  min-width:400px;
-  min-height:400px;
-  z-index: 999;
-
-  display: none;
-}

@@ -65,10 +65,10 @@ module Services
         @formatters.delete(chiaVersionId) if @dumpers[chiaVersionId].keys.empty?
         # create indices
         Localization.no_timeout.create_indexes
-        # update kheer job state and summary
+        # update summaries
         kheerJob = ::KheerJob.where(video_id: videoId).where(chia_version_id: chiaVersionId).first
+        Metrics::Analysis::SummaryCounts.new(kheerJob).getSummaryCounts
         States::KheerJobState.new(kheerJob).setSuccessProcess
-        Metrics::Analysis::KheerJobSummary.new(kheerJob).summaryCounts
       end
 
       def addToExistingVideoStorage(videoId, chiaVersionId, localizations)
