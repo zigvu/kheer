@@ -10,7 +10,7 @@ $filter-panel-border-color-light: $panel-border-color;
 $filter-panel-legend-box-color: scale-color($filter-panel-border-color-light, $lightness: 85%);
 
 $chart-timeline-background-color: $white;
-$chart-timeline-border-color: $zigvu-footer-background-color;
+$chart-timeline-border-color: $black;
 $chart-timeline-brush-color: $orange;
 
 // ------------------------------------
@@ -145,7 +145,7 @@ $chart-timeline-brush-color: $orange;
   rect.bg-rect {
     fill: $chart-timeline-background-color;
     stroke: $chart-timeline-border-color;
-    stroke-width: 1px;
+    stroke-width: 2px;
     shape-rendering: crispEdges;
   }
 
@@ -158,12 +158,8 @@ $chart-timeline-brush-color: $orange;
     shape-rendering: crispEdges;
   }
 
-  .focusBrush {
-    .focusBrushHandlePointer {
-      stroke: red;
-    }
-    .focusBrushHandleRect {
-    }
+  .brushHandlePointer {
+    stroke: red;
   }
 
   path {

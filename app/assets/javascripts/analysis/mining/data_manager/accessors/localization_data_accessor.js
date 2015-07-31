@@ -93,7 +93,7 @@ Mining.DataManager.Accessors.LocalizationDataAccessor = function() {
     var score = 0, spInterScore = 0;
     if(loc[videoId] && loc[videoId][videoFN] && loc[videoId][videoFN][detId]) {
       // if even one localization is present, it gets a height
-      score = 0.7;
+      score = 0.6;
       var detDetails = self.dataStore.dataFullLocalizations[videoId][videoFN][detId];
       spInterScore = _.max(detDetails, 
         function(dd){ return dd.spatial_intersection; }).spatial_intersection;

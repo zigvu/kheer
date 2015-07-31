@@ -22,26 +22,33 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
 
   var divId_d3VideoTimelineChart = "#d3-video-timeline-chart";
   var divWidth = $(divId_d3VideoTimelineChart).parent().width();
-  var divHeight = 70;
+  var focusBarHeight = 35;
+  var contextBarHeight = 120;
+  var divHeight = focusBarHeight + contextBarHeight;
 
   //------------------------------------------------
   // set up gemoetry
   var focusMargin = {top: 5, right: 5, bottom: 5, left: 5},
     contextMargin = {top: 0, right: 5, bottom: 5, left: 5},
     focusWidth = divWidth - focusMargin.left - focusMargin.right,
-    focusHeight = divHeight/2 - focusMargin.top - focusMargin.bottom,
+    focusHeight = focusBarHeight - focusMargin.top - focusMargin.bottom,
 
     contextMargin = {top: 0, right: 5, bottom: 5, left: 5},
     contextWidth = divWidth - contextMargin.left - contextMargin.right,
-    contextHeight = divHeight/2 - contextMargin.top - contextMargin.bottom;
+    contextHeight = contextBarHeight - contextMargin.top - contextMargin.bottom;
   //------------------------------------------------
 
   //------------------------------------------------
   // define ranges
+
+  // note: contextY will need to re-calculated once datamanager has data 
+  var focusRangeHeight = focusHeight;
+  var contextRangeHeight = contextHeight;
+
   var focusX = d3.scale.linear().range([0, focusWidth]),
-    focusY = d3.scale.linear().range([focusHeight, 0]),
+    focusY = d3.scale.linear().range([focusRangeHeight, 0]),
     contextX = d3.scale.linear().range([0, contextWidth]),
-    contextY = d3.scale.linear().range([contextHeight, 0]);
+    contextY = d3.scale.linear().range([contextRangeHeight, 0]);
 
   //------------------------------------------------
 
@@ -108,6 +115,7 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
       focusBrush.extent([focusBrushMid, focusBrushMid]);
     }
     focusBrushHandle.attr("transform", "translate(" + focusX(focusBrushMid) + ",0)");
+    contextBrushHandlePointer.attr("transform", "translate(" + contextX(focusBrushMid) + ",0)");
   };
 
   function focusBrushedEnd(){
@@ -152,7 +160,7 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
   var contextLine = d3.svg.line()
     .interpolate("linear")
     .x(function(d) { return contextX(d.counter); })
-    .y(function(d) { return contextY(d.score); });
+    .y(function(d) { return (contextRangeHeight * d.det_idx) + contextY(d.score); });
   //------------------------------------------------
 
   //------------------------------------------------
@@ -195,7 +203,7 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
       .attr("y", -3)
       .attr("height", focusHeight + 6);
   focusBrushHandle.append("rect")
-      .attr("class", "focusBrushHandlePointer")
+      .attr("class", "brushHandlePointer")
       .attr("width", 1)
       .attr("y", -3)
       .attr("height", focusHeight + 6);
@@ -216,6 +224,12 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
       .selectAll("rect")
       .attr("y", -3)
       .attr("height", contextHeight + 6);
+
+  var contextBrushHandlePointer = contextChart.append("rect")
+      .attr("class", "brushHandlePointer")
+      .attr("width", 1)
+      .attr("y", -3)
+      .attr("height", contextHeight + 6);
   //------------------------------------------------
 
   //------------------------------------------------
@@ -227,10 +241,11 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
       d3.min(scores, function(s) { return d3.min(s.values, function(v) { return v.counter; }); }),
       d3.max(scores, function(s) { return d3.max(s.values, function(v) { return v.counter; }); })
     ]);
-    contextY.domain([0, 1]);
-
-
     focusX.domain(contextX.domain());
+
+    var numOfDetectables = self.dataManager.tChart_getNumOfSelectedDetIds();
+    contextRangeHeight = contextHeight/numOfDetectables;
+    contextY.range([contextRangeHeight, 0]).domain([0, 1]);
     focusY.domain(contextY.domain());
 
     var contextChartLines = contextChart.selectAll("path").data(scores);
@@ -279,6 +294,7 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
   $("#d3-video-timeline-chart-background-color-button").click(function(){
     if(isBackgroundColorWhite){
       $('#d3-video-timeline-chart rect.bg-rect').css('fill', 'black');
+
     } else {
       $('#d3-video-timeline-chart rect.bg-rect').css('fill', 'white');
     }

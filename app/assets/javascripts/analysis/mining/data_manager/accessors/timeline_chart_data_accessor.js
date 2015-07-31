@@ -20,6 +20,10 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
   this.firstCounter = undefined;
   this.lastCounter = undefined;
 
+  this.getNumOfSelectedDetIds = function(){
+    return self.dataStore.miningData.selectedDetIds.length;
+  };
+
   this.createChartData = function(localizationDataAccessor){
     // initialize
     self.dataStore.tChartData = [];
@@ -34,7 +38,7 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
     var sortedClipIds = self.dataStore.videoClipMap.sortedClipIds;
     
     // loop through all filtered detectables
-    _.each(detectableIds, function(detId){
+    _.each(detectableIds, function(detId, idx, list){
       var name = self.dataStore.detectables.decorations[detId].pretty_name;
       var color = self.dataStore.detectables.decorations[detId].chart_color;
 
@@ -50,7 +54,7 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
 
           // max scores
           score = localizationDataAccessor.getMaxScore(clipId, clipFN, detId);
-          values.push({counter: counter++, score: score});
+          values.push({counter: counter++, score: score, det_idx: idx});
 
           // create maps beteween clipId/clipFN and counter
           if(!vf2cm[clipId]){ vf2cm[clipId] = {}; }

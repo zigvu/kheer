@@ -157,6 +157,10 @@ Mining.DataManager.DataManager = function() {
 
   // ----------------------------------------------
   // Timeline chart
+  this.tChart_getNumOfSelectedDetIds = function(){
+    return self.timelineChartDataAccessor.getNumOfSelectedDetIds();
+  };
+
   this.tChart_createData = function(){
     return self.timelineChartDataAccessor.createChartData(
       self.localizationDataAccessor
