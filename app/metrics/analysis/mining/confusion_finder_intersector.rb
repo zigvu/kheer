@@ -6,25 +6,22 @@ module Metrics
 				@bboxIntersector = Metrics::Analysis::BboxIntersector.new
 			end
 
-			def computeIntersections(localizations)
+			def computeIntersections(localizations, intThreshs)
 				intersections = {}
-				localizations.each do |loc2|
-					intersections[loc2.id] = 0 if intersections[loc2.id] == nil
-					localizations.each do |loc1|
-						intersections[loc1.id] = 0 if intersections[loc1.id] == nil
+				localizations.each do |pri|
+					intersections[pri.id] = false if intersections[pri.id] == nil
+					localizations.each do |sec|
+						intersections[sec.id] = false if intersections[sec.id] == nil
 						# don't compare to self - this would be 100%
-						next if loc1.id == loc2.id
-
-						# compute intersections
-						intersectionVal = @bboxIntersector.intersectArea(loc1, loc2)
-						# symmetrically add to both localizations
-						intersections[loc1.id] += intersectionVal
-						intersections[loc2.id] += intersectionVal
+						next if pri.id == sec.id
+						interArea = @bboxIntersector.intersectArea(pri, sec)
+						interArea = 1 if interArea > 1
+						intThresh = interArea.round(1)
+						if intThreshs.include?(intThresh)
+							intersections[pri.id] = true
+							intersections[sec.id] = true
+						end
 					end
-				end
-				intersections.each do |locId, interArea|
-					interArea = 1.0 if interArea > 1.0
-					intersections[locId] = interArea.round(1)
 				end
 				intersections
 			end

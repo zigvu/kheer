@@ -50,9 +50,9 @@ module Jsonifiers::Mining::ConfusionFinder
       queries = generateQueries()
       queries.each do |q, intThreshs|
         q.group_by(&:frame_number).each do |fn, localizations|
-          intersections = @locIntersector.computeIntersections(localizations)
+          intersections = @locIntersector.computeIntersections(localizations, intThreshs)
           localizations.each do |loclz|
-            if intThreshs.include?(intersections[loclz.id])
+            if intersections[loclz.id]
               addLoclzToFormatted(intersections, loclz)
             end
           end #localizations

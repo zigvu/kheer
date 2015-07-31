@@ -19,11 +19,14 @@ module Metrics
 				@summaryDumper = DataImporters::MongoCollectionDumper.new('KheerJobSummary')
 			end
 
-			def computeIntersections(localizations, intersections)
+			def computeIntersections(localizations, intersections, priZdist, priScale, secZdist, secScale)
 				localizations.each do |pri|
 					localizations.each do |sec|
 						# don't compare to self - this would be 100%
 						next if pri.id == sec.id
+						next if not (pri.zdist_thresh == priZdist and pri.scale == priScale)
+						next if not (sec.zdist_thresh == secZdist and sec.scale == secScale)
+
 						interArea = @bboxIntersector.intersectArea(pri, sec)
 						interArea = 1 if interArea > 1
 						intThresh = interArea.round(1)
@@ -50,7 +53,8 @@ module Metrics
 											::Localization.where(zdist_thresh: secZdist, scale: secScale).selector												
 										)
 								q.group_by(&:frame_number).each do |fn, localizations|
-									intersections = computeIntersections(localizations, intersections)
+									intersections = computeIntersections(
+										localizations, intersections, priZdist, priScale, secZdist, secScale)
 								end
 
 								# save results
