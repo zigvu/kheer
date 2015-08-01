@@ -24,9 +24,9 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
     return self.dataStore.miningData.selectedDetIds.length;
   };
 
-  this.createChartData = function(localizationDataAccessor){
+  this.createChartDataLoc = function(localizationDataAccessor){
     // initialize
-    self.dataStore.tChartData = [];
+    self.dataStore.tChartDataLoc = [];
     self.dataStore.toCounterMap = {};
     self.dataStore.fromCounterMap = {};
 
@@ -62,11 +62,36 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
           if(!cm2vf[counter - 1]){ cm2vf[counter - 1] = {clip_id: clipId, clip_fn: clipFN}; }
         });
       });
-      self.dataStore.tChartData.push({name: name, color: color, values: values});
+      self.dataStore.tChartDataLoc.push({name: name, color: color, values: values});
     });
 
-    self.firstCounter = _.first(self.dataStore.tChartData[0].values).counter;
-    self.lastCounter = _.last(self.dataStore.tChartData[0].values).counter;
+    self.firstCounter = _.first(self.dataStore.tChartDataLoc[0].values).counter;
+    self.lastCounter = _.last(self.dataStore.tChartDataLoc[0].values).counter;
+  };
+
+  this.createChartDataAnno = function(annotationDataAccessor){
+    // initialize
+    self.dataStore.tChartDataAnno = [];
+
+    // short hand
+    var cm2vf = self.dataStore.fromCounterMap;
+
+    var name = "Annotations";
+    var color = "rgb(0,0,0)";
+
+    // d3 chart data expectations
+    var values = [], score, annos;
+    // loop through all counters
+    _.each(cm2vf, function(clipIdClipFn, counter){
+      score = 0;
+      annos = annotationDataAccessor.getAnnotations(clipIdClipFn.clip_id, clipIdClipFn.clip_fn);
+      _.find(annos, function(anno, detectableId){
+        if(anno.length > 0){ score = 1; return true; }
+      });
+      values.push({counter: +counter, score: score, det_idx: 0});
+    });
+
+    self.dataStore.tChartDataAnno.push({name: name, color: color, values: values});    
   };
 
   this.getNewPlayPosition = function(clipId, clipFN, numOfFrames){
@@ -84,14 +109,14 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
     return self.getClipIdClipFN(newCounter);
   };
 
-  this.getHitPlayPosition = function(clipId, clipFN, direction){
+  this.getHitLocPlayPosition = function(clipId, clipFN, direction){
     // direction == true if forward direction search
 
     var curCounter = self.getCounter(clipId, clipFN);
     // each class will have next hit at different positions - get the min/max
     // position by traversing data for all classes
     var differentCounters = [];
-    _.each(self.dataStore.tChartData, function(clsData){
+    _.each(self.dataStore.tChartDataLoc, function(clsData){
       var values = clsData.values;
       if(direction){
         for(var i = curCounter + 1; i < values.length; i++){
@@ -112,6 +137,25 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
     return self.getClipIdClipFN(minMaxCounter);
   };
 
+  this.getHitAnnoPlayPosition = function(clipId, clipFN, direction){
+    // direction == true if forward direction search
+
+    var curCounter = self.getCounter(clipId, clipFN);
+    var values = self.dataStore.tChartDataAnno[0].values;
+
+    if(direction){
+      for(var i = curCounter + 1; i < values.length; i++){
+        if(values[i].score > 0){ curCounter = i; break; }
+      }
+    } else {
+      for(var i = curCounter - 1; i >= 0; i--){
+        if(values[i].score > 0){ curCounter = i; break; }
+      }
+    }
+
+    return self.getClipIdClipFN(curCounter);
+  };
+
   this.getCounter = function(clipId, clipFN){
     var counter = self.dataStore.toCounterMap[clipId][clipFN];
     if(!counter){ counter = self.firstCounter; }
@@ -122,8 +166,12 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
     return self.dataStore.fromCounterMap[counter];
   };
 
-  this.getTimelineChartData = function(){
-    return self.dataStore.tChartData;
+  this.getTimelineChartDataLoc = function(){
+    return self.dataStore.tChartDataLoc;
+  };
+
+  this.getTimelineChartDataAnno = function(){
+    return self.dataStore.tChartDataAnno;
   };
 
   //------------------------------------------------

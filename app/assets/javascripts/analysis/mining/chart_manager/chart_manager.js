@@ -25,7 +25,8 @@ Mining.ChartManager.ChartManager = function() {
   };
 
   this.drawTimelineChart = function(){
-    self.timelineChart.draw();
+    self.timelineChart.drawLoc();
+    self.timelineChart.drawAnno();
   };
 
   //------------------------------------------------

@@ -82,6 +82,8 @@ Mining.DataManager.DataManager = function() {
     self.ajaxHandler.getAnnotationSavePromise(annotationObjs)
       .then(function(status){ console.log(status); })
       .catch(function (errorReason) { self.err(errorReason); });
+    // emit event to update annotation timeline chart
+    self.eventManager.fireUpdateAnnoChartCallback({});
   };
 
   this.getAnno_selectedAnnotationDetails = function(){
@@ -162,7 +164,7 @@ Mining.DataManager.DataManager = function() {
   };
 
   this.tChart_createData = function(){
-    return self.timelineChartDataAccessor.createChartData(
+    return self.timelineChartDataAccessor.createChartDataLoc(
       self.localizationDataAccessor
     );
   };
@@ -172,8 +174,12 @@ Mining.DataManager.DataManager = function() {
     return self.timelineChartDataAccessor.getNewPlayPosition(clipId, clipFN, numOfFrames);
   };
 
-  this.tChart_getHitPlayPosition = function(clipId, clipFN, forwardDirection){
-    return self.timelineChartDataAccessor.getHitPlayPosition(clipId, clipFN, forwardDirection);
+  this.tChart_getHitLocPlayPosition = function(clipId, clipFN, forwardDirection){
+    return self.timelineChartDataAccessor.getHitLocPlayPosition(clipId, clipFN, forwardDirection);
+  };
+
+  this.tChart_getHitAnnoPlayPosition = function(clipId, clipFN, forwardDirection){
+    return self.timelineChartDataAccessor.getHitAnnoPlayPosition(clipId, clipFN, forwardDirection);
   };
 
   this.tChart_getCounter = function(clipId, clipFN){
@@ -184,8 +190,15 @@ Mining.DataManager.DataManager = function() {
     return self.timelineChartDataAccessor.getClipIdClipFN(counter);
   };
 
-  this.tChart_getTimelineChartData = function(){
-    return self.timelineChartDataAccessor.getTimelineChartData();
+  this.tChart_getTimelineChartDataLoc = function(){
+    return self.timelineChartDataAccessor.getTimelineChartDataLoc();
+  };
+
+  this.tChart_getTimelineChartDataAnno = function(){
+    self.timelineChartDataAccessor.createChartDataAnno(
+      self.annotationDataAccessor
+    );
+    return self.timelineChartDataAccessor.getTimelineChartDataAnno();
   };
 
   // ----------------------------------------------

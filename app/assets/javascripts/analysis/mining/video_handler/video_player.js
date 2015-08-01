@@ -106,8 +106,11 @@ Mining.VideoHandler.VideoPlayer = function() {
 
   //------------------------------------------------
   // player keys and button control
-  this.previousHit = function(){ self.playHit(false); };
-  this.nextHit = function(){ self.playHit(true); };
+  this.previousHitLoc = function(){ self.playHitLoc(false); };
+  this.nextHitLoc = function(){ self.playHitLoc(true); };
+
+  this.previousHitAnno = function(){ self.playHitAnno(false); };
+  this.nextHitAnno = function(){ self.playHitAnno(true); };
 
   this.fastPlayBackward = function(){ self.skipFewFramesBack(); };
   this.fastPlayForward = function(){ self.skipFewFramesForward(); };
@@ -164,16 +167,25 @@ Mining.VideoHandler.VideoPlayer = function() {
     self.paintUntilPaused();
   };
 
-  this.playHit = function(forwardDirection){
+  this.playHitLoc = function(forwardDirection){
     if(!isVideoPaused){ isVideoPaused = true; }
     var currentPlayState = self.multiVideoExtractor.getCurrentState();
-    var newPlayPos = self.dataManager.tChart_getHitPlayPosition(
+    var newPlayPos = self.dataManager.tChart_getHitLocPlayPosition(
       currentPlayState.clip_id, currentPlayState.clip_fn, forwardDirection);
 
     self.multiVideoExtractor.seekToClipIdClipFN(newPlayPos.clip_id, newPlayPos.clip_fn);
     self.paintUntilPaused();
   }
 
+  this.playHitAnno = function(forwardDirection){
+    if(!isVideoPaused){ isVideoPaused = true; }
+    var currentPlayState = self.multiVideoExtractor.getCurrentState();
+    var newPlayPos = self.dataManager.tChart_getHitAnnoPlayPosition(
+      currentPlayState.clip_id, currentPlayState.clip_fn, forwardDirection);
+
+    self.multiVideoExtractor.seekToClipIdClipFN(newPlayPos.clip_id, newPlayPos.clip_fn);
+    self.paintUntilPaused();
+  }
   //------------------------------------------------
   // Event handling
   function frameNavigateAfterBrush(args){

@@ -62,7 +62,8 @@ Mining.DataManager.Stores = Mining.DataManager.Stores || {};
     }, }
   }
 
-  tChartData: [{name:, color:, values: [{counter: score:}, ]}, ]
+  tChartDataLoc: [{name:, color:, values: [{counter: score:}, ]}, ]
+  tChartDataAnno: [{name:, color:, values: [{counter: score:}, ]}, ]
   toCounterMap: {:clip_id => {:clip_fn => counter}}
   fromCounterMap: {:counter => {clip_id: , clip_fn:}}
 

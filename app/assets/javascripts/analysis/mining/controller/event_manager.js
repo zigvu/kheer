@@ -29,6 +29,11 @@ Mining.Controller.EventManager = function() {
   var statusFrameCallbacks = $.Callbacks("unique");
   this.addStatusFrameCallback = function(callback){ statusFrameCallbacks.add(callback); };
   this.fireStatusFrameCallback = function(args){ statusFrameCallbacks.fire(args); };
+
+  var updateAnnoChartCallback = $.Callbacks("unique");
+  this.addUpdateAnnoChartCallback = function(callback){ updateAnnoChartCallback.add(callback); };
+  this.fireUpdateAnnoChartCallback = function(args){ updateAnnoChartCallback.fire(args); };
+
   //------------------------------------------------
 
 
