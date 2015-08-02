@@ -31,7 +31,7 @@ Mining.DataManager.Stores = Mining.DataManager.Stores || {};
     <chiaVersion>: {
       id:, name:, settings: {zdistThresh: [zdistValue, ], scales: [scale, ]}
     }
-    <detectables>: [{id:, name:, pretty_name:, chia_detectable_id:}, ]
+    <detectables>: [{id:, name:, pretty_name:}, ]
     <video>: {video_id:, title:, playback_frame_rate:, detection_frame_rate:}
     <clip>: {clip_id:, clip_url:, clip_fn_start:, clip_fn_end:, length:}
 

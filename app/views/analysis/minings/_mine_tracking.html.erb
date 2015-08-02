@@ -3,7 +3,7 @@
   <thead>
     <tr>
       <th>Set #</th>
-      <th># Videos</th>
+      <th width="40%"># Videos</th>
       <th># Clips</th>
       <th># Localizations</th>
       <th># Frames</th>
@@ -16,7 +16,13 @@
     <% @clipSets.each do |idx, clipSet| %>
       <tr>
         <td><%= idx %></td>
-        <td><%= clipSet.map{ |c| c[:video_id] }.uniq.count %></td>
+        <td>
+          <ul>
+            <% clipSet.map{ |c| c[:video_id] }.uniq.each do |videoId| %>
+              <li><%= ::Video.find(videoId).title %></li>
+            <% end %>
+          </ul>
+        </td>
         <td><%= clipSet.count %></td>
         <td><%= clipSet.map{ |c| c[:loc_count] }.sum %></td>
         <td><%= clipSet.map{ |c| c[:fn_count] }.sum %></td>

@@ -15,6 +15,7 @@ Mining.FrameDisplay.Shapes.Polygon = function(chiaVersionId, detId, title, fillC
   var self = this;
   var selected = false, polyId;
   var snrPercent;
+  var patchArea = 227 * 227; // 256 x 256 patch size but area for SNR smaller
   this.state = 'existing'; // 'deleted', 'new'
 
   // default decorations
@@ -157,7 +158,6 @@ Mining.FrameDisplay.Shapes.Polygon = function(chiaVersionId, detId, title, fillC
     // assume poly is closed
     // check cache - if doesn't exist, then compute
     if(snrPercent === undefined){
-      var patchArea = 256 * 256;
       var polyArea = self.getArea();
       snrPercent = Math.round(100 * 10 * polyArea/patchArea)/10 + " %";
     }

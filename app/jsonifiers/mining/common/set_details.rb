@@ -36,16 +36,27 @@ module Jsonifiers::Mining::Common
     }
     end
 
-    def getDetectablesFormatted(chiaVersionId)
-      # <detectables>: [{id:, name:, pretty_name:, chia_detectable_id:}, ]
+    def getDetectablesFormattedLoc(chiaVersionId)
+      detectableIds = ::ChiaVersionDetectable.where(chia_version_id: chiaVersionId).pluck(:detectable_id)
+      getDetectablesFormatted(detectableIds)
+    end
+
+    def getDetectablesFormattedAnno(chiaVersionId)
+      detectableIds = ::ChiaVersionDetectable.where(chia_version_id: chiaVersionId).pluck(:detectable_id)
+      selDetIdsForAnno = @selectedDetIds.map{ |dId| dId if detectableIds.include?(dId) } - [nil]
+      locsDets = getDetectablesFormatted(selDetIdsForAnno)
+      locsAnno = getDetectablesFormatted(detectableIds - selDetIdsForAnno)
+      locsDets + locsAnno
+    end
+
+    def getDetectablesFormatted(detectableIds)
+      # <detectables>: [{id:, name:, pretty_name:}, ]
       detectables = []
-      ::ChiaVersionDetectable.where(chia_version_id: chiaVersionId).each do |cvd|
-        det = cvd.detectable
+      ::Detectable.where(id: detectableIds).order(name: :asc).each do |det|
         detectables << {
           id: det.id,
           name: det.name,
-          pretty_name: det.pretty_name,
-          chia_detectable_id: cvd.chia_detectable_id
+          pretty_name: det.pretty_name
         }
       end
       detectables
@@ -101,8 +112,8 @@ module Jsonifiers::Mining::Common
           annotation:  getChiaVersionFormatted(@chiaVersionIdAnno)
         },
         detectables: {
-          localization: getDetectablesFormatted(@chiaVersionIdLoc),
-          annotation:  getDetectablesFormatted(@chiaVersionIdAnno)
+          localization: getDetectablesFormattedLoc(@chiaVersionIdLoc),
+          annotation:  getDetectablesFormattedAnno(@chiaVersionIdAnno)
         },
         videos: getVideosFormatted(@clipSet),
         clips: getClipsFormatted(@clipSet),

@@ -66,7 +66,7 @@
       <tr>
         <th>Id</th>
         <th>Length</th>
-        <th>URL</th>
+        <th>Show</th>
         <th>Frame Num Start</th>
         <th>FrameNum End</th>
       </tr>
@@ -77,7 +77,7 @@
         <tr>
           <td><%= clip.id %></td>
           <td><%= clip.length %></td>
-          <td><%= clip.clip_url %></td>
+          <td><%= link_to 'Show', clip.clip_url, target: "_blank" %></td>
           <td><%= clip.frame_number_start %></td>
           <td><%= clip.frame_number_end %></td>
         </tr>

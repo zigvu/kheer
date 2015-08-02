@@ -27,7 +27,7 @@ Mining.FrameDisplay.Shapes.Bbox = function() {
 
   // text rendering : scale
   var scaleHeight = 10;
-  var scaleWidth = 40;
+  var scaleWidth = 55;
 
   this.draw = function(ctx, bbox, detName){
     var x = bbox.x, y = bbox.y, w = bbox.w, h = bbox.h;
@@ -52,7 +52,7 @@ Mining.FrameDisplay.Shapes.Bbox = function() {
     ctx.fillText(score, x + borderOffset + textLeftOffset + 2, y + borderOffset + textTopOffset + nameHeight);
 
     // text rendering : scale
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
     ctx.crispFillRect(x + borderOffset, y + borderOffset + nameHeight + scoreHeight + 2, scaleWidth, scaleHeight);
     ctx.font = "10px serif";
     ctx.fillStyle = "rgb(0,0,0)";
