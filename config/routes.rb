@@ -51,8 +51,10 @@ Kheer::Application.routes.draw do
     get 'metrics/video_details'
   end
 
-  devise_for :users
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 
+  devise_for :users
+  
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

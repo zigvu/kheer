@@ -25,13 +25,31 @@ elsif Rails.env.development?
 else
   raise "No queue set up for non development/production environments"
 end
-    
-bunnyConnection = Messaging::BunnyConnection.new(amqp_url).connection
-HEATMAPDATA_RPC = Messaging::RpcClient.new(
-    bunnyConnection, heatmap_data_request, heatmap_data_response)
 
-clipIdHandler = Services::MessagingServices::ClipIdHandler.new()
-Messaging::RpcServer.new(bunnyConnection, clip_id_request, clipIdHandler).start
+# TODO: Remove hack
+# Delayed Job uses `fork` which results in sharing file descriptors
+# the bunny connection cannot be shared across processes - and this will
+# print errors when starting bin/delayed_job
+# A hacky solution is to detect when delayed job is being run and not start
+# bunny connection then
+# BEGIN HACK
+executable_name = File.basename $0
+arguments = $*
+rake_args_regex = /\Ajobs:/
+if not ((executable_name == 'delayed_job') || (executable_name == 'rake' && arguments.find{ |v| v =~ rake_args_regex }))
+# END HACK
 
-localizationHandler = Services::MessagingServices::LocalizationHandler.new()
-Messaging::RpcServer.new(bunnyConnection, localization_request, localizationHandler).start
+  # TODO: move each of these to their own containers
+  bunnyConnection = Messaging::BunnyConnection.new(amqp_url).connection
+  HEATMAPDATA_RPC = Messaging::RpcClient.new(
+      bunnyConnection, heatmap_data_request, heatmap_data_response)
+
+  clipIdHandler = Services::MessagingServices::ClipIdHandler.new()
+  Messaging::RpcServer.new(bunnyConnection, clip_id_request, clipIdHandler).start
+
+  localizationHandler = Services::MessagingServices::LocalizationHandler.new()
+  Messaging::RpcServer.new(bunnyConnection, localization_request, localizationHandler).start
+
+# BEGIN HACK
+end
+# END HACK
