@@ -6,7 +6,8 @@ module States
 	# confusionFinder - find confusion based on localization intersection
 	class MiningType < States::StateCommon
 
-		@@possibleStates = [:zdistFinder, :chiaVersionComparer, :zdistDifferencer, :confusionFinder]
+		@@possibleStates = [:zdistFinder, :chiaVersionComparer, 
+			:zdistDifferencer, :confusionFinder, :sequenceViewer]
 
 		def initialize(mining)
 			super(mining, :mtype) if mining != nil

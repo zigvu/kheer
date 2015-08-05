@@ -5,7 +5,11 @@
       <th>Set #</th>
       <th width="40%"># Videos</th>
       <th># Clips</th>
-      <th># Localizations</th>
+      <% if not States::MiningType.new(@mining).isSequenceViewer? %>
+        <th># Localizations</th>
+      <% else %>
+        <th># Annotations</th>
+      <% end %>
       <th># Frames</th>
       <th>Progress %</th>
       <th>Mine</th>

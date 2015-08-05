@@ -41,6 +41,7 @@ Kheer::Application.routes.draw do
       resources :chia_version_comparer
       resources :zdist_differencer
       resources :confusion_finder
+      resources :sequence_viewer
     end
 
     resources :minings do

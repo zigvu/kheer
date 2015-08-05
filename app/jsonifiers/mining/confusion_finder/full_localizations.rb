@@ -7,8 +7,7 @@ module Jsonifiers::Mining::ConfusionFinder
 
       clipSet = @mining.clip_sets[setId.to_s]
       @clipIds = clipSet.map{ |cs| cs["clip_id"].to_i }
-      @videoIds = Clip.where(id: @clipIds).pluck(:video_id).uniq.sort
-
+ 
       @chiaVersionId = @mining.chia_version_id_loc
 
       @locIntersector = Metrics::Analysis::Mining::ConfusionFinderIntersector.new
@@ -29,12 +28,12 @@ module Jsonifiers::Mining::ConfusionFinder
     def generateQueries
       # format [[query, intThreshs], ]
       queries = []
-      # since frame numbers are not uniq across videos, we have to partition
-      # by video id first
-      @videoIds.each do |videoId|
+      # since each clip will have a unique frame number, we can iterate
+      # over clipIds rather than videoIds
+      @clipIds.each do |clipId|
         @filters.each do |filter|
           intThreshs = filter[:selected_filters][:int_threshs]
-          q = generateSingleQuery(filter).where(video_id: videoId).where(chia_version_id: @chiaVersionId)
+          q = generateSingleQuery(filter).where(clip_id: clipId).where(chia_version_id: @chiaVersionId)
           queries << [q, intThreshs]
         end
       end

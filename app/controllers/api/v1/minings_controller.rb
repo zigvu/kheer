@@ -77,6 +77,8 @@ module Api
 						@mTypeModule = Jsonifiers::Mining::ZdistDifferencer
 					elsif States::MiningType.new(@mining).isConfusionFinder?
 						@mTypeModule = Jsonifiers::Mining::ConfusionFinder
+					elsif States::MiningType.new(@mining).isSequenceViewer?
+						@mTypeModule = Jsonifiers::Mining::SequenceViewer
 					end
 				end
 

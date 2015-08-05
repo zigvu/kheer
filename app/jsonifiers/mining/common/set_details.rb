@@ -20,7 +20,13 @@ module Jsonifiers::Mining::Common
       elsif States::MiningType.new(@mining).isConfusionFinder?
         ff = @mining.md_confusion_finder.confusion_filters[:filters]
         @selectedDetIds = ff.map { |f| [f[:pri_det_id], f[:sec_det_id]] }.flatten.uniq.sort
-        @smartFilter = ff.map { |f| f[:selected_filters][:int_threshs] }.flatten.uniq.min
+        sf = ff.map { |f| f[:selected_filters][:int_threshs] }.flatten.uniq.min
+        @smartFilter = {spatial_intersection_thresh: sf}
+      elsif States::MiningType.new(@mining).isSequenceViewer?
+        # empty selectedDetIds causes JS error in timeline chart data creation
+        detectableIds = ::ChiaVersionDetectable.where(chia_version_id: @chiaVersionIdAnno).pluck(:detectable_id)
+        @selectedDetIds = [detectableIds.first]
+        @smartFilter = {spatial_intersection_thresh: 1.0}
       end
     end
 

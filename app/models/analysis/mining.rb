@@ -36,6 +36,8 @@ class Mining
       self.create_md_zdist_differencer
     elsif States::MiningType.new(self).isConfusionFinder?
       self.create_md_confusion_finder
+    elsif States::MiningType.new(self).isSequenceViewer?
+      # don't need extra data
     end
   end
 

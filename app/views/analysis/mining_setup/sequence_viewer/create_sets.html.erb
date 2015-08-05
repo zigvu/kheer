@@ -1,0 +1,45 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'analysis/mining_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Create Sets</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+  <table>
+    <thead>
+      <tr>
+        <th>Set #</th>
+        <th># Videos</th>
+        <th># Clips</th>
+        <th># Annotations</th>
+        <th># Frames</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @clipSets.each do |idx, clipSet| %>
+        <tr>
+          <td><%= idx %></td>
+          <td><%= clipSet.map{ |c| c[:video_id] }.uniq.count %></td>
+          <td><%= clipSet.count %></td>
+          <td><%= clipSet.map{ |c| c[:loc_count] }.sum %></td>
+          <td><%= clipSet.map{ |c| c[:fn_count] }.sum %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render 'analysis/mining_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->

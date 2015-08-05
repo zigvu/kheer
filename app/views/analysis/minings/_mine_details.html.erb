@@ -45,5 +45,7 @@
   <%= render 'mine_details_zdist_differencer' %>
 <% elsif States::MiningType.new(@mining).isConfusionFinder? %>
   <%= render 'mine_details_confusion_finder' %>
+<% elsif States::MiningType.new(@mining).isSequenceViewer? %>
+  <!-- nothing for now -->
 <% end %>
 <!-- END: Mine details -->
