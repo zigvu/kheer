@@ -1,0 +1,29 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th width="80px">Games</th>
+      <th width="50px"></th>
+      <th width="50px"></th>
+      <th width="80px"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sub_seasons.each do |sub_season| %>
+      <tr>
+        <td><%= sub_season.name %></td>
+        <td><%= sub_season.description %></td>
+        <td><%= sub_season.games.count %></td>
+        <td><%= link_to 'Show', [:stream, sub_season] %></td>
+        <td><%= link_to 'Edit', edit_stream_sub_season_path(sub_season, season_id: @season.id) %></td>
+        <td><%= link_to 'Destroy', [:stream, sub_season], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td><%= link_to 'New SubSeason', new_stream_sub_season_path(season_id: @season.id), class: "button" %></td>
+      <td> </td><td> </td><td> </td><td> </td><td> </td>
+    </tr>
+  </tbody>
+</table>

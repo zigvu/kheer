@@ -1,0 +1,25 @@
+<p>
+  <strong>Name:</strong>
+  <%= @channel.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @channel.description %>
+</p>
+
+<p>
+  <strong>Url:</strong>
+  <%= @channel.url %>
+</p>
+
+<p>
+  <strong>Videos:</strong>
+    <ul>
+      <% @channel.videos.each do |video| %>
+        <li><%= video.title %></li>
+      <% end %>
+    </ul>
+</p>
+
+<%= link_to 'Cancel', stream_channels_path, class: "button alert" %>

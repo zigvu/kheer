@@ -1,0 +1,7 @@
+<% breadcrumb :game_new, @sub_season %>
+
+<h3>New game</h3>
+
+<%= render 'form' %>
+
+<%= link_to 'Cancel', stream_sub_season_path(@sub_season), class: "button alert" %>

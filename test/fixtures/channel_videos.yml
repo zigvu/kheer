@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  channel_id: 
+  video_id: 
+  cellroti_id: 1
+
+two:
+  channel_id: 
+  video_id: 
+  cellroti_id: 1

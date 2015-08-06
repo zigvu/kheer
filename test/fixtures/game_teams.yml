@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  game_id: 
+  team_id: 
+  cellroti_id: 1
+
+two:
+  game_id: 
+  team_id: 
+  cellroti_id: 1

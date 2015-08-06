@@ -1,0 +1,23 @@
+<% breadcrumb :event_type, @event_type %>
+
+<p>
+  <strong>Detectable ID:</strong>
+  <%= @event_type.detectable.id %>
+</p>
+
+<p>
+  <strong>Detectable Name:</strong>
+  <%= @event_type.detectable.name %>
+</p>
+
+<p>
+  <strong>Detectable Pretty Name:</strong>
+  <%= @event_type.detectable.pretty_name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @event_type.description %>
+</p>
+
+<%= link_to 'Cancel', stream_sport_path(@event_type.sport), class: "button alert" %>

@@ -1,0 +1,15 @@
+<%= simple_form_for([:stream, @channel]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.input :description %>
+    <%= f.input :url %>
+    <%= f.association :videos, as: :check_boxes %>
+  </div>
+
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

@@ -1,0 +1,62 @@
+<%= simple_form_for([:stream, @game]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.input :description %>
+    <%= f.input :start_date %>
+    <%= f.input :end_date %>
+    <%= f.input :venue_city %>
+    <%= f.input :venue_stadium %>
+    <%= f.hidden_field :sub_season_id, value: @sub_season.id %>
+  </div>
+  <div class="field">
+    <table>
+      <thead>
+        <tr>
+          <td>Team</td>
+          <td>Delete?</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :game_teams do |game_team| %>
+          <tr>
+            <td>
+              <%= game_team.association :team, :as => :select, label: false %>              
+            </td>
+            <td>
+              <%= game_team.check_box :_destroy %>              
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="field">
+    <table>
+      <thead>
+        <tr>
+          <td>Video</td>
+          <td>Delete?</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :game_videos do |game_video| %>
+          <tr>
+            <td>
+              <%= game_video.association :video, :as => :select, label: false %>              
+            </td>
+            <td>
+              <%= game_video.check_box :_destroy %>              
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

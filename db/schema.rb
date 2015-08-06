@@ -11,7 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150802175121) do
+ActiveRecord::Schema.define(version: 20150806204407) do
+
+  create_table "channel_videos", force: true do |t|
+    t.integer  "channel_id"
+    t.integer  "video_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "channel_videos", ["channel_id"], name: "index_channel_videos_on_channel_id", using: :btree
+  add_index "channel_videos", ["video_id"], name: "index_channel_videos_on_video_id", using: :btree
+
+  create_table "channels", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "url"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "chia_version_detectables", force: true do |t|
     t.integer  "chia_version_id"
@@ -68,6 +88,109 @@ ActiveRecord::Schema.define(version: 20150802175121) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "event_types", force: true do |t|
+    t.text     "description"
+    t.float    "weight"
+    t.integer  "sport_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "detectable_id"
+  end
+
+  add_index "event_types", ["detectable_id"], name: "index_event_types_on_detectable_id", using: :btree
+  add_index "event_types", ["sport_id"], name: "index_event_types_on_sport_id", using: :btree
+
+  create_table "game_teams", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "team_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "game_teams", ["game_id"], name: "index_game_teams_on_game_id", using: :btree
+  add_index "game_teams", ["team_id"], name: "index_game_teams_on_team_id", using: :btree
+
+  create_table "game_videos", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "video_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "game_videos", ["game_id"], name: "index_game_videos_on_game_id", using: :btree
+  add_index "game_videos", ["video_id"], name: "index_game_videos_on_video_id", using: :btree
+
+  create_table "games", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string   "venue_city"
+    t.string   "venue_stadium"
+    t.integer  "sub_season_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "games", ["sub_season_id"], name: "index_games_on_sub_season_id", using: :btree
+
+  create_table "leagues", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "sport_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "leagues", ["sport_id"], name: "index_leagues_on_sport_id", using: :btree
+
+  create_table "seasons", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "league_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "seasons", ["league_id"], name: "index_seasons_on_league_id", using: :btree
+
+  create_table "sports", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sub_seasons", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "season_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sub_seasons", ["season_id"], name: "index_sub_seasons_on_season_id", using: :btree
+
+  create_table "teams", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "icon_path"
+    t.integer  "league_id"
+    t.integer  "cellroti_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "teams", ["league_id"], name: "index_teams_on_league_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

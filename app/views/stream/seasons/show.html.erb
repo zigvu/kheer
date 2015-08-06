@@ -1,0 +1,18 @@
+<% breadcrumb :season, @season %>
+
+<p>
+  <strong>Season Name:</strong>
+  <%= @season.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @season.description %>
+</p>
+
+<p>
+  <strong>Sub-Seasons:</strong>
+  <%= render '/stream/sub_seasons/index_table' %>
+</p>
+
+<%= link_to 'Cancel', stream_league_path(@season.league), class: "button alert" %>

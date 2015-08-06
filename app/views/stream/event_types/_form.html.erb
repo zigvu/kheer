@@ -1,0 +1,14 @@
+<%= simple_form_for([:stream, @event_type]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.association :detectable %>
+    <%= f.input :description %>
+    <%= f.select :weight, (0..10).map{ |i| i/10.0} %>
+    <%= f.hidden_field :sport_id, value: @sport.id %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

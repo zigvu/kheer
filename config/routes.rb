@@ -1,5 +1,17 @@
 Kheer::Application.routes.draw do
 
+  namespace :stream do
+    resources :event_types
+    resources :game_teams
+    resources :games
+    resources :teams
+    resources :sub_seasons
+    resources :seasons
+    resources :leagues
+    resources :sports
+    resources :channels
+  end
+
   namespace :api, :defaults => {:format => :json} do
     namespace :v1 do
 

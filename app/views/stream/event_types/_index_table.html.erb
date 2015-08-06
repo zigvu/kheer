@@ -1,0 +1,29 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Weight</th>
+      <th width="50px"></th>
+      <th width="50px"></th>
+      <th width="80px"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @event_types.each do |event_type| %>
+      <tr>
+        <td><%= event_type.detectable.pretty_name %></td>
+        <td><%= event_type.description %></td>
+        <td><%= event_type.weight %></td>
+        <td><%= link_to 'Show', [:stream, event_type] %></td>
+        <td><%= link_to 'Edit', edit_stream_event_type_path(event_type, sport_id: @sport.id) %></td>
+        <td><%= link_to 'Destroy', [:stream, event_type], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td><%= link_to 'New Event Type', new_stream_event_type_path(sport_id: @sport.id), class: "button" %></td>
+      <td> </td><td> </td><td> </td><td> </td>
+    </tr>
+  </tbody>
+</table>
