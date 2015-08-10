@@ -12,6 +12,8 @@ MiningSetup.Confusion = MiningSetup.Confusion || {};
 MiningSetup.Confusion.HeatmapChart = function(dataManager) {
   var self = this;
 
+  this.eventManager = undefined;
+
   //------------------------------------------------
   // set up
 
@@ -71,7 +73,7 @@ MiningSetup.Confusion.HeatmapChart = function(dataManager) {
       .attr("width", gridWidth)
       .attr("height", gridHeight)
       .style("fill", "blue")
-      .on("click", function(d){ handleCellClick(d); });
+      .on("click", function(d){ self.handleCellClick(d); });
 
   heatmap.append("title")
     .text(function(d) { 
@@ -156,9 +158,17 @@ MiningSetup.Confusion.HeatmapChart = function(dataManager) {
         .style("fill", function(d) { return heatmapColorScale(d.value); });
   };
 
-  function handleCellClick(d){
-    dataManager.handleCellClick(d.row, d.col, d.count);
+  this.handleCellClick = function(d){
+    dataManager.handleCellClick(d.row, d.col);
   };
   //------------------------------------------------
+
+  //------------------------------------------------
+  // set relations
+  this.setEventManager = function(em){
+    self.eventManager = em;
+    self.eventManager.addRedrawHeatmapCallback(self.repaint);
+    return self;
+  };
 };
 

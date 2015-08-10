@@ -1,13 +1,17 @@
 
 $(".analysis_mining_setup_confusion_finder.show").ready(function() {
   // special case for wicked wizard since it always uses show - disable
-  // when in non-confusion.html.erb page
+  // when not in confusion.html.erb page
   if(!window.isInConfusionPage){ return; }
 
-  $("#heatmap-submit").addClass('disabled');
+  var buttonDisabled = false;
+  disableButtons();
 
   heatmapChart = undefined;
+  eventManager = new MiningSetup.Confusion.EventManager();
   dataManager = new MiningSetup.Confusion.DataManager();
+  dataManager.setEventManager(eventManager);
+
   populateFilters();
 
   showSpinner();
@@ -15,28 +19,35 @@ $(".analysis_mining_setup_confusion_finder.show").ready(function() {
     .then(function(){
       hideSpinner();
       heatmapChart = new MiningSetup.Confusion.HeatmapChart(dataManager);
-      $("#maxNumOfLocalizations").text(dataManager.getMaxNumOfLocalizations());
-      $("#heatmap-submit").removeClass('disabled');
+      heatmapChart.setEventManager(eventManager);
+
+      enableButtons();
     })
     .catch(function (errorReason) {
       displayJavascriptError(errorReason);
     });
 
   $("#heatmap-submit").click(function(){
-    if($("#heatmap-submit").hasClass('disabled')){ return; }
-    $("#heatmap-submit").addClass('disabled');
+    if(buttonDisabled){ return; }
+    disableButtons();
+
     showSpinner();
     populateFilters();
     dataManager.getFullDataPromise()
       .then(function(){
         hideSpinner();
-        heatmapChart.repaint();
-        $("#heatmap-submit").removeClass('disabled');
-        $("#maxNumOfLocalizations").text(dataManager.getMaxNumOfLocalizations());
+        enableButtons();
       })
       .catch(function (errorReason) {
         displayJavascriptError(errorReason);
       });
+  });
+
+  $("#heatmap-hide-diagonal").click(function(){
+    if(buttonDisabled){ return; }
+    disableButtons();
+    dataManager.setZeroDiagonal();
+    enableButtons();
   });
 
 
@@ -56,5 +67,18 @@ $(".analysis_mining_setup_confusion_finder.show").ready(function() {
     }).get();
 
     dataManager.updateFilters(priZdist, priScales, secZdist, secScales, intThreshs);
+  };
+
+  function enableButtons(){
+    buttonDisabled = false;
+    $("#heatmap-submit").removeClass('disabled');
+    $("#heatmap-hide-diagonal").removeClass('disabled');
+    $("#maxNumOfLocalizations").text(dataManager.getMaxNumOfLocalizations());
+  };
+
+  function disableButtons(){
+    buttonDisabled = true;
+    $("#heatmap-submit").addClass('disabled');
+    $("#heatmap-hide-diagonal").addClass('disabled');
   };
 });

@@ -15,20 +15,23 @@ MiningSetup.Confusion = MiningSetup.Confusion || {};
   JS style hash implies that (keyname: value) text are used as keys of objects.]
 
   fullData: [{name:, row:, col:, value: count:}, ]
+  shadowedData: {row: {col: count}, }
   detectableMap: {detectable_id: detectable_name, }
   detectableIds: [:detectable_id, ]
   currentFilters: {pri_zdist:, pri_scales:, sec_zdist:, sec_scales:, int_threshs: }
-  selectedFilters:
-    [{
-      pri_det_id:, sec_det_id:, 
-      number_of_localizations:, selected_filters:currentFilters
+  selectedFilters: [{ 
+    pri_det_id:, sec_det_id:, row:, col:, 
+    number_of_localizations:, selected_filters:currentFilters 
     }, ]
 */
 
 MiningSetup.Confusion.DataManager = function() {
   var self = this;
 
+  this.eventManager = undefined;
+
   this.fullData = undefined;
+  this.shadowedData = undefined;
   this.detectableMap = undefined;
   this.detectableIds = undefined;
   this.currentFilters = {
@@ -42,6 +45,17 @@ MiningSetup.Confusion.DataManager = function() {
   };
   this.selectedFilters = [];
 
+  this.setZeroDiagonal = function(){
+    // shadow diagonal and recompute percentage
+    _.each(self.fullData, function(d){
+      if(d.row === d.col){
+        self.shadowedData[d.row][d.col] = d.count;
+        d.count = 0;
+      }
+    });
+    self.repaintHeatmap();
+  };
+
   this.updateFilters = function(priZdist, priScales, secZdist, secScales, intThreshs){
     self.currentFilters.pri_zdist = priZdist;
     self.currentFilters.pri_scales = priScales;
@@ -50,23 +64,34 @@ MiningSetup.Confusion.DataManager = function() {
     self.currentFilters.int_threshs = intThreshs;
   };
 
-  this.handleCellClick = function(rowId, colId, numLocs){
+  this.handleCellClick = function(rowId, colId){
+    var numLocs = self.getNumOfLocalizations(rowId, colId);
+    if(numLocs <= 0){ return; }
+
     var cellFilters = {
       pri_det_id: parseInt(self.detectableIds[rowId]),
       sec_det_id: parseInt(self.detectableIds[colId]),
+      row: rowId,
+      col: colId,
       number_of_localizations: numLocs,
       selected_filters: _.clone(self.currentFilters)
     };
 
+    // return if already included
     var alreadyIncluded = false;
     _.find(self.selectedFilters, function(selectedFilter){
       if(_.isEqual(cellFilters, selectedFilter)){ alreadyIncluded = true; }
       return alreadyIncluded;
     });
-    if(!alreadyIncluded){
-      self.selectedFilters.push(cellFilters);
-    }
+    if(alreadyIncluded){ return; }
+
+    // add filters and update
+    self.selectedFilters.push(cellFilters);
     self.updateSelectedFiltersHTML();
+
+    // remove from heatmap value
+    self.shadowData(rowId, colId);
+    self.repaintHeatmap();
   };
 
   this.getSelectedFilters = function(){
@@ -79,6 +104,12 @@ MiningSetup.Confusion.DataManager = function() {
 
   this.getHeatmapData = function(){
     return self.fullData;
+  };
+
+  this.getNumOfLocalizations = function(rowId, colId){
+    return _.find(self.fullData, function(d){ 
+      return (d.row == rowId) && (d.col == colId);
+    }).count;
   };
 
   this.getMaxNumOfLocalizations = function(){
@@ -109,6 +140,13 @@ MiningSetup.Confusion.DataManager = function() {
         self.fullData = data.intersections;
         self.detectableMap = data.detectable_map;
         self.detectableIds = Object.keys(self.detectableMap);
+        // empty selected data
+        self.shadowedData = {}
+        _.each(self.fullData, function(d){
+          if(!self.shadowedData[d.row]){ self.shadowedData[d.row] = {}; }
+          self.shadowedData[d.row][d.col] = 0;
+        });
+        self.repaintHeatmap();
         requestDefer.resolve(true);
       })
       .catch(function (errorReason) {
@@ -162,10 +200,7 @@ MiningSetup.Confusion.DataManager = function() {
             .append($('<div>')
               .addClass('button success').attr('id', idx)
               .text('Remove')
-              .click(function(){ 
-                self.selectedFilters.splice(idx, 1);
-                self.updateSelectedFiltersHTML();
-              })
+              .click(function(){ self.removeSelectedFilter(idx); })
             )
           )
         );
@@ -174,6 +209,59 @@ MiningSetup.Confusion.DataManager = function() {
     $('#current_filters').val(jj);
   };
 
+  this.removeSelectedFilter = function(selectedFilterIdx){
+    var selFilter = self.selectedFilters[selectedFilterIdx];
+
+    if(_.isEqual(selFilter.selected_filters, self.currentFilters)){
+      var rowId = selFilter.row, colId = selFilter.col;
+      _.find(self.fullData, function(d){
+        if((d.row == rowId) && (d.col == colId)){
+          d.count = self.shadowedData[d.row][d.col];
+          self.shadowedData[d.row][d.col] = 0;
+          return true;
+        }
+        return false;
+      });
+      self.repaintHeatmap();
+    }
+
+    self.selectedFilters.splice(selectedFilterIdx, 1);
+    self.updateSelectedFiltersHTML();
+  };
+
+  this.shadowData = function(rowId, colId){
+    _.find(self.fullData, function(d){
+      if((d.row == rowId) && (d.col == colId)){
+        self.shadowedData[d.row][d.col] = d.count;
+        d.count = 0;
+        return true;
+      }
+      return false;
+    });
+  };
+
+  this.recomputePercentage = function(){
+    var maxCount = self.getMaxNumOfLocalizations();
+    if(maxCount > 0){
+      _.each(self.fullData, function(d){
+        d.value = parseInt(100.0 * d.count / maxCount)/100;
+      });      
+    }
+  };
+
+  // ----------------------------------------------
+  // event handling
+  this.repaintHeatmap = function(){
+    self.recomputePercentage();
+    self.eventManager.fireRedrawHeatmapCallback({});
+  };
+
+  //------------------------------------------------
+  // set relations
+  this.setEventManager = function(em){
+    self.eventManager = em;
+    return self;
+  };
 
   //------------------------------------------------
   // shorthand for error printing
