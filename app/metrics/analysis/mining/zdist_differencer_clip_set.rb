@@ -5,12 +5,11 @@ module Metrics
       def initialize(mining)
         @chiaVersionId = mining.chia_version_id_loc
         @videoIds = mining.video_ids
-        @detIdZdistsPri = mining.md_zdist_differencer.zdist_threshs_pri
-        @detIdZdistsSec = mining.md_zdist_differencer.zdist_threshs_sec
-
-        @clipIds = ::Clip.where(video_id: @videoIds).pluck(:id)
+        @filters = mining.md_zdist_differencer.confusion_filters[:filters]
 
         @clipSetSize = 5
+
+        @locIntersector = Metrics::Analysis::Mining::ZdistDifferencerIntersector.new
       end
 
       def getClipSets
@@ -26,69 +25,50 @@ module Metrics
         clipSets
       end
 
+      def generateQueries
+        # format [[query, priZdist, secZdists, intThresh], ]
+        queries = []
+        # since frame numbers are not uniq across videos, we have to partition
+        # by video id first
+        @videoIds.each do |videoId|
+          @filters.each do |filter|
+            priDetId = filter[:pri_det_id]
+            priZdist = filter[:selected_filters][:pri_zdist]
+            priScales = filter[:selected_filters][:pri_scales]
+            secZdists = filter[:selected_filters][:sec_zdists]
+            intThresh = filter[:selected_filters][:int_thresh]
+
+            q = ::Localization.where(video_id: videoId)
+                .where(chia_version_id: @chiaVersionId)
+                .where(detectable_id: priDetId)
+                .in(scale: priScales)
+            queries << [q, priZdist, secZdists, intThresh]
+          end
+        end
+        queries
+     end
+
       def getClipIdLocCount
         locCount = {}
-        @detIdZdistsPri.each do |detId, zdistPri|
-          # get counts of primary localization bboxes
-          cIdsVids = ::Localization.in(clip_id: @clipIds)
-              .where(chia_version_id: @chiaVersionId)
-              .where(detectable_id: detId)
-              .where(zdist_thresh: zdistPri)
-              .pluck(:video_id, :clip_id, :frame_number)
-          cIdsVids.each do |vId, cId, fn|
-            locCount[vId] ||= {}
-            locCount[vId][cId] ||= {}
-            if locCount[vId][cId][detId] == nil
-              locCount[vId][cId][detId] = {}
-              locCount[vId][cId][detId][:pri_fns] = []
-              locCount[vId][cId][detId][:sec_fns] = []
-              locCount[vId][cId][detId][:diff_fns] = []
-              locCount[vId][cId][detId][:pri_loc_count] = 0
-              locCount[vId][cId][detId][:sec_loc_count] = 0
-              locCount[vId][cId][detId][:diff_loc_count] = 0
-            end
-            locCount[vId][cId][detId][:pri_fns] << fn
-            locCount[vId][cId][detId][:pri_loc_count] += 1
-          end
+        queries = generateQueries()
+        queries.each do |q, priZdist, secZdists, intThresh|
+          q.group_by(&:frame_number).each do |fn, localizations|
+            intersections = @locIntersector.computeIntersections(
+              localizations, priZdist, secZdists, intThresh)
+            localizations.each do |loclz|
+              if intersections[loclz.id]
+                locCount[loclz.video_id] ||= {}
+                if locCount[loclz.video_id][loclz.clip_id] == nil
+                  locCount[loclz.video_id][loclz.clip_id] = {}
+                  locCount[loclz.video_id][loclz.clip_id][:loc_count] = 0
+                  locCount[loclz.video_id][loclz.clip_id][:fns] = []
+                end
 
-          # get counts of secondary localization bboxes
-          zdistSec = @detIdZdistsSec[detId]
-          cIdsVids = ::Localization.in(clip_id: @clipIds)
-              .where(chia_version_id: @chiaVersionId)
-              .where(detectable_id: detId)
-              .where(zdist_thresh: zdistSec)
-              .pluck(:video_id, :clip_id, :frame_number)
-          cIdsVids.each do |vId, cId, fn|
-            locCount[vId] ||= {}
-            locCount[vId][cId] ||= {}
-            if locCount[vId][cId][detId] == nil
-              locCount[vId][cId][detId] = {}
-              locCount[vId][cId][detId][:pri_fns] = []
-              locCount[vId][cId][detId][:sec_fns] = []
-              locCount[vId][cId][detId][:diff_fns] = []
-              locCount[vId][cId][detId][:pri_loc_count] = 0
-              locCount[vId][cId][detId][:sec_loc_count] = 0
-              locCount[vId][cId][detId][:diff_loc_count] = 0
-            end
-            locCount[vId][cId][detId][:sec_fns] << fn
-            locCount[vId][cId][detId][:sec_loc_count] += 1
-          end
-
-          # store difference between primary and secondary counts
-          locCount.each do |vId, cIdCnt|
-            cIdCnt.each do |cId, detCnt|
-              detVal = locCount[vId][cId][detId]
-              next if detVal == nil
-
-              diffFns = (detVal[:pri_fns] - detVal[:sec_fns]).uniq
-              diffLocCount = (detVal[:pri_loc_count] - detVal[:sec_loc_count]).abs
-              locCount[vId][cId][detId][:diff_fns] = diffFns
-              locCount[vId][cId][detId][:diff_loc_count] = diffLocCount
-              # free up memory
-              locCount[vId][cId][detId][:pri_fns] = nil
-              locCount[vId][cId][detId][:sec_fns] = nil
-            end
-          end
+                locCount[loclz.video_id][loclz.clip_id][:loc_count] += 1
+                locCount[loclz.video_id][loclz.clip_id][:fns] << fn
+              end
+            end #localizations
+          end #q
         end
 
         clipIdLocCount = []
@@ -96,23 +76,18 @@ module Metrics
         # [{video_id:, :clip_id, :loc_count, fn_count:, fn_visited_count:}, ]
         # sorted by :loc_count
         locCount.each do |vId, cIdCnt|
-          cIdCnt.each do |cId, detCnt|
-            diffFns = []
-            diffLocCount = 0
-            detCnt.each do |detId, detVal|
-              diffFns += detVal[:diff_fns]
-              diffLocCount += detVal[:diff_loc_count]
-            end
+          cIdCnt.each do |cId, cIdVal|
+            locCnt = cIdVal[:loc_count]
+            fnCnt = cIdVal[:fns].uniq.count
             clipIdLocCount << {
               video_id: vId,
               clip_id: cId,
-              loc_count: diffLocCount,
-              fn_count: diffFns.uniq.count,
+              loc_count: locCnt,
+              fn_count: fnCnt,
               fn_visited_count: 0
             }
           end
         end
-
         clipIdLocCount.sort_by{ |l| l[:loc_count] }.reverse
       end
 

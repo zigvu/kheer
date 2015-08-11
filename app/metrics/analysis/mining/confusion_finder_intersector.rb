@@ -7,6 +7,7 @@ module Metrics
 			end
 
 			def computeIntersections(localizations, intThreshs)
+				# format {loclId: true/false, }
 				intersections = {}
 				localizations.each do |pri|
 					intersections[pri.id] = false if intersections[pri.id] == nil

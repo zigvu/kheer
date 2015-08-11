@@ -1,6 +1,6 @@
 <script type="text/javascript">
   window.miningId = '<%= "#{@mining.id}" %>';
-  window.isInConfusionPage = true;
+  window.isInDifferencePage = true;
 </script>
 
 <div class="row">
@@ -24,7 +24,6 @@
         <th>Pri Detectable Zdist</th>
         <th>Pri Detectable Scale</th>
         <th>Sec Detectable Zdist</th>
-        <th>Sec Detectable Scale</th>
         <th>Intersection Threshold</th>
         <th>Update Heatmap</th>
       </tr>
@@ -45,37 +44,25 @@
           </div>
         </td>
         <td>
-          <%= select_tag "secZdistThresh", options_for_select(@zdistThreshs) %>
-        </td>
-        <td>
           <div class="filter-selection-scroll-container">
-            <% @scales.each do |scale| %>
+            <% @zdistThreshs.each do |secZdist| %>
               <label>
-                <%= check_box_tag 'secScales', scale, checked = true %>
-                <%= scale %>
+                <%= check_box_tag 'secZdists', secZdist, checked = true %>
+                <%= secZdist %>
               </label>
             <% end %>
           </div>
         </td>
         <td>
-          <div class="filter-selection-scroll-container">
-            <% @intThreshs.each_with_index do |intThresh, idx| %>
-              <label>
-                <%= check_box_tag 'intThreshs', intThresh, checked = (idx == 0) %>
-                <%= intThresh %>
-              </label>
-            <% end %>
-          </div>
+          <%= select_tag "intThresh", options_for_select(@intThreshs) %>
         </td>
         <td>
           <div id="heatmap-submit" class="button success">Submit</div>
-          <div id="heatmap-hide-diagonal" class="button success">Hide Diagonal</div>
         </td>
       </tr>
       <tr>
-        <td>Max num of localizations (100%)</td>
+        <td>Max num of localization differences (100%)</td>
         <td><div id="maxNumOfLocalizations">0</div></td>
-        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -94,7 +81,7 @@
   <div class="small-12 columns">
     <div class="filter-panel">
       <div class="filter-title clearfix">
-        <div class="text left">Cross-class Confusion</div>
+        <div class="text left">Localization differences</div>
       </div>
       <div class="filter-content">
 
@@ -120,10 +107,8 @@
     <tr>
       <th>Pri Detectable</th>
       <th>Pri Detectable Zdist</th>
-      <th>Pri Detectable Scales</th>
-      <th>Sec Detectable</th>
-      <th>Sec Detectable Zdist</th>
-      <th>Sec Detectable Scales</th>
+      <th>Pri Detectable Scale</th>
+      <th>Sec Detectable Zdists</th>
       <th>Intersection Thresholds</th>
       <th># Localizations</th>
       <th>Remove</th>

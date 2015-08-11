@@ -1,13 +1,16 @@
 class MdZdistDifferencer
   include Mongoid::Document
 
-	# format:
-	# {detId: zDistSelected, }
-  field :ztp, as: :zdist_threshs_pri, type: Hash
-  field :zts, as: :zdist_threshs_sec, type: Hash
-	# format
-	# {spatial_intersection_thresh:, }
-	field :sf, as: :smart_filter, type: Hash
+  # format:
+  # { filters: [
+  #   {pri_det_id:, number_of_localizations:, 
+  #     selected_filters: {
+  #       pri_zdist:, pri_scales: [floats], 
+  #       sec_zdists: [floats], int_thresh:
+  #     }
+  #   }
+  # ]}
+  field :cf, as: :confusion_filters, type: Hash
 
 	embedded_in :mining
 end

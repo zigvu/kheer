@@ -44,4 +44,5 @@ class KheerJob
   end
 
   has_many :kheer_job_summaries
+  has_many :summary_zdist_differencers
 end
