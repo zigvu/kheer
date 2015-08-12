@@ -49,7 +49,7 @@ module Api
 
 				# puts "priZdist #{priZdist}, priScales #{priScales}, secZdist #{secZdist}, secScales #{secScales}, intThreshs #{intThreshs}"
 
-				confusionMatrix = @videosDetails.getConfusionMatrix(
+				confusionMatrix = @videosDetails.getConfusionFinderMatrix(
 					priZdist, priScales, secZdist, secScales, intThreshs)
 				render json: {
 					intersections: confusionMatrix,

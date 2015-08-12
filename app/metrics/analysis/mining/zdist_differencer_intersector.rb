@@ -34,7 +34,7 @@ module Metrics
 						# fraction of secondary that falls under primary
 						interArea = @bboxIntersector.intersectArea(sec, pri)
 
-						if interArea <= intThresh
+						if interArea >= intThresh
 							intersections[pri.id] = false
 						end
 					end # sec

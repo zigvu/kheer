@@ -64,16 +64,16 @@ module Metrics
 				retArr
 			end
 
-			def getConfusionMatrix(priZdist, priScales, secZdist, secScales, intThreshs)
+			def getConfusionFinderMatrix(priZdist, priScales, secZdist, secScales, intThreshs)
 				@kheerJobs.each do |kheerJob|
-					if kheerJob.kheer_job_summaries.count == 0
+					if kheerJob.summary_confusion_finders.count == 0
 						# compute and save summary
-						Metrics::Analysis::ConfusionMatrix.new(kheerJob).computeAndSaveConfusions
+						Metrics::Analysis::ConfusionFinderMatrix.new(kheerJob).computeAndSaveConfusions
 					end
 				end
 				kheerJobIds = @kheerJobs.map{ |kj| kj.id }
 				# run query across all kheer job summaries
-				confMats = ::KheerJobSummary.in(kheer_job_id: kheerJobIds)
+				confMats = ::SummaryConfusionFinder.in(kheer_job_id: kheerJobIds)
 						.where(pri_zdist_thresh: priZdist)
 						.in(pri_scale: priScales)
 						.where(sec_zdist_thresh: secZdist)

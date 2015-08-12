@@ -1,4 +1,4 @@
-class KheerJobSummary
+class SummaryConfusionFinder
   include Mongoid::Document
 
   # meta data for indexing

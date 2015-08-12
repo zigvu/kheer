@@ -36,10 +36,11 @@ module Metrics
 						rankingLocs << [sec.zdist_thresh, interArea]
 					end # sec
 
+					# mark not missing if intersection area is greater than threshold
 					rankingLocs.group_by {|r| r[0] }.each do |secZdist, rl|
-						maxInt = rl.map { |r| r[1] }.max
+						maxInterArea = rl.map { |r| r[1] }.max
 						@intersectionThreshs.each do |intThresh|
-							missingLocs[intThresh][secZdist] = 0 if maxInt >= intThresh
+							missingLocs[intThresh][secZdist] = 0 if maxInterArea >= intThresh
 						end
 					end # rankingLocs
 
@@ -121,7 +122,9 @@ module Metrics
 				# format: {intThresh: {zdist: count}}
 				missingLocs = {}
 				@intersectionThreshs.each do |intThresh|
+					# assume all locs are missing
 					missingLocs[intThresh] = Hash[@zdistThreshs.map{ |z| [z, 1] }]
+					# for locs with same zdist, they are not missing
 					missingLocs[intThresh][zdist] = 0
 				end
 				missingLocs
