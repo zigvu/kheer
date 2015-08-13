@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+# @author: Evan
+
+require 'rubygems'
+require 'daemons'
+
+class IngestData
+
+  def initialize
+  end
+
+  def ingest
+    BunnyConnections.start_ingest_servers
+    ::Rails.logger.debug("Starting IngestData...")
+    while true
+      # sleep - otherwise this will exit
+      sleep 1000
+    end
+  rescue => e
+    STDERR.puts e.message
+    STDERR.puts e.backtrace
+    ::Rails.logger.fatal(e)
+  end
+end
+
+dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+daemon_options = {
+  :multiple   => false,
+  :dir_mode   => :normal,
+  :dir        => File.join(dir, 'tmp', 'pids'),
+  :backtrace  => true
+}
+
+Daemons.run_proc('ingest_data', daemon_options) do
+  if ARGV.include?('--')
+    ARGV.slice! 0..ARGV.index('--')
+  else
+    ARGV.clear
+  end
+
+  Dir.chdir dir
+
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', 'config', 'environment'))
+  ingest_logger = Logger.new(File.join(Rails.root, "log", "ingest_data.log"))
+  Rails.logger = ingest_logger
+  ActiveRecord::Base.logger = ingest_logger
+
+  IngestData.new.ingest
+end

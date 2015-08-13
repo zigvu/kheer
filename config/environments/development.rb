@@ -26,4 +26,13 @@ Kheer::Application.configure do
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
   config.assets.debug = true
+
+  # Rabbit configurations
+  config.bunny = ActiveSupport::OrderedOptions.new
+  config.bunny.amqp_url = nil
+  config.bunny.log_request = 'development.log'
+  config.bunny.clip_id_request = 'development.clip_id.request'
+  config.bunny.heatmap_data_request = 'development.heatmap.request'
+  config.bunny.heatmap_data_response = 'development.heatmap.response'
+  config.bunny.localization_request = 'development.localization.request'
 end

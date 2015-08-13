@@ -3,7 +3,7 @@ module Services
     class HeatmapData
 
       def initialize
-        @heatmapRpcClient = HEATMAPDATA_RPC
+        @heatmapRpcClient = $heatmap_client
       end
 
       def getData(chiaVersionId, videoId, frameNumber, scale, detectableId)
