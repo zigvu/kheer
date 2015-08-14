@@ -5,6 +5,7 @@
       <th>Description</th>
       <th width="100px">Sub-Seasons</th>
       <th width="80px">Games</th>
+      <th width="100px">Cellroti Synch</th>
       <th width="50px"></th>
       <th width="50px"></th>
       <th width="80px"></th>
@@ -18,6 +19,13 @@
         <td><%= season.description %></td>
         <td><%= season.sub_seasons.count %></td>
         <td><%= season.games.count %></td>
+        <td>
+          <% if season.cellroti_id == nil %>
+            <%= link_to 'Create', synch_stream_season_path(season, league_id: @league.id), class: "button small" %>
+          <% else %>
+            <%= link_to 'Update', synch_stream_season_path(season, league_id: @league.id), class: "button small" %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', [:stream, season] %></td>
         <td><%= link_to 'Edit', edit_stream_season_path(season, league_id: @league.id) %></td>
         <td><%= link_to 'Destroy', [:stream, season], method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -25,7 +33,7 @@
     <% end %>
     <tr>
       <td><%= link_to 'New Season', new_stream_season_path(league_id: @league.id), class: "button" %></td>
-      <td> </td><td> </td><td> </td><td> </td><td> </td>
+      <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td>
     </tr>
   </tbody>
 </table>

@@ -2,8 +2,15 @@ module Stream
   class LeaguesController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_league, only: [:show, :edit, :update, :destroy]
-    before_action :set_sport, only: [:new, :edit, :create, :update]
+    before_action :set_league, only: [:synch, :show, :edit, :update, :destroy]
+    before_action :set_sport, only: [:synch, :new, :edit, :create, :update]
+
+    # GET /leagues/1/synch
+    def synch
+      raise "Cellroti ID not found" if @sport.cellroti_id == nil
+      CellrotiData::League.synch(@league, {sport_id: @sport.cellroti_id})
+      redirect_to stream_sport_url(@sport), notice: 'League was successfully synched.'
+    end
 
     # GET /leagues/1
     def show

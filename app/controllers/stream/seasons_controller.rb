@@ -2,8 +2,15 @@ module Stream
   class SeasonsController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_season, only: [:show, :edit, :update, :destroy]
-    before_action :set_league, only: [:new, :edit, :create, :update]
+    before_action :set_season, only: [:synch, :show, :edit, :update, :destroy]
+    before_action :set_league, only: [:synch, :new, :edit, :create, :update]
+
+    # GET /seasons/1/synch
+    def synch
+      raise "Cellroti ID not found" if @league.cellroti_id == nil
+      CellrotiData::Season.synch(@season, {league_id: @league.cellroti_id})
+      redirect_to stream_league_url(@league), notice: 'Season was successfully synched.'
+    end
 
     # GET /seasons/1
     def show
@@ -22,7 +29,6 @@ module Stream
     # POST /seasons
     def create
       @season = ::Season.new(season_params)
-      @league = ::League.find(params[:season][:league_id])
       if @season.save
         redirect_to stream_league_url(@league), notice: 'Season was successfully created.'
       else

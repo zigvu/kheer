@@ -2,7 +2,13 @@ module Stream
   class SportsController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_sport, only: [:show, :edit, :update, :destroy]
+    before_action :set_sport, only: [:synch, :show, :edit, :update, :destroy]
+
+    # GET /sports/1/synch
+    def synch
+      CellrotiData::Sport.synch(@sport, {})
+      redirect_to stream_sports_url, notice: 'Sport was successfully synched.'
+    end
 
     # GET /sports
     def index

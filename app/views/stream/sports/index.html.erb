@@ -6,16 +6,16 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Description</th>
       <th>Leagues</th>
       <th>Seasons</th>
       <th>SubSeasons</th>
       <th>Games</th>
       <th>Teams</th>
       <th>Event Types</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th width="100px">Cellroti Synch</th>
+      <th width="50px"></th>
+      <th width="50px"></th>
+      <th width="80px"></th>
     </tr>
   </thead>
 
@@ -23,13 +23,19 @@
     <% @sports.each do |sport| %>
       <tr>
         <td><%= sport.name %></td>
-        <td><%= sport.description %></td>
         <td><%= sport.leagues.count %></td>
         <td><%= sport.seasons.count %></td>
         <td><%= sport.sub_seasons.count %></td>
         <td><%= sport.games.count %></td>
         <td><%= sport.teams.count %></td>
         <td><%= sport.event_types.count %></td>
+        <td>
+          <% if sport.cellroti_id == nil %>
+            <%= link_to 'Create', synch_stream_sport_path(sport), class: "button small" %>
+          <% else %>
+            <%= link_to 'Update', synch_stream_sport_path(sport), class: "button small" %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', [:stream, sport] %></td>
         <td><%= link_to 'Edit', edit_stream_sport_path(sport) %></td>
         <td><%= link_to 'Destroy', [:stream, sport], method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -4,6 +4,7 @@
       <th>Name</th>
       <th>Description</th>
       <th>Icon path</th>
+      <th width="100px">Cellroti Synch</th>
       <th width="50px"></th>
       <th width="50px"></th>
       <th width="80px"></th>
@@ -16,6 +17,13 @@
         <td><%= team.name %></td>
         <td><%= team.description %></td>
         <td><%= team.icon_path %></td>
+        <td>
+          <% if team.cellroti_id == nil %>
+            <%= link_to 'Create', synch_stream_team_path(team, league_id: @league.id), class: "button small" %>
+          <% else %>
+            <%= link_to 'Update', synch_stream_team_path(team, league_id: @league.id), class: "button small" %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', [:stream, team] %></td>
         <td><%= link_to 'Edit', edit_stream_team_path(team, league_id: @league.id) %></td>
         <td><%= link_to 'Destroy', [:stream, team], method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -23,7 +31,7 @@
     <% end %>
     <tr>
       <td><%= link_to 'New Team', new_stream_team_path(league_id: @league.id), class: "button" %></td>
-      <td> </td><td> </td><td> </td><td> </td><td> </td>
+      <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td>
     </tr>
   </tbody>
 </table>

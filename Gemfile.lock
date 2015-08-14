@@ -79,6 +79,8 @@ GEM
     execjs (2.4.0)
     fancybox2-rails (0.2.6)
       railties (>= 3.1.0)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
     foundation-icons-sass-rails (3.0.0)
       railties (>= 3.1.1)
       sass-rails (>= 3.1.1)
@@ -90,6 +92,11 @@ GEM
       railties (>= 3.0)
     gretel (3.0.8)
       rails (>= 3.2.0)
+    her (0.7.6)
+      activemodel (>= 3.0.0, <= 4.3.0)
+      activesupport (>= 3.0.0, <= 4.3.0)
+      faraday (>= 0.8, < 1.0)
+      multi_json (~> 1.7)
     high_voltage (2.2.1)
     hike (1.2.3)
     i18n (0.7.0)
@@ -122,6 +129,7 @@ GEM
       connection_pool (~> 2.0)
       optionable (~> 0.2.0)
     multi_json (1.11.0)
+    multipart-post (2.0.0)
     mysql2 (0.3.18)
     optionable (0.2.0)
     origin (2.1.1)
@@ -226,6 +234,7 @@ DEPENDENCIES
   foundation-rails
   foundation_rails_helper
   gretel
+  her
   high_voltage (~> 2.2.1)
   jbuilder (~> 1.2)
   jquery-rails

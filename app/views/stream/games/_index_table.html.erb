@@ -4,11 +4,11 @@
       <th>Name</th>
       <th>Description</th>
       <th>Start date</th>
-      <th>End date</th>
       <th>Venue city</th>
       <th>Venue stadium</th>
       <th># Teams</th>
       <th width="50px">Videos</th>
+      <th width="100px">Cellroti Synch</th>
       <th width="50px"></th>
       <th width="50px"></th>
       <th width="80px"></th>
@@ -21,11 +21,17 @@
         <td><%= game.name %></td>
         <td><%= game.description %></td>
         <td><%= game.start_date %></td>
-        <td><%= game.end_date %></td>
         <td><%= game.venue_city %></td>
         <td><%= game.venue_stadium %></td>
         <td><%= game.teams.count %></td>
         <td><%= game.videos.count %></td>
+        <td>
+          <% if game.cellroti_id == nil %>
+            <%= link_to 'Create', synch_stream_game_path(game, sub_season_id: @sub_season.id), class: "button small" %>
+          <% else %>
+            <%= link_to 'Update', synch_stream_game_path(game, sub_season_id: @sub_season.id), class: "button small" %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', [:stream, game] %></td>
         <td><%= link_to 'Edit', edit_stream_game_path(game, sub_season_id: @sub_season.id) %></td>
         <td><%= link_to 'Destroy', [:stream, game], method: :delete, data: { confirm: 'Are you sure?' } %></td>

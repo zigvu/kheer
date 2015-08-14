@@ -2,8 +2,16 @@ module Stream
   class EventTypesController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_event_type, only: [:show, :edit, :update, :destroy]
-    before_action :set_sport, only: [:new, :edit, :create, :update]
+    before_action :set_event_type, only: [:synch, :show, :edit, :update, :destroy]
+    before_action :set_sport, only: [:synch, :new, :edit, :create, :update]
+
+    # GET /event_types/1/synch
+    def synch
+      raise "Cellroti ID not found" if @sport.cellroti_id == nil
+      name = @event_type.detectable.pretty_name
+      CellrotiData::EventType.synch(@event_type, {sport_id: @sport.cellroti_id, name: name})
+      redirect_to stream_sport_url(@sport), notice: 'Event type was successfully synched.'
+    end
 
     # GET /event_types/1
     def show

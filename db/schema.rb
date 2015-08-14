@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150806204407) do
+ActiveRecord::Schema.define(version: 20150807000403) do
 
   create_table "channel_videos", force: true do |t|
     t.integer  "channel_id"
@@ -128,7 +128,6 @@ ActiveRecord::Schema.define(version: 20150806204407) do
     t.string   "name"
     t.text     "description"
     t.datetime "start_date"
-    t.datetime "end_date"
     t.string   "venue_city"
     t.string   "venue_stadium"
     t.integer  "sub_season_id"

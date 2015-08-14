@@ -2,8 +2,15 @@ module Stream
   class SubSeasonsController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_sub_season, only: [:show, :edit, :update, :destroy]
-    before_action :set_season, only: [:new, :edit, :create, :update]
+    before_action :set_sub_season, only: [:synch, :show, :edit, :update, :destroy]
+    before_action :set_season, only: [:synch, :new, :edit, :create, :update]
+
+    # GET /seasons/1/synch
+    def synch
+      raise "Cellroti ID not found" if @season.cellroti_id == nil
+      CellrotiData::SubSeason.synch(@sub_season, {season_id: @season.cellroti_id})
+      redirect_to stream_season_url(@season), notice: 'SubSeason was successfully synched.'
+    end
 
     # GET /sub_seasons/1
     def show

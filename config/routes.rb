@@ -1,14 +1,11 @@
 Kheer::Application.routes.draw do
 
   namespace :stream do
-    resources :event_types
-    resources :game_teams
-    resources :games
-    resources :teams
-    resources :sub_seasons
-    resources :seasons
-    resources :leagues
-    resources :sports
+    resources :sports, :leagues, :event_types, :seasons, :sub_seasons, :teams, :games, :channels do
+      member do
+        get 'synch'
+      end
+    end
     resources :channels
   end
 

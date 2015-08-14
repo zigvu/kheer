@@ -2,7 +2,13 @@ module Stream
   class ChannelsController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_channel, only: [:show, :edit, :update, :destroy]
+    before_action :set_channel, only: [:synch, :show, :edit, :update, :destroy]
+
+    # GET /sports/1/synch
+    def synch
+      CellrotiData::Channel.synch(@channel, {})
+      redirect_to stream_channels_url, notice: 'Channel was successfully synched.'
+    end
 
     # GET /channels
     def index

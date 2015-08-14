@@ -7,9 +7,10 @@
       <th>Description</th>
       <th>Url</th>
       <th># Videos</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th width="100px">Cellroti Synch</th>
+      <th width="50px"></th>
+      <th width="50px"></th>
+      <th width="80px"></th>
     </tr>
   </thead>
 
@@ -20,6 +21,13 @@
         <td><%= channel.description %></td>
         <td><%= channel.url %></td>
         <td><%= channel.videos.count %></td>
+        <td>
+          <% if channel.cellroti_id == nil %>
+            <%= link_to 'Create', synch_stream_channel_path(channel), class: "button small" %>
+          <% else %>
+            <%= link_to 'Update', synch_stream_channel_path(channel), class: "button small" %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', [:stream, channel] %></td>
         <td><%= link_to 'Edit', edit_stream_channel_path(channel) %></td>
         <td><%= link_to 'Destroy', [:stream, channel], method: :delete, data: { confirm: 'Are you sure?' } %></td>

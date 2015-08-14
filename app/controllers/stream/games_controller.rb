@@ -2,8 +2,31 @@ module Stream
   class GamesController < ApplicationController
 
     before_filter :ensure_html_format
-    before_action :set_game, only: [:show, :edit, :update, :destroy]
-    before_action :set_sub_season, only: [:new, :edit, :create, :update]
+    before_action :set_game, only: [:synch, :show, :edit, :update, :destroy]
+    before_action :set_sub_season, only: [:synch, :new, :edit, :create, :update]
+
+    # GET /games/1/synch
+    def synch
+      raise "Cellroti ID not found" if @sub_season.cellroti_id == nil
+      CellrotiData::Game.synch(@game, {sub_season_id: @sub_season.cellroti_id})
+      cellGtIds = @game.game_teams.pluck(:cellroti_id)
+      # synch game_teams
+      # first delete existing records that were deleted in kheer
+      CellrotiData::GameTeam.where(game_id: @game.cellroti_id).each do |cellGt|
+        cellGt.destroy if not cellGtIds.include?(cellGt.id)
+      end
+      # then create new game teams
+      @game.game_teams.each do |gt|
+        if gt.cellroti_id == nil
+          cellrotiGameId = @game.cellroti_id
+          cellrotiTeamId = gt.team.cellroti_id
+          raise "Cellroti ID not found" if cellrotiGameId == nil or cellrotiTeamId == nil
+          CellrotiData::GameTeam.synch(gt, {game_id: cellrotiGameId, team_id: cellrotiTeamId})
+        end
+      end
+
+      redirect_to stream_sub_season_url(@sub_season), notice: 'Game was successfully synched.'
+    end
 
     # GET /games/1
     def show
@@ -67,7 +90,7 @@ module Stream
 
       # Only allow a trusted parameter "white list" through.
       def game_params
-        params.require(:game).permit(:name, :description, :start_date, :end_date, :venue_city, 
+        params.require(:game).permit(:name, :description, :start_date, :venue_city, 
           :venue_stadium, :sub_season_id, 
           game_teams_attributes: [:id, :team_id, :_destroy],
           game_videos_attributes: [:id, :video_id, :_destroy])
