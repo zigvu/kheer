@@ -61,6 +61,7 @@ Kheer::Application.routes.draw do
     get 'metrics/video_details'
   end
 
+  # look at cellroti routes to see how to authenticate this
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 
   devise_for :users
