@@ -246,7 +246,7 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
       .attr("height", contextHeight + 6);
 
   var annoChart = timelineSVG.append("g")
-      .attr("class", "timeline-focus-chart")
+      .attr("class", "timeline-anno-chart")
       .attr("transform", "translate(" + annoMargin.left + "," + 
         (focusBarHeight + contextBarHeight + annoMargin.top) + ")");
 
@@ -349,11 +349,11 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
   var isBackgroundColorWhite = true;
   $("#d3-video-timeline-chart-background-color-button").click(function(){
     if(isBackgroundColorWhite){
-      $('#d3-video-timeline-chart rect.bg-rect').css('fill', 'black');
-      $('#d3-video-timeline-chart g.anno-lines path').css('stroke', 'white');
+      $('#d3-video-timeline-chart .timeline-context-chart rect.bg-rect').css('fill', 'black');
+      $('#d3-video-timeline-chart .timeline-focus-chart rect.bg-rect').css('fill', 'black');
     } else {
-      $('#d3-video-timeline-chart rect.bg-rect').css('fill', 'white');
-      $('#d3-video-timeline-chart g.anno-lines path').css('stroke', 'black');
+      $('#d3-video-timeline-chart .timeline-context-chart rect.bg-rect').css('fill', 'white');
+      $('#d3-video-timeline-chart .timeline-focus-chart rect.bg-rect').css('fill', 'white');
     }
     isBackgroundColorWhite = !isBackgroundColorWhite;
   });

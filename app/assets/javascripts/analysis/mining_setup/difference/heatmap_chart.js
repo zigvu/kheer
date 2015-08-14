@@ -3,13 +3,13 @@ ZIGVU.Analysis = ZIGVU.Analysis || {};
 ZIGVU.Analysis.MiningSetup = ZIGVU.Analysis.MiningSetup || {};
 
 var MiningSetup = ZIGVU.Analysis.MiningSetup;
-MiningSetup.Confusion = MiningSetup.Confusion || {};
+MiningSetup.Difference = MiningSetup.Difference || {};
 
 /*
-  D3 Heatmap chart for plotting confusion
+  D3 Heatmap chart for plotting Difference
 */
 
-MiningSetup.Confusion.HeatmapChart = function(dataManager) {
+MiningSetup.Difference.HeatmapChart = function(dataManager) {
   var self = this;
 
   this.eventManager = undefined;
@@ -20,9 +20,8 @@ MiningSetup.Confusion.HeatmapChart = function(dataManager) {
   // div for chart
   var heatmap_div = '#d3-heatmap-chart';
   var divWidth = $(heatmap_div).parent().width();
-  var divHeight = divWidth;
-  var numOfRows = dataManager.getNumRowsCols();
-  var numOfCols = numOfRows;
+  var numOfRows = dataManager.getNumRows();
+  var numOfCols = dataManager.getNumCols();
 
   var heatmapData = dataManager.getHeatmapData();
   var heatmapRowLabel = dataManager.getHeatmapRowLabels();
@@ -44,9 +43,9 @@ MiningSetup.Confusion.HeatmapChart = function(dataManager) {
   // set gemoetry
   var margin = { top: 50, right: 50, bottom: 50, left: 50 },
       width = divWidth - margin.left - margin.right,
-      height = divHeight - margin.top - margin.bottom,
-      gridWidth = Math.floor(width / numOfRows),
-      gridHeight = Math.floor(height / numOfCols);
+      gridWidth = Math.floor(width / numOfCols),
+      gridHeight = gridWidth,
+      height = gridHeight * numOfRows;
 
   var legendStartX = width + 5,
       legendTotalHeight = height,

@@ -3,7 +3,7 @@ ZIGVU.Analysis = ZIGVU.Analysis || {};
 ZIGVU.Analysis.MiningSetup = ZIGVU.Analysis.MiningSetup || {};
 
 var MiningSetup = ZIGVU.Analysis.MiningSetup;
-MiningSetup.Confusion = MiningSetup.Confusion || {};
+MiningSetup.Difference = MiningSetup.Difference || {};
 
 /*
   This class manages data.
@@ -11,21 +11,20 @@ MiningSetup.Confusion = MiningSetup.Confusion || {};
 
 /*
   Data structure:
-  [Note: Ruby style hash (:keyname => value) implies that raw id are used as keys of objects.
-  JS style hash implies that (keyname: value) text are used as keys of objects.]
 
   fullData: [{name:, row:, col:, value: count:}, ]
   shadowedData: {row: {col: count}, }
   detectableMap: {detectable_id: detectable_name, }
   detectableIds: [:detectable_id, ]
-  currentFilters: {pri_zdist:, pri_scales:, sec_zdist:, sec_scales:, int_threshs: }
+  zdistThreshs: [:zdist_thresh, ]
+  currentFilters: {pri_zdist:, pri_scales:, sec_zdists:, int_thresh: }
   selectedFilters: [{ 
-    pri_det_id:, sec_det_id:, row:, col:, 
+    pri_det_id:, row:, col:, 
     number_of_localizations:, selected_filters:currentFilters 
     }, ]
 */
 
-MiningSetup.Confusion.DataManager = function() {
+MiningSetup.Difference.DataManager = function() {
   var self = this;
 
   this.eventManager = undefined;
@@ -34,34 +33,22 @@ MiningSetup.Confusion.DataManager = function() {
   this.shadowedData = undefined;
   this.detectableMap = undefined;
   this.detectableIds = undefined;
+  this.zdistThreshs = undefined;
   this.currentFilters = {
     pri_zdist: undefined,
     pri_scales: undefined,
 
-    sec_zdist: undefined,
-    sec_scales: undefined,
+    sec_zdists: undefined,
 
-    int_threshs: undefined
+    int_thresh: undefined
   };
   this.selectedFilters = [];
 
-  this.setZeroDiagonal = function(){
-    // shadow diagonal and recompute percentage
-    _.each(self.fullData, function(d){
-      if(d.row === d.col){
-        self.shadowedData[d.row][d.col] = d.count;
-        d.count = 0;
-      }
-    });
-    self.repaintHeatmap();
-  };
-
-  this.updateFilters = function(priZdist, priScales, secZdist, secScales, intThreshs){
+  this.updateFilters = function(priZdist, priScales, secZdists, intThresh){
     self.currentFilters.pri_zdist = priZdist;
     self.currentFilters.pri_scales = priScales;
-    self.currentFilters.sec_zdist = secZdist;
-    self.currentFilters.sec_scales = secScales;
-    self.currentFilters.int_threshs = intThreshs;
+    self.currentFilters.sec_zdists = secZdists;
+    self.currentFilters.int_thresh = intThresh;
   };
 
   this.handleCellClick = function(rowId, colId){
@@ -69,8 +56,7 @@ MiningSetup.Confusion.DataManager = function() {
     if(numLocs <= 0){ return; }
 
     var cellFilters = {
-      pri_det_id: parseInt(self.detectableIds[rowId]),
-      sec_det_id: parseInt(self.detectableIds[colId]),
+      pri_det_id: parseInt(self.detectableIds[colId]),
       row: rowId,
       col: colId,
       number_of_localizations: numLocs,
@@ -117,18 +103,22 @@ MiningSetup.Confusion.DataManager = function() {
   };
 
   this.getHeatmapRowLabels = function(){
-    return self.detectableIds;
+    return self.zdistThreshs;
   };
   this.getHeatmapColLabels = function(){
     return self.detectableIds;
   };
 
-  this.getNumRowsCols = function(){
+  this.getNumRows = function(){
+    return self.zdistThreshs.length;
+  };
+
+  this.getNumCols = function(){
     return self.detectableIds.length;
   };
 
   this.getFullDataPromise = function(){
-    var dataURL = '/api/v1/minings/confusion';
+    var dataURL = '/api/v1/minings/difference';
     var dataParam = {
       mining_id: window.miningId,
       current_filters: self.currentFilters
@@ -140,6 +130,7 @@ MiningSetup.Confusion.DataManager = function() {
         self.fullData = data.intersections;
         self.detectableMap = data.detectable_map;
         self.detectableIds = Object.keys(self.detectableMap);
+        self.zdistThreshs = data.zdist_threshs;
         // empty selected data
         self.shadowedData = {}
         _.each(self.fullData, function(d){
@@ -150,7 +141,7 @@ MiningSetup.Confusion.DataManager = function() {
         requestDefer.resolve(true);
       })
       .catch(function (errorReason) {
-        requestDefer.reject('MiningSetup.Confusion.DataManager ->' + errorReason);
+        requestDefer.reject('MiningSetup.Difference.DataManager ->' + errorReason);
       });
 
     return requestDefer.promise;    
@@ -166,7 +157,7 @@ MiningSetup.Confusion.DataManager = function() {
       type: "GET",
       success: function(json){ requestDefer.resolve(json) },
       error: function( xhr, status, errorThrown ) {
-        requestDefer.reject("MiningSetup.Confusion.DataManager: " + errorThrown);
+        requestDefer.reject("MiningSetup.Difference.DataManager: " + errorThrown);
       }
     });
     return requestDefer.promise;
@@ -177,24 +168,20 @@ MiningSetup.Confusion.DataManager = function() {
     filtersHTMLTbody.empty();
     _.each(self.selectedFilters, function(sf, idx, list){
       // HTML table rows:
-      var rowDet = self.getDetectableName(sf.pri_det_id) + " [" + sf.pri_det_id + "]";
-      var colDet = self.getDetectableName(sf.sec_det_id) + " [" + sf.sec_det_id + "]";
+      var colDet = self.getDetectableName(sf.pri_det_id) + " [" + sf.pri_det_id + "]";
       var numLocs = sf.number_of_localizations;
       var rowZd = sf.selected_filters.pri_zdist;
       var rowScl = sf.selected_filters.pri_scales;
-      var colZd = sf.selected_filters.sec_zdist;
-      var colScl = sf.selected_filters.sec_scales;
-      var intThreshs = sf.selected_filters.int_threshs;
+      var rowZds = sf.selected_filters.sec_zdists;
+      var intThresh = sf.selected_filters.int_thresh;
 
       filtersHTMLTbody
         .append($('<tr>')
-          .append($('<td>').text(rowDet))
+          .append($('<td>').text(colDet))
           .append($('<td>').text(rowZd))
           .append($('<td>').text(rowScl))
-          .append($('<td>').text(colDet))
-          .append($('<td>').text(colZd))
-          .append($('<td>').text(colScl))
-          .append($('<td>').text(intThreshs))
+          .append($('<td>').text(rowZds))
+          .append($('<td>').text(intThresh))
           .append($('<td>').text(numLocs))
           .append($('<td>')
             .append($('<div>')
@@ -266,6 +253,6 @@ MiningSetup.Confusion.DataManager = function() {
   //------------------------------------------------
   // shorthand for error printing
   this.err = function(errorReason){
-    displayJavascriptError('MiningSetup.Confusion.DataManager -> ' + errorReason);
+    displayJavascriptError('MiningSetup.Difference.DataManager -> ' + errorReason);
   };
 };

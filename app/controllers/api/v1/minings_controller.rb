@@ -4,6 +4,7 @@ module Api
 
 			before_filter :ensure_json_format
 			before_action :set_mining
+			before_action :heatmap_common, only: [:confusion, :difference]
 
 			# GET api/v1/minings/show
 			def show
@@ -39,32 +40,57 @@ module Api
 
 			# GET api/v1/minings/confusion
 			def confusion
-        chiaVersionId = @mining.chia_version_id_loc
-        videoIds = @mining.video_ids
+				# play nice with float hash keys
+				priZdist = params['current_filters']['pri_zdist'].to_f.round(1)
+				priScales = params['current_filters']['pri_scales'].map{ |s| s.to_f.round(1) }
+				secZdist = params['current_filters']['sec_zdist'].to_f.round(1)
+				secScales = params['current_filters']['sec_scales'].map{ |s| s.to_f.round(1) }
+				intThreshs = params['current_filters']['int_threshs'].map{ |i| i.to_f.round(1) }
 
-	      chiaVersion = ::ChiaVersion.find(chiaVersionId)
-	      detectableIds = chiaVersion.chia_version_detectables.pluck(:detectable_id)
-	      detectableIdNameMap = Hash[::Detectable.where(id: detectableIds).pluck(:id, :pretty_name)]
+				# puts "priZdist #{priZdist}, priScales #{priScales}, secZdist #{secZdist}, secScales #{secScales}, intThreshs #{intThreshs}"
 
-	      # play nice with float hash keys
-	      priZdist = params['current_filters']['pri_zdist'].to_f.round(1)
-	      priScales = params['current_filters']['pri_scales'].map{ |s| s.to_f.round(1) }
-	      secZdist = params['current_filters']['sec_zdist'].to_f.round(1)
-	      secScales = params['current_filters']['sec_scales'].map{ |s| s.to_f.round(1) }
-	      intThreshs = params['current_filters']['int_threshs'].map{ |i| i.to_f.round(1) }
+				confusionMatrix = @videosDetails.getConfusionFinderMatrix(
+					priZdist, priScales, secZdist, secScales, intThreshs)
+				render json: {
+					intersections: confusionMatrix,
+					detectable_map: @detectableIdNameMap
+				}.to_json
+			end
 
-	      # puts "priZdist #{priZdist}, priScales #{priScales}, secZdist #{secZdist}, secScales #{secScales}, intThreshs #{intThreshs}"
+			# GET api/v1/minings/difference
+			def difference
+				# play nice with float hash keys
+				priZdist = params['current_filters']['pri_zdist'].to_f.round(1)
+				priScales = params['current_filters']['pri_scales'].map{ |s| s.to_f.round(1) }
+				secZdists = params['current_filters']['sec_zdists'].map{ |s| s.to_f.round(1) }
+				intThresh = params['current_filters']['int_thresh'].to_f.round(1)
 
-	      mv = ::Metrics::Analysis::VideosDetails.new(chiaVersionId, videoIds)
-	      confusionMatrix = mv.getConfusionMatrix(priZdist, priScales, secZdist, secScales, intThreshs)
-	      render json: {
-	        intersections: confusionMatrix,
-	        detectable_map: detectableIdNameMap
-	      }.to_json
+				confusionMatrix = @videosDetails.getZdistDifferencerMatrix(
+					priZdist, priScales, secZdists, intThresh)
+				render json: {
+					intersections: confusionMatrix,
+					detectable_map: @detectableIdNameMap,
+					zdist_threshs: @zdistThreshs
+				}.to_json
 			end
 
 			private
 				# Use callbacks to share common setup or constraints between actions.
+
+				def heatmap_common
+					chiaVersionId = @mining.chia_version_id_loc
+					videoIds = @mining.video_ids
+
+					chiaVersion = ::ChiaVersion.find(chiaVersionId)
+					detectableIds = chiaVersion.chia_version_detectables.pluck(:detectable_id)
+					@detectableIdNameMap = Hash[::Detectable.where(id: detectableIds).pluck(:id, :pretty_name)]
+
+					cvs = ::Serializers::ChiaVersionSettingsSerializer.new(chiaVersion)
+					@zdistThreshs = cvs.getSettingsZdistThresh.map{ |z| z.to_f }
+
+					@videosDetails = ::Metrics::Analysis::VideosDetails.new(chiaVersionId, videoIds)
+				end
+
 				def set_mining
 					miningId = params['mining_id']
 					@setId = params['set_id']

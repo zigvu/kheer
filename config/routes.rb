@@ -23,6 +23,7 @@ Kheer::Application.routes.draw do
       get 'minings/cell_map'
 
       get 'minings/confusion'
+      get 'minings/difference'
     end
   end
 

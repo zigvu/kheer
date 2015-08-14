@@ -1,6 +1,6 @@
 module Metrics
 	module Analysis
-		class ConfusionMatrix
+		class ConfusionFinderMatrix
 
 			def initialize(kheerJob)
 				@kheerJob = kheerJob
@@ -16,7 +16,7 @@ module Metrics
 
 				@intersectionThreshs = ::KheerJob.intersection_threshs
 				@bboxIntersector = Metrics::Analysis::BboxIntersector.new
-				@summaryDumper = DataImporters::MongoCollectionDumper.new('KheerJobSummary')
+				@summaryDumper = DataImporters::MongoCollectionDumper.new('SummaryConfusionFinder')
 			end
 
 			def computeIntersections(localizations, intersections, priZdist, priScale, secZdist, secScale)
@@ -38,7 +38,7 @@ module Metrics
 
 			def computeAndSaveConfusions
 				# delete any old confusions in database
-				@kheerJob.kheer_job_summaries.destroy_all
+				@kheerJob.summary_confusion_finders.destroy_all
 				# loop through all zdist and scales
 				@zdistThreshs.each do |priZdist|
 					@scales.each do |priScale|
@@ -70,7 +70,7 @@ module Metrics
 
 			def dumpFormattedJobSummary(priZdist, priScale, secZdist, secScale, intersections)
 				@intersectionThreshs. each do |intThresh|
-					# Note: this is tied to schema in KheerJobSummary class
+					# Note: this is tied to schema in SummaryConfusionFinder class
 					kjs = {
 						pzt: priZdist,
 						szt: secZdist,

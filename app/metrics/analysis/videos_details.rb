@@ -17,16 +17,63 @@ module Metrics
 	      @zdistThreshs = cvs.getSettingsZdistThresh
 			end
 
-			def getConfusionMatrix(priZdist, priScales, secZdist, secScales, intThreshs)
+			def getZdistDifferencerMatrix(priZdist, priScales, secZdists, intThresh)
 				@kheerJobs.each do |kheerJob|
-					if kheerJob.kheer_job_summaries.count == 0
+					if kheerJob.summary_zdist_differencers.count == 0
 						# compute and save summary
-						Metrics::Analysis::ConfusionMatrix.new(kheerJob).computeAndSaveConfusions
+						Metrics::Analysis::ZdistDifferencerMatrix.new(kheerJob).computeAndSaveConfusions
 					end
 				end
 				kheerJobIds = @kheerJobs.map{ |kj| kj.id }
 				# run query across all kheer job summaries
-				confMats = ::KheerJobSummary.in(kheer_job_id: kheerJobIds)
+				confMats = ::SummaryZdistDifferencer.in(kheer_job_id: kheerJobIds)
+						.where(pri_zdist_thresh: priZdist)
+						.in(pri_scale: priScales)
+						.in(sec_zdist_thresh: secZdists)
+						.where(int_thresh: intThresh)
+						.pluck(:sec_zdist_thresh, :confusion_matrix)
+
+				retArr = []
+				maxConfCount = 1
+				# structure:
+				# [{name:, row:, col:, value: count:}, ]
+				@zdistThreshs.each_with_index do |zdistRow, rowIdx|
+					@detectables.each_with_index do |detCol, colIdx|
+
+						confCount = 0
+						confMats.each do |secZdist, confMat|
+							next if zdistRow != secZdist
+							confCount += confMat[detCol.id.to_s]
+						end # confMats
+
+						# puts "[#{detCol.id}][#{zdistRow}] : #{confCount}" if confCount > 0
+						retArr << {
+							name: "#{detCol.pretty_name} [#{detCol.id}] :: #{zdistRow}",
+							row: rowIdx,
+							col: colIdx,
+							value: 0,
+							count: confCount
+						}
+						maxConfCount = [maxConfCount, confCount].max
+
+					end # detCol
+				end # zdistRow
+				retArr.each do |ra|
+					ra[:value] = (1.0 * ra[:count] / maxConfCount).round(3)
+				end
+				retArr
+			end
+
+			def getConfusionFinderMatrix(priZdist, priScales, secZdist, secScales, intThreshs)
+				@kheerJobs.each do |kheerJob|
+					if kheerJob.summary_confusion_finders.count == 0
+						# compute and save summary
+						Metrics::Analysis::ConfusionFinderMatrix.new(kheerJob).computeAndSaveConfusions
+					end
+				end
+				kheerJobIds = @kheerJobs.map{ |kj| kj.id }
+				# run query across all kheer job summaries
+				confMats = ::SummaryConfusionFinder.in(kheer_job_id: kheerJobIds)
 						.where(pri_zdist_thresh: priZdist)
 						.in(pri_scale: priScales)
 						.where(sec_zdist_thresh: secZdist)

@@ -15,8 +15,10 @@ module Jsonifiers::Mining::Common
         @selectedDetIds = @mining.md_chia_version_comparer.zdist_threshs_loc.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
         @smartFilter = @mining.md_chia_version_comparer.smart_filter
       elsif States::MiningType.new(@mining).isZdistDifferencer?
-        @selectedDetIds = @mining.md_zdist_differencer.zdist_threshs_pri.map{ |d, z| d.to_i if z != -1 }.uniq - [nil]
-        @smartFilter = @mining.md_zdist_differencer.smart_filter
+        ff = @mining.md_zdist_differencer.confusion_filters[:filters]
+        @selectedDetIds = ff.map { |f| f[:pri_det_id] }.uniq.sort
+        sf = ff.map { |f| f[:selected_filters][:int_thresh] }.min
+        @smartFilter = {spatial_intersection_thresh: sf}
       elsif States::MiningType.new(@mining).isConfusionFinder?
         ff = @mining.md_confusion_finder.confusion_filters[:filters]
         @selectedDetIds = ff.map { |f| [f[:pri_det_id], f[:sec_det_id]] }.flatten.uniq.sort

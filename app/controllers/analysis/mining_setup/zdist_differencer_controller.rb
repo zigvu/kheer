@@ -12,12 +12,8 @@ module Analysis::MiningSetup
         serveChiaVersion
       when :videos
         serveVideos
-      when :zdist_threshs_pri
-        serveZDistThreshsPri
-      when :zdist_threshs_sec
-        serveZDistThreshsSec
-      when :smart_filters
-        serveSmartFilters
+      when :difference
+        serveDifference
       when :create_sets
         serveCreateSets
       end
@@ -30,12 +26,8 @@ module Analysis::MiningSetup
         handleChiaVersion
       when :videos
         handleVideos
-      when :zdist_threshs_pri
-        handleZDistThreshsPri
-      when :zdist_threshs_sec
-        handleZDistThreshsSec
-      when :smart_filters
-        handleSmartFilters
+      when :difference
+        handleDifference
       when :create_sets
         handleCreateSets
       end
@@ -81,43 +73,22 @@ module Analysis::MiningSetup
         @mining.update(video_ids: videoIds)
       end
 
-      def serveZDistThreshsPri
-        chiaVersionIdLoc = @mining.chia_version_id_loc
-        videoIds = @mining.video_ids
-        @zdistThreshs = @mining.md_zdist_differencer.zdist_threshs_pri || {}
+      def serveDifference
+        @chiaVersionId = @mining.chia_version_id_loc
+        @videoIds = @mining.video_ids
 
-        @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
-        @metricsVideoDetails = @metricsVideo.getSummaryCounts
+        @chiaVersion = ::ChiaVersion.find(@chiaVersionId)
+        cvs = ::Serializers::ChiaVersionSettingsSerializer.new(@chiaVersion)
+        @zdistThreshs = cvs.getSettingsZdistThresh.map{ |z| z.to_f }
+        @scales = cvs.getSettingsScales.map{ |s| s.to_f }
+        @intThreshs = ::KheerJob.intersection_threshs
       end
-      def handleZDistThreshsPri
-        zd = params[:det_ids].map{ |d,z| [d.to_i, z.to_f] if z.to_f > -1 } - [nil]
-        zdistThreshs = Hash[zd]
-        @mining.md_zdist_differencer.update(zdist_threshs_pri: zdistThreshs)
-      end
-
-      def serveZDistThreshsSec
-        chiaVersionIdLoc = @mining.chia_version_id_loc
-        videoIds = @mining.video_ids
-        @zdistThreshsPri = @mining.md_zdist_differencer.zdist_threshs_pri
-        @zdistThreshs = @mining.md_zdist_differencer.zdist_threshs_sec || {}
-
-        @metricsVideo = ::Metrics::Analysis::VideosDetails.new(chiaVersionIdLoc, videoIds)
-        @metricsVideoDetails = @metricsVideo.getSummaryCounts
-      end
-      def handleZDistThreshsSec
-        zd = params[:det_ids].map{ |d,z| [d.to_i, z.to_f] if z.to_f > -1 } - [nil]
-        zdistThreshs = Hash[zd]
-        @mining.md_zdist_differencer.update(zdist_threshs_sec: zdistThreshs)
+      def handleDifference
+        currentFilters = ActiveSupport::JSON.decode(params[:current_filters])
+        @mining.md_zdist_differencer.update(confusion_filters: {filters: currentFilters})
 
         clipSets = ::Metrics::Analysis::Mining::ZdistDifferencerClipSet.new(@mining).getClipSets
         @mining.update(clip_sets: clipSets)
-      end
-
-      def serveSmartFilters
-      end
-      def handleSmartFilters
-        spatialIntersectionThresh = params[:spatial_intersection_thresh].to_f
-        @mining.md_zdist_differencer.update(smart_filter: {spatial_intersection_thresh: spatialIntersectionThresh})
       end
 
       def serveCreateSets
@@ -132,7 +103,7 @@ module Analysis::MiningSetup
       def set_steps
         session[:mining_id] ||= params[:mining_id]
         @mining = ::Mining.find(session[:mining_id])
-        self.steps = [:chia_version, :videos, :zdist_threshs_pri, :zdist_threshs_sec, :smart_filters, :create_sets]
+        self.steps = [:chia_version, :videos, :difference, :create_sets]
       end
 
       def set_steps_ll

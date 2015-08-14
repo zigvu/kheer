@@ -6,24 +6,39 @@ module Metrics
 				@bboxIntersector = Metrics::Analysis::BboxIntersector.new
 			end
 
-			def computeIntersections(localizations)
+			def computeIntersections(localizations, priZdist, secZdists, intThresh)
+				# format {loclId: true/false, }
 				intersections = {}
-				localizations.each do |loc2|
-					intersections[loc2.id] = 0
-					localizations.each do |loc1|
-						# don't compare to self - this would be 100%
-						next if loc1.id == loc2.id
-						# skip if not localization for same detectable
-						next if loc1.detectable_id != loc2.detectable_id
-						# skip if same zdist
-						next if loc1.zdist_thresh == loc2.zdist_thresh
-						# get intersection
-						intersections[loc2.id] += @bboxIntersector.intersectArea(loc1, loc2)
+				localizations.each do |pri|
+					# all localizations start out as having missing secondaries
+					intersections[pri.id] = true if intersections[pri.id] == nil
+
+					# if not included in filter, skip
+					if (pri.zdist_thresh != priZdist)
+						intersections[pri.id] = false
+						next
 					end
-				end
-				intersections.each do |locId, interArea|
-					intersections[locId] = interArea.round(3)
-				end
+
+					localizations.each do |sec|
+						# if already marked as to be included, skip
+						next if intersections[sec.id]
+
+						# don't compare to self - this would be 100%
+						next if pri.id == sec.id
+						# don't compare same zdist - these are not missing
+						next if pri.zdist_thresh == sec.zdist_thresh
+
+						# if not included in filter, skip
+						next if not secZdists.include?(sec.zdist_thresh)
+
+						# fraction of secondary that falls under primary
+						interArea = @bboxIntersector.intersectArea(sec, pri)
+
+						if interArea >= intThresh
+							intersections[pri.id] = false
+						end
+					end # sec
+				end # pri
 				intersections
 			end
 

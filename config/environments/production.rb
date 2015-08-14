@@ -79,4 +79,13 @@ Kheer::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  # Rabbit configurations
+  config.bunny = ActiveSupport::OrderedOptions.new
+  config.bunny.amqp_url = nil
+  config.bunny.log_request = 'production.log'
+  config.bunny.clip_id_request = 'production.clip_id.request'
+  config.bunny.heatmap_data_request = 'production.heatmap.request'
+  config.bunny.heatmap_data_response = 'production.heatmap.response'
+  config.bunny.localization_request = 'production.localization.request'
 end

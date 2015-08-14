@@ -18,6 +18,7 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 
+
 # scaffold and view helpers
 gem 'bootstrap-glyphicons' # although using foundation, use icons from bootstrap
 gem 'foundation-rails' # CSS library
@@ -50,6 +51,9 @@ gem 'cache_digests'    # to expire view partials
 gem 'kgio', '~> 2.9.2' # makes dalli 20-30% faster as per dalli github page
 # document store
 gem 'mongoid', '~> 4.0.0' # driver for mongo
+
+# serving
+gem 'puma'
 
 # kheer specific - not in cellroti
 gem 'bunny' # for rabbitmq
