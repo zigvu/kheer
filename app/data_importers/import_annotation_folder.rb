@@ -16,10 +16,6 @@ module DataImporters
 
 			saveToDb_annoData()
 
-			# create indexes if not there yet
-			Rails.logger.debug { "ImportAnnotationFolder : Creating indexes" }
-			Annotation.no_timeout.create_indexes
-
 			# reset old logger
 			Moped.logger = oldLogger
 

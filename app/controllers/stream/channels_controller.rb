@@ -6,8 +6,12 @@ module Stream
 
     # GET /sports/1/synch
     def synch
-      CellrotiData::Channel.synch(@channel, {})
-      redirect_to stream_channels_url, notice: 'Channel was successfully synched.'
+      success, message = CellrotiData::Channel.synch(@channel, {})
+      if success
+        redirect_to stream_channels_url, notice: 'Channel : ' + message
+      else
+        redirect_to stream_channels_url, alert: 'Channel : ' + message
+      end
     end
 
     # GET /channels

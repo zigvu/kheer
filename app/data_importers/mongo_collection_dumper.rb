@@ -21,6 +21,7 @@ module DataImporters
 
 		def finalize
 			dump()
+			@mongoCollection.no_timeout.create_indexes
 		end
 
 		def count

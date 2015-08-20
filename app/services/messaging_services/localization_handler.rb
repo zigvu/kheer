@@ -63,8 +63,6 @@ module Services
         @dumpers[chiaVersionId].delete(videoId)
         # if no dumper currently uses formatter, delete that as well
         @formatters.delete(chiaVersionId) if @dumpers[chiaVersionId].keys.empty?
-        # create indices
-        Localization.no_timeout.create_indexes
         # enqueue in delayed job for summary creation
         kheerJob = ::KheerJob.where(video_id: videoId).where(chia_version_id: chiaVersionId).first
         Services::Caching::KheerJobCaching.new(kheerJob).create()

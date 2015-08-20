@@ -1,0 +1,53 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'export/export_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Videos</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Game</th>
+        <th>Channel</th>
+        <th># Locs</th>
+        <th>Select</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @videos.each do |video| %>
+        <% game = video.games.first %>
+        <% channel = video.channels.first %>
+        <% next if game == nil or channel == nil %>
+        <tr>
+          <td><%= video.id %></td>
+          <td><%= video.title %></td>
+          <td><%= game.name %></td>
+          <td><%= channel.name %></td>
+          <td>
+            <%= ::Localization.where(video_id: video.id, chia_version_id: @chiaVersionIdLoc).count %>
+          </td>
+          <% isButChecked = @videoIds.include?(video.id) %>
+          <td><%= check_box_tag 'video_ids[]', video.id, checked = isButChecked %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render 'export/export_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->

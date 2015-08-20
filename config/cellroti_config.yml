@@ -1,0 +1,20 @@
+# Configuration to access cellroti
+
+# Need to copy/modify this file for each server/environment
+development:
+  cellroti_URL: "http://localhost:3001/api/stream"
+  cellroti_api_user_email: "zigvu_admin@zigvu.com"
+  cellroti_api_token: "Vyu5Zyq4yazzaUSBWFw6"
+  cellroti_ssl_cert_path: "/usr/lib/ssl/certs"
+
+test:
+  cellroti_URL: "http://localhost:3001/api/stream"
+  cellroti_api_user_email: "zigvu_admin@zigvu.com"
+  cellroti_api_token: "Vyu5Zyq4yazzaUSBWFw6"
+  cellroti_ssl_cert_path: "/usr/lib/ssl/certs"
+
+production:
+  cellroti_URL: "http://localhost:3001/api/stream"
+  cellroti_api_user_email: "zigvu_admin@zigvu.com"
+  cellroti_api_token: "Vyu5Zyq4yazzaUSBWFw6"
+  cellroti_ssl_cert_path: "/usr/lib/ssl/certs"

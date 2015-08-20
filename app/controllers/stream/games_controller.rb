@@ -8,24 +8,28 @@ module Stream
     # GET /games/1/synch
     def synch
       raise "Cellroti ID not found" if @sub_season.cellroti_id == nil
-      CellrotiData::Game.synch(@game, {sub_season_id: @sub_season.cellroti_id})
-      cellGtIds = @game.game_teams.pluck(:cellroti_id)
-      # synch game_teams
-      # first delete existing records that were deleted in kheer
-      CellrotiData::GameTeam.where(game_id: @game.cellroti_id).each do |cellGt|
-        cellGt.destroy if not cellGtIds.include?(cellGt.id)
-      end
-      # then create new game teams
-      @game.game_teams.each do |gt|
-        if gt.cellroti_id == nil
-          cellrotiGameId = @game.cellroti_id
-          cellrotiTeamId = gt.team.cellroti_id
-          raise "Cellroti ID not found" if cellrotiGameId == nil or cellrotiTeamId == nil
-          CellrotiData::GameTeam.synch(gt, {game_id: cellrotiGameId, team_id: cellrotiTeamId})
+      success, message = CellrotiData::Game.synch(@game, {sub_season_id: @sub_season.cellroti_id})
+      if success
+        cellGtIds = @game.game_teams.pluck(:cellroti_id)
+        # synch game_teams
+        # first delete existing records that were deleted in kheer
+        CellrotiData::GameTeam.where(game_id: @game.cellroti_id).each do |cellGt|
+          cellGt.destroy if not cellGtIds.include?(cellGt.id)
         end
-      end
+        # then create new game teams
+        @game.game_teams.each do |gt|
+          if gt.cellroti_id == nil
+            cellrotiGameId = @game.cellroti_id
+            cellrotiTeamId = gt.team.cellroti_id
+            raise "Cellroti ID not found" if cellrotiGameId == nil or cellrotiTeamId == nil
+            CellrotiData::GameTeam.synch(gt, {game_id: cellrotiGameId, team_id: cellrotiTeamId})
+          end
+        end
 
-      redirect_to stream_sub_season_url(@sub_season), notice: 'Game was successfully synched.'
+        redirect_to stream_sub_season_url(@sub_season), notice: 'Game : ' + message
+      else
+        redirect_to stream_sub_season_url(@sub_season), alert: 'Game : ' + message
+      end
     end
 
     # GET /games/1

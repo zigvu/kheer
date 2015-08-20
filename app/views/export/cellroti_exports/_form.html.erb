@@ -1,11 +1,9 @@
-<%= simple_form_for([:chia_data, @detectable]) do |f| %>
+<%= simple_form_for([:export, @cellroti_export]) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
     <%= f.input :name %>
-    <%= f.input :pretty_name %>
     <%= f.input :description %>
-    <%= f.input :cellroti_id %>
   </div>
 
   <div class="form-actions">

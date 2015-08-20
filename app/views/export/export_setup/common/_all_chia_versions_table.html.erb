@@ -1,0 +1,25 @@
+<!-- BEGIN: Table -->
+<table>
+  <thead>
+    <tr><th colspan="4"><%= tableTitle %></th></tr>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Select</th>
+    </tr>
+  </thead>
+
+  <tbody>
+      <% @chiaVersions.each do |chia_version| %>
+        <tr>
+          <td><%= chia_version.id %></td>
+          <td><%= chia_version.name %></td>
+          <td><%= chia_version.description %></td>
+          <% isButChecked = (selectedChiaVersionId == chia_version.id) %>
+          <td><%= radio_button_tag radioTagName, chia_version.id, checked = isButChecked %></td>
+        </tr>
+      <% end %>
+  </tbody>
+</table>
+<!-- END: Table -->

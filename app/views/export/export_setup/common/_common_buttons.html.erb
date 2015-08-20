@@ -1,0 +1,12 @@
+<div class="row">
+  <div class="small-2 columns">
+    <% if @prev_step == nil %>
+      <%= link_to 'Back', export_cellroti_export_path(@cellroti_export), class: "button" %>
+    <% else %>
+      <%= link_to 'Back', wizard_path(@prev_step), class: "button" %>
+    <% end %>
+  </div>
+  <div class="small-2 columns small-offset-8">
+    <%= submit_tag 'Next', class: "button", id: "cellroti-export-setup-next" %>
+  </div>
+</div>

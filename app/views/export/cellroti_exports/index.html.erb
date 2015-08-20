@@ -1,0 +1,31 @@
+<h3>Listing Cellrit Exports</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>User</th>
+      <th>State</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @cellroti_exports.each do |cellroti_export| %>
+      <tr>
+        <td><%= cellroti_export.name %></td>
+        <td><%= cellroti_export.user.email %></td>
+        <td><%= cellroti_export.state %></td>
+        <td><%= link_to 'Show', export_cellroti_export_path(cellroti_export) %></td>
+        <td><%= link_to 'Edit', edit_export_cellroti_export_path(cellroti_export) %></td>
+        <td><%= link_to 'Destroy', [:export, cellroti_export], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Cellroti Export', new_export_cellroti_export_path, class: "button" %>

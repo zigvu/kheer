@@ -1,11 +1,10 @@
 
-# TODO: get from config
-# TODO: test if needs to be pulled into puma
+cellrotiConfig = YAML.load_file(Rails.root.join('config','cellroti_config.yml'))[Rails.env]
 
-$cellroti_URL = "http://localhost:3001/api/stream"
-$cellroti_api_user_email = "zigvu_admin@zigvu.com"
-$cellroti_api_token = "Vyu5Zyq4yazzaUSBWFw6"
-$cellroti_ssl_cert_path = "/usr/lib/ssl/certs"
+$cellroti_URL = cellrotiConfig["cellroti_URL"]
+$cellroti_api_user_email = cellrotiConfig["cellroti_api_user_email"]
+$cellroti_api_token = cellrotiConfig["cellroti_api_token"]
+$cellroti_ssl_cert_path = cellrotiConfig["cellroti_ssl_cert_path"]
 
 class CellrotiTokenAuthentication < Faraday::Middleware
   def call(env)
@@ -24,6 +23,7 @@ Her::API.setup url: $cellroti_URL do |c|
   c.use CellrotiTokenAuthentication
 
   # Request
+  c.use Faraday::Request::Multipart
   c.use Faraday::Request::UrlEncoded
 
   # Response

@@ -9,8 +9,13 @@ module Stream
     def synch
       raise "Cellroti ID not found" if @sport.cellroti_id == nil
       name = @event_type.detectable.pretty_name
-      CellrotiData::EventType.synch(@event_type, {sport_id: @sport.cellroti_id, name: name})
-      redirect_to stream_sport_url(@sport), notice: 'Event type was successfully synched.'
+      success, message = CellrotiData::EventType.synch(
+        @event_type, {sport_id: @sport.cellroti_id, name: name})
+      if success
+        redirect_to stream_sport_url(@sport), notice: 'Event : ' + message
+      else
+        redirect_to stream_sport_url(@sport), alert: 'Event : ' + message
+      end
     end
 
     # GET /event_types/1

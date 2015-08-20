@@ -6,7 +6,6 @@ Kheer::Application.routes.draw do
         get 'synch'
       end
     end
-    resources :channels
   end
 
   namespace :api, :defaults => {:format => :json} do
@@ -60,6 +59,13 @@ Kheer::Application.routes.draw do
       end
     end
     get 'metrics/video_details'
+  end
+
+  namespace :export do
+    resources :cellroti_exports
+    namespace :export_setup do
+      resources :mongo_export
+    end
   end
 
   # look at cellroti routes to see how to authenticate this

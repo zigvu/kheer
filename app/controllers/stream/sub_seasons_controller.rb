@@ -8,8 +8,13 @@ module Stream
     # GET /seasons/1/synch
     def synch
       raise "Cellroti ID not found" if @season.cellroti_id == nil
-      CellrotiData::SubSeason.synch(@sub_season, {season_id: @season.cellroti_id})
-      redirect_to stream_season_url(@season), notice: 'SubSeason was successfully synched.'
+      success, message = CellrotiData::SubSeason.synch(
+        @sub_season, {season_id: @season.cellroti_id})
+      if success
+        redirect_to stream_season_url(@season), notice: 'SubSeason : ' + message
+      else
+        redirect_to stream_season_url(@season), alert: 'SubSeason : ' + message
+      end
     end
 
     # GET /sub_seasons/1

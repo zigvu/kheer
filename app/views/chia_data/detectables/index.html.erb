@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Id</th>
+      <th>Cellroti Id</th>
       <th>Pretty Name</th>
       <th># Chia Versions</th>
       <th>Edit | Destroy</th>
@@ -14,6 +15,7 @@
     <% @detectables.each do |detectable| %>
       <tr>
         <td><%= detectable.id %></td>
+        <td><%= detectable.cellroti_id %></td>
         <td><%= detectable.pretty_name %></td>
         <td><%= detectable.chia_version_detectables.count %></td>
         <td>

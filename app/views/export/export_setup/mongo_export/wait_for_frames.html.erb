@@ -1,0 +1,62 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'export/export_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Wait for frame numbers from Cellroti</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+<div class="row">
+  <div class="small-12 columns">
+    <p>Please check cellroti delayed_job for the progress of processing for the following videos. Once delayed_job completes the processing, click <b>Next</b> to get frames to extract. Do <b>NOT</b> click next until cellroti delayed_job is complete for all videos below.</p>
+    <p>TODO: AJAX cellroti periodically to see if processing is complete.</p>
+    <p>You can check the information sent to cellroti in the export folder below.</p>
+  </div>
+</div>
+
+<!-- BEGIN: Video selections -->
+<div class="row">
+  <div class="small-12 columns">
+    <table>
+      <thead>
+        <tr>
+          <th>Video Id</th>
+          <th>Title</th>
+          <th>Cellroti Video Id</th>
+          <th width="50%">Export Folder</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @cellrotiVideoIdMap.each do |videoId, cellrotiVideoId| %>
+          <% video = ::Video.find(videoId) %>
+          <% outputFolder = Managers::MVideo.new(video).get_export_folder(@cellroti_export.id) %>
+          <tr>
+            <td><%= video.id %></td>
+            <td><%= video.title %></td>
+            <td><%= cellrotiVideoId %></td>
+            <td><%= outputFolder %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+<!-- END: Video selections -->
+
+  <%= render 'export/export_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->

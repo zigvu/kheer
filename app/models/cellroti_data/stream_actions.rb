@@ -16,17 +16,26 @@ class CellrotiData::StreamActions
     paramHash = Hash[@streamObjAttr.map{ |f| [f, streamObj.send(f)] }]
     paramHash.merge!(extraParamsHash)
 
+    response = nil
     if streamObj.cellroti_id == nil
-      self.createFrom(streamObj, paramHash)
+      response = self.createFrom(streamObj, paramHash)
     else
-      self.updateFrom(streamObj, paramHash)
+      response = self.updateFrom(streamObj, paramHash)
     end
-    streamObj
+    success = true
+    message = "Successfully updated"
+    begin
+      message = response.error
+      success = false
+    rescue
+    end
+    return success, message
   end
 
   def self.createFrom(streamObj, paramHash)
     response = self.create(paramHash)
     streamObj.update(cellroti_id: response.id)
+    response
   end
   def self.updateFrom(streamObj, paramHash)
     raise "Cellroti ID not found" if streamObj.cellroti_id == nil

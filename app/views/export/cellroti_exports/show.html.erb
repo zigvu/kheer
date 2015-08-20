@@ -1,0 +1,13 @@
+<h3><%= @cellroti_export.name %></h3>
+
+<% if not @isSessionComplete %>
+  <% if @isSetupComplete %>
+    <%= render 'export/export_setup/common/current_settings' %>
+  <% end %>
+  <%= link_to 'Setup export', export_export_setup_mongo_export_path(Wicked::FIRST_STEP, cellroti_export_id: @cellroti_export.id), class: "button" %>
+<% else %>
+  <h3>Export complete!</h3>
+  <%= render 'export/export_setup/common/current_settings' %>
+<% end %>
+
+<%= link_to 'Back', export_cellroti_exports_path, class: "button" %>

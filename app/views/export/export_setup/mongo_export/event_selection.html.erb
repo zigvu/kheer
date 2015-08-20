@@ -1,0 +1,46 @@
+<!-- BEGIN: Layout -->
+<%= render :layout => 'export/export_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Select Events to Export</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Pretty Name</th>
+        <th># Events</th>
+        <th>Select</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @detectables.each do |detectable| %>
+        <tr>
+          <td><%= detectable.id %></td>
+          <td><%= detectable.pretty_name %></td>
+          <td>
+            <%= ::Annotation.in(video_id: @videoIds).where(chia_version_id: @chiaVersionIdEvent, detectable_id: detectable.id).count %>
+          </td>
+          <% isButChecked = @selectedEventDetIds.include?(detectable.id) %>
+          <td><%= check_box_tag 'event_detectable_ids[]', detectable.id, checked = isButChecked %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render 'export/export_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>  
+<% end %>
+<!-- END: Layout -->
