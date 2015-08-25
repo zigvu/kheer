@@ -46,4 +46,5 @@ class Annotation
 		return ChiaVersion.find(self.chia_version_id)
 	end
 
+  has_one :patch_bucket, dependent: :destroy
 end

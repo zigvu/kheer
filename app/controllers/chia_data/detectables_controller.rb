@@ -65,7 +65,7 @@ module ChiaData
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def detectable_params
-        params.require(:detectable).permit(:name, :pretty_name, :description, :cellroti_id)
+        params.require(:detectable).permit(:name, :pretty_name, :dtype, :description, :cellroti_id)
       end
   end
 end

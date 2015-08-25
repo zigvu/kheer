@@ -60,6 +60,7 @@ namespace :importexport do
     end
   end
 
+
   desc "Export annotations associated with a particular chia version id for chia"
   task export_annotation_for_chia: :environment do
     chiaVersionId = ENV['chia_version_id']
@@ -73,6 +74,42 @@ namespace :importexport do
       ea = DataExporters::ExportAnnotationsForChia.new(chiaVersionId.to_i, outputFolder, avoidLabel)
       ea.export()
       puts "Done exporting annotations"
+    end
+  end
+
+
+  desc "Import patch bucket folder"
+  task import_patch_bucket_folder: :environment do
+    inputFolder = ENV['input_folder']
+    if (inputFolder == nil)
+      puts "Usage: rake importexport:import_patch_bucket_folder input_folder=<folder>"
+      puts "Exiting"
+    else
+      puts "Start importing patch bucket folder"
+      ipbf = DataImporters::ImportPatchBucketFolder.new(inputFolder)
+      ipbf.saveToDb()
+      puts "Done importing patch bucket folder"
+    end
+  end
+
+
+  desc "Import patch scores"
+  task import_patch_scores: :environment do
+    scoreFile = ENV['score_file']
+    chiaVersionIdMajor = ENV['chia_version_id_major']
+    chiaVersionIdMinor = ENV['chia_version_id_minor']
+    if (scoreFile == nil) or (chiaVersionIdMajor == nil) or (chiaVersionIdMinor == nil)
+      puts "Usage: rake importexport:import_patch_scores score_file=<scoreFile.csv> chia_version_id_major=<id> chia_version_id_minor=<id>"
+      puts "Exiting"
+    else
+      puts "Start importing score file"
+      ips = DataImporters::ImportPatchScores.new(
+        chiaVersionIdMajor.to_i,
+        chiaVersionIdMinor.to_i,
+        scoreFile
+      )
+      ips.saveToDb
+      puts "Done importing score file"
     end
   end
 

@@ -6,6 +6,7 @@
       <th>Id</th>
       <th>Cellroti Id</th>
       <th>Pretty Name</th>
+      <th>Type</th>
       <th># Chia Versions</th>
       <th>Edit | Destroy</th>
     </tr>
@@ -17,6 +18,7 @@
         <td><%= detectable.id %></td>
         <td><%= detectable.cellroti_id %></td>
         <td><%= detectable.pretty_name %></td>
+        <td><%= detectable.dtype %></td>
         <td><%= detectable.chia_version_detectables.count %></td>
         <td>
           <%= link_to 'Edit', edit_chia_data_detectable_path(detectable) %> | 

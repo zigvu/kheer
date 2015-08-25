@@ -5,6 +5,7 @@
     <%= f.input :name %>
     <%= f.input :pretty_name %>
     <%= f.input :description %>
+    <%= f.input :dtype, collection: States::DetectableType.possibleStates %>
     <%= f.input :cellroti_id %>
   </div>
 
