@@ -16,7 +16,7 @@
         <td><%= cvd.detectable.id %></td>
         <td><%= cvd.chia_detectable_id %></td>
         <td><%= cvd.detectable.pretty_name %></td>
-        <td><%= ::Annotation.where(chia_version_id: @chia_version.id).where(detectable_id: cvd.detectable.id).count %></td>
+        <td><%= ::Annotation.where(chia_version_id: @chia_version.id).where(active: true).where(detectable_id: cvd.detectable.id).count %></td>
       </tr>
     <% end %>
   </tbody>

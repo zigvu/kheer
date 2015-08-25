@@ -41,6 +41,8 @@ module DataExporters
 
 			def getFormattedAnno(anno)
 				return {
+					annotation_id: anno.id.to_s,
+
 					x0: anno.x0,
 					y0: anno.y0,
 					

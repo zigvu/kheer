@@ -10,13 +10,16 @@ module DataExporters
 			@avoidLabel = avoidLabel
 			@detectableIdNameMap = {}
 
-			@allOtherChiaVersionIds = ::ChiaVersion.all.pluck(:id) - [@chiaVersionId]
+			chiaVersionType = ::ChiaVersion.find(chiaVersionId).ctype
+			@allOtherChiaVersionIds = ::ChiaVersion.where(
+				ctype: chiaVersionType).pluck(:id) - [@chiaVersionId]
 
 			FileUtils::mkdir_p(@outputFolder)
 		end
 
 		def export
 			::Annotation.where(chia_version_id: @chiaVersionId).where(active: true)
+				.order(frame_number: :asc)
 				.group_by{|a1| a1.video_id}.each do |videoId, a2|
 				
 				video = Video.find(videoId)

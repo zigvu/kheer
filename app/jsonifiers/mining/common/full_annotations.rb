@@ -5,12 +5,17 @@ module Jsonifiers::Mining::Common
       @mining = mining
       clipSet = @mining.clip_sets[setId.to_s]
       @clipIds = clipSet.map{ |cs| cs["clip_id"].to_i }
+
+      chiaVersionAnnoType = ::ChiaVersion.find(@mining.chia_version_id_anno).ctype
+      @sameTypeChiaVersionIds = ::ChiaVersion.where(ctype: chiaVersionAnnoType).pluck(:id)
     end
 
     def generateQueries
       queries = []
       # get all annotations for clips in set
-      queries << ::Annotation.where(active: true).in(clip_id: @clipIds)
+      queries << ::Annotation.where(active: true)
+        .in(chia_version_id: @sameTypeChiaVersionIds)
+        .in(clip_id: @clipIds)
       queries
    end
 

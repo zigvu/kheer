@@ -1,6 +1,8 @@
 module States
 	class StateCommon
 
+	  cattr_accessor :possibleStates
+
 		def initialize(tableObject, columnName)
 			@tableObject = tableObject
 			@columnName = columnName

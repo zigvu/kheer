@@ -13,7 +13,7 @@ module ChiaData
     # GET /chia_versions/1.json
     def show
       @chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
-      @chia_versions = ::ChiaVersion.all - [@chia_version]
+      @chia_versions = ::ChiaVersion.where(ctype: @chia_version.ctype) - [@chia_version]
       @chiaVersionDetectables = @chia_version
         .chia_version_detectables
         .order(:chia_detectable_id => :asc)
@@ -45,24 +45,19 @@ module ChiaData
 
       respond_to do |format|
         if @chia_version.save
-          # TODO: REMOVE
           format.html { 
+            update_chia_version_settings()
+
+            # TODO: REMOVE
             kheerSeed = Rails.root.join('public','data','kheerSeed').to_s
             cellMapFile = "#{kheerSeed}/cell_map.json"
             colorMapFile = "#{kheerSeed}/color_map.json"
-            chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
-            zDistThreshs = params["zDistThreshs"][1..-2].split(",").map{ |s| s.to_f }
-            chiaSerializer.addSettingsZdistThresh(zDistThreshs)
-            scales = params["scales"][1..-2].split(",").map{ |s| s.to_f }
-            chiaSerializer.addSettingsScales(scales)
-
             pmf = DataImporters::CreateMaps.new(cellMapFile, colorMapFile)
             pmf.saveToDb(@chia_version)
+            # END TODO
 
             redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully created.' 
           }
-          # END TODO
-          # format.html { redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully created.' }
           format.json { render action: 'show', status: :created, location: @chia_version }
         else
           format.html { render action: 'new' }
@@ -77,12 +72,7 @@ module ChiaData
       respond_to do |format|
         if @chia_version.update(chia_version_params)
           format.html { 
-            chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
-            zDistThreshs = params["zDistThreshs"][1..-2].split(",").map{ |s| s.to_f }
-            chiaSerializer.replaceSettingsZdistThresh(zDistThreshs)
-            scales = params["scales"][1..-2].split(",").map{ |s| s.to_f }
-            chiaSerializer.replaceSettingsScales(scales)
-
+            update_chia_version_settings()
             redirect_to chia_data_chia_version_url(@chia_version), notice: 'Chia version was successfully updated.' 
           }
           format.json { head :no_content }
@@ -150,6 +140,14 @@ module ChiaData
 
 
     private
+      def update_chia_version_settings
+        chiaSerializer = Serializers::ChiaVersionSettingsSerializer.new(@chia_version)
+        zDistThreshs = params["zDistThreshs"][1..-2].split(",").map{ |s| s.to_f }
+        chiaSerializer.replaceSettingsZdistThresh(zDistThreshs)
+        scales = params["scales"][1..-2].split(",").map{ |s| s.to_f }
+        chiaSerializer.replaceSettingsScales(scales)
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_chia_version
         @chia_version = ::ChiaVersion.find(params[:id])
@@ -157,7 +155,7 @@ module ChiaData
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def chia_version_params
-        params.require(:chia_version).permit(:name, :description, :comment)
+        params.require(:chia_version).permit(:name, :description, :comment, :ctype)
       end
   end
 end
