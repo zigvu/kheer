@@ -1,0 +1,51 @@
+
+<!-- BEGIN: Layout -->
+<%= render :layout => 'retraining/iteration_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Select Chia Version for Annotations</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+<!-- BEGIN: Chia Version -->
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th># Annotations</th>
+      <th>Select</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chiaVersions.each do |chia_version| %>
+      <tr>
+        <td><%= chia_version.id %></td>
+        <td><%= chia_version.name %></td>
+        <td><%= chia_version.description %></td>
+        <td><%= ::Annotation.where(chia_version_id: chia_version.id, active: true).count %></td>
+        <% isButChecked = @annotationChiaVersionIds.include?(chia_version.id) %>
+        <td><%= check_box_tag 'chia_version_ids[]', chia_version.id, checked = isButChecked %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<!-- END: Chia Version -->
+
+  <%= render 'retraining/iteration_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<!-- END: Layout -->

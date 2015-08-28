@@ -1,0 +1,65 @@
+
+<!-- BEGIN: Layout -->
+<%= render :layout => 'retraining/iteration_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Select patches</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+<!-- BEGIN: Detectable details -->
+<table>
+  <thead>
+    <tr>
+      <th>Det Id</th>
+      <th>Det Name</th>
+      <th># Annotations</th>
+      <th># Patch Buckets</th>
+      <th># Parent Patches</th>
+      <th># Parent Duplicates</th>
+      <th># Available Patches</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @summaryCounts.each do |detId, s| %>
+      <tr>
+        <td><%= s[:det_id] %></td>
+        <td><%= s[:det_name] %></td>
+        <td><%= s[:num_annos] %></td>
+        <td><%= s[:num_patch_buckets] %></td>
+        <td><%= s[:num_parent_patches] %></td>
+        <td><%= s[:num_parent_duplicates] %></td>
+        <td><%= s[:num_patches_unused] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<!-- END: Detectable details -->
+
+<!-- BEGIN: Patch input -->
+<div class="row">
+  <div class="small-10 columns">
+    Number of patches to include in this iteration:
+  </div>
+  <div class="small-2 columns">
+    <%= text_field_tag 'numberOfPatches', 200 %>
+  </div>
+</div>
+<!-- END: Patch input -->
+
+  <%= render 'retraining/iteration_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<!-- END: Layout -->

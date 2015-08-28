@@ -1,0 +1,55 @@
+
+<!-- BEGIN: Layout -->
+<%= render :layout => 'retraining/iteration_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Import scores</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+<!-- BEGIN: Chia Version selected -->
+<table>
+  <thead>
+    <tr><th colspan="3">Selected Chia Versions for Annotation</th></tr>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+      <% @chiaVersions.each do |chia_version| %>
+        <tr>
+          <td><%= chia_version.id %></td>
+          <td><%= chia_version.name %></td>
+          <td><%= chia_version.description %></td>
+        </tr>
+      <% end %>
+  </tbody>
+</table>
+<!-- END: Table -->
+
+<div class="row">
+  <div class="small-12 columns">
+    <h3>Please use rake task to import scores of patches from all included chia versions. When all scores are imported, press next to select patches for this iteration of training.</h3>
+    <br></br>
+    <h4>Iteration Id: <%= @iteration.id %></h4>
+  </div>
+</div>  
+
+  <%= render 'retraining/iteration_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<!-- END: Layout -->

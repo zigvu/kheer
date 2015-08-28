@@ -1,0 +1,25 @@
+
+<!-- BEGIN: Layout -->
+<%= render :layout => 'retraining/iteration_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Confirm selections</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+  <%= render 'retraining/iteration_setup/common/summary_table' %>
+  <%= render 'retraining/iteration_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<!-- END: Layout -->

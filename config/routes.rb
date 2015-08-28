@@ -68,6 +68,11 @@ Kheer::Application.routes.draw do
     end
   end
 
+  namespace :retraining do
+    resources :iterations
+    resources :iteration_setup
+  end
+
   # look at cellroti routes to see how to authenticate this
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 

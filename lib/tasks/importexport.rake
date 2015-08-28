@@ -80,36 +80,47 @@ namespace :importexport do
 
   desc "Import patch bucket folder"
   task import_patch_bucket_folder: :environment do
-    inputFolder = ENV['input_folder']
-    if (inputFolder == nil)
-      puts "Usage: rake importexport:import_patch_bucket_folder input_folder=<folder>"
+    iterationId = ENV['iteration_id']
+    inputFolder = ENV['combined_input_folder']
+    if (iterationId == nil) or (inputFolder == nil)
+      puts "Usage: rake importexport:import_patch_bucket_folder iteration_id=<id> combined_input_folder=<folder>"
       puts "Exiting"
     else
       puts "Start importing patch bucket folder"
-      ipbf = DataImporters::ImportPatchBucketFolder.new(inputFolder)
+      ipbf = DataImporters::ImportPatchBucketFolders.new(iterationId, inputFolder)
       ipbf.saveToDb()
       puts "Done importing patch bucket folder"
     end
   end
 
 
-  desc "Import patch scores"
-  task import_patch_scores: :environment do
-    scoreFile = ENV['score_file']
-    chiaVersionIdMajor = ENV['chia_version_id_major']
-    chiaVersionIdMinor = ENV['chia_version_id_minor']
-    if (scoreFile == nil) or (chiaVersionIdMajor == nil) or (chiaVersionIdMinor == nil)
-      puts "Usage: rake importexport:import_patch_scores score_file=<scoreFile.csv> chia_version_id_major=<id> chia_version_id_minor=<id>"
+  desc "Export patch list for retraining"
+  task export_patch_list_for_retraining: :environment do
+    iterationId = ENV['iteration_id']
+    outputFile = ENV['output_file']
+    if (iterationId == nil) or (outputFile == nil)
+      puts "Usage: rake importexport:export_patch_list_for_retraining iteration_id=<id> output_file=<outputFile.json>"
       puts "Exiting"
     else
-      puts "Start importing score file"
-      ips = DataImporters::ImportPatchScores.new(
-        chiaVersionIdMajor.to_i,
-        chiaVersionIdMinor.to_i,
-        scoreFile
-      )
-      ips.saveToDb
-      puts "Done importing score file"
+      puts "Start exporting patch list"
+      de = DataExporters::ExportPatchNamesForRetraining.new(iterationId, outputFile)
+      de.export
+      puts "Done exporting patch list"
+    end
+  end
+
+  desc "Export patch list for quality assurance"
+  task export_patch_list_for_qa: :environment do
+    iterationId = ENV['iteration_id']
+    outputFolder = ENV['output_folder']
+    if (iterationId == nil) or (outputFolder == nil)
+      puts "Usage: rake importexport:export_patch_list_for_qa iteration_id=<id> output_folder=<folder>"
+      puts "Exiting"
+    else
+      puts "Start exporting patch list for quality assurance"
+      de = DataExporters::ExportPatchNamesForQa.new(iterationId, outputFolder)
+      de.export
+      puts "Done exporting patch list"
     end
   end
 

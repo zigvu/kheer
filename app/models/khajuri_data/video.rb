@@ -19,7 +19,7 @@ class Video < ActiveRecord::Base
 
   private
     def destroy_mongo_documents
-      Localization.where(video_id: self.id).delete_all
-      Annotation.where(video_id: self.id).delete_all
+      Localization.where(video_id: self.id).destroy_all
+      Annotation.where(video_id: self.id).destroy_all
     end
 end

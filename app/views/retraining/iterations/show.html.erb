@@ -1,0 +1,24 @@
+<h3>Iteration: <%= "#{@iteration.name} [#{@iteration.major_chia_version_id}.#{@iteration.minor_chia_version_id}]" %></h3>
+
+<h6>Parent Iteration: 
+  <% @piteration = @iteration.parent %>
+  <% if @piteration == nil %>
+    None
+  <% else %>
+    <%= "#{@piteration.name} [#{@piteration.major_chia_version_id}.#{@piteration.minor_chia_version_id}]" %>
+  <% end %>
+</h6>
+
+
+<% if @isNewIteration %>
+  <%= link_to 'Setup iteration', retraining_iteration_setup_path(Wicked::FIRST_STEP, iteration_id: @iteration.id), class: "button" %>
+<% elsif @isExportComplete %>
+  <%= render 'retraining/iteration_setup/common/summary_table' %>
+<!-- 
+   link_to 'Next Iteration',  next_iteration_retraining_iteration_path(@iteration), class: "button"
+ -->
+<% else %>
+  <h3>Unknown iteration state!</h3>
+<% end %>
+
+<%= link_to 'Back', retraining_iterations_path, class: "button" %>

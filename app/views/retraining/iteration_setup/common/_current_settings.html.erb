@@ -1,0 +1,124 @@
+<!-- BEGIN: Chia Version selections -->
+<div class="row">
+  <div class="small-12 columns">
+    <table>
+      <thead>
+        <tr><th colspan="4">Chia Versions</th></tr>
+        <tr>
+          <th>Type</th>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>For Localization</td>
+          <td><%= @chiaVersionLoc.id %></td>
+          <td><%= @chiaVersionLoc.name %></td>
+          <td><%= @chiaVersionLoc.description %></td>
+        </tr>
+        <tr>
+          <td>For Event Timing</td>
+          <td><%= @chiaVersionEvent.id %></td>
+          <td><%= @chiaVersionEvent.name %></td>
+          <td><%= @chiaVersionEvent.description %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- END: Chia Version selections -->
+
+<!-- BEGIN: Video selections -->
+<div class="row">
+  <div class="small-12 columns">
+    <table>
+      <thead>
+        <tr><th colspan="5">Videos</th></tr>
+        <tr>
+          <th>Id</th>
+          <th>Title</th>
+          <th>Game</th>
+          <th>Channel</th>
+          <th># Locs</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @videos.each do |video| %>
+          <% game = video.games.first %>
+          <% channel = video.channels.first %>
+          <% locCount = ::Localization.where(video_id: video.id, chia_version_id: @chiaVersionLoc.id).count %>
+
+          <tr>
+            <td><%= video.id %></td>
+            <td><%= video.title %></td>
+            <td><%= game.name %></td>
+            <td><%= channel.name %></td>
+            <td><%= locCount %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+<!-- END: Video selections -->
+
+<!-- BEGIN: ZDist for Localization selections -->
+<div class="row">
+  <div class="small-12 columns">
+    <table>
+      <thead>
+        <tr><th colspan="3">Detectables</th></tr>
+        <tr>
+          <th>Det Id</th>
+          <th>Det Name</th>
+          <th>ZDist</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @cellroti_export.zdist_threshs.each do |detId, zDistSelected| %>
+          <% detectable = ::Detectable.find(detId) %>
+          <tr>
+            <td><%= detectable.id %></td>
+            <td><%= detectable.pretty_name %></td>
+            <td><%= zDistSelected %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- END: ZDist for Localization selections -->
+
+
+<!-- BEGIN: Events to Export selections -->
+<div class="row">
+  <div class="small-12 columns">
+      <table>
+        <thead>
+          <tr><th colspan="3">Events to Export</th></tr>
+          <tr>
+            <th>Id</th>
+            <th>Pretty Name</th>
+            <th># Events</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @eventDetectables.each do |detectable| %>
+            <% annoCount = ::Annotation.in(video_id: @cellroti_export.video_ids).where(chia_version_id: @chiaVersionEvent.id, detectable_id: detectable.id).count %>
+            <tr>
+              <td><%= detectable.id %></td>
+              <td><%= detectable.pretty_name %></td>
+              <td><%= annoCount %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+  </div>
+</div>
+<!-- END: Events to Export selections -->

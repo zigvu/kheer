@@ -1,0 +1,32 @@
+
+<!-- BEGIN: Layout -->
+<%= render :layout => 'retraining/iteration_setup/common/outershell' do %>
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Export selections</div>
+        </div>
+        <div class="filter-content">
+
+<!-- BEGIN: Content -->
+<%= form_tag wizard_path, :method => :put do %>
+
+<div class="row">
+  <div class="small-12 columns">
+    <h3>If you are satisfied with the patch selection, please use rake task to export names of patches. When export rake task is complete, click next to clean up database items no longer in use.</h3>
+    <br></br>
+    <h4>Iteration Id: <%= @iteration.id %></h4>
+  </div>
+</div>  
+
+  <%= render 'retraining/iteration_setup/common/common_buttons' %>
+<% end %>
+<!-- END: Content -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<!-- END: Layout -->

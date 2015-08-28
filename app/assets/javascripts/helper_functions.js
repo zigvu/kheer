@@ -58,6 +58,13 @@ hideSpinner = function() {
   $("#spinner-popup").hide();
   $("#spinner-popup").spin(false);
 };
+
+
+// when clicking the next button in a wizard, show spinner
+// note: no need to hide spinner since there will be a page change anyways
+$("#wizard-setup-next").click(function(){
+  showSpinner();
+});
 //------------------------------------------------
 
 //------------------------------------------------

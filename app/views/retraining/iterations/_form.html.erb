@@ -1,0 +1,26 @@
+<%= simple_form_for([:retraining, @iteration]) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <% if @iteration.major_chia_version_id == nil %>
+      <%= f.input :major_chia_version_id do %>
+        <%= f.select :major_chia_version_id, @possibleChiaVersions.map { |c| [c.name, c.id] }, include_blank: true %>
+      <% end %>
+    <% else %>
+      <div>Major Chia Version: <%= @iteration.major_chia_version.name %></div><br></br>
+    <% end %>
+    <% if @iteration.parent_iteration == nil %>
+      <%= f.input :parent_iteration do %>
+        <%= f.select :parent_iteration, @possibleParents.map { |c| [c.name, c.id] }, include_blank: true %>
+      <% end %>
+    <% else %>
+      <% @piteration = @iteration.parent %>
+      <div>Parent Iteration: <%= "#{@piteration.name} [#{@piteration.major_chia_version_id}.#{@piteration.minor_chia_version_id}]" %></div><br></br>
+    <% end %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

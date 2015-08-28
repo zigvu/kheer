@@ -1,0 +1,41 @@
+<h3>Listing Iterations</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Parent</th>
+      <th>Major ChiaVersion</th>
+      <th>Minor ChiaVersion</th>
+      <th>State</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @iterations.each do |iteration| %>
+      <tr>
+        <td><%= iteration.name %></td>
+        <td>
+          <% if iteration.parent == nil %>
+            None
+          <% else %>
+            <%= iteration.parent.name %>
+          <% end %>
+        </td>
+        <td><%= iteration.major_chia_version.name %></td>
+        <td><%= iteration.minor_chia_version_id %></td>
+        <td><%= iteration.state %></td>
+        <td><%= link_to 'Show', retraining_iteration_path(iteration) %></td>
+        <td><%= link_to 'Edit', edit_retraining_iteration_path(iteration) %></td>
+        <td><%= link_to 'Destroy', [:retraining, iteration], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Iteration', new_retraining_iteration_path, class: "button" %>
