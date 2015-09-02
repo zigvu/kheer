@@ -30,5 +30,9 @@ module States
 			end
 		end
 
+		define_method("getAllStates") do
+			return @@possibleStates
+		end
+
 	end
 end

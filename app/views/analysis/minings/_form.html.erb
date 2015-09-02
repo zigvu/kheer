@@ -6,7 +6,7 @@
     <%= f.input :description %>
     <% if @mining.mtype == nil %>
       <%= f.input :mtype, label: "Mining Type" do %>
-        <%= f.select :mtype, States::MiningType.class_variable_get(:@@possibleStates).map{ |t| t.to_s }, include_blank: false %>
+        <%= f.select :mtype, States::MiningType.new(nil).getAllStates.map{ |t| t.to_s }, include_blank: false %>
       <% end %>
     <% else %>
       <div>Mining type: <%= @mining.mtype %></div><br></br>

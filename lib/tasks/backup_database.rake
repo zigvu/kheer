@@ -38,7 +38,9 @@ namespace :backupdatabases do
 
       puts "Start importing mysql"
       sqlDbConf = Rails.configuration.database_configuration[Rails.env]
+      system "rake db:drop && rake db:create"
       system "mysql -u #{sqlDbConf['username']} #{sqlDbConf['database']} < #{sqlFile}"
+      system "rake db:migration"
       puts "Finish importing mysql"
 
 
