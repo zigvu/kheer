@@ -146,7 +146,7 @@ module Metrics::Retraining
 				numParentPatches = 0
 				numDuplicateParentPatches = 0
 				if @iteration.parent != nil
-					parentPatchCounts = @iteration.iteration_trackers.where(di: det.id).first.getPatchesParents.count
+					parentPatchCounts = @iteration.iteration_trackers.where(di: det.id).first.getPatchesParents.values
 					numParentPatches = parentPatchCounts.sum
 					numDuplicateParentPatches = parentPatchCounts.sum - parentPatchCounts.count
 				end

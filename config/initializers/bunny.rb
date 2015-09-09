@@ -20,14 +20,14 @@ module BunnyConnections
       clipIdHandler = Services::MessagingServices::ClipIdHandler.new()
       Messaging::RpcServer.new(bc, 
         Rails.configuration.bunny.clip_id_request, 
-        Rails.configuration.bunny.clipIdHandler
+        clipIdHandler
       ).start
 
       # start localization data handler server
       localizationHandler = Services::MessagingServices::LocalizationHandler.new()
       Messaging::RpcServer.new(bc, 
         Rails.configuration.bunny.localization_request, 
-        Rails.configuration.bunny.localizationHandler
+        localizationHandler
       ).start
     end
   end

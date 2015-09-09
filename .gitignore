@@ -16,6 +16,7 @@
 /tmp
 
 # evan added:
+/config/cellroti_config.yml
 /config/passwords.yml
 /public/data
 /public/assets

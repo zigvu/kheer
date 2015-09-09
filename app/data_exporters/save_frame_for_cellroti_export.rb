@@ -53,7 +53,7 @@ module DataExporters
 			FileUtils::rm_rf(outputFile)
 
 			File.open(outputFile, 'w') do |f|
-				f.puts frameNumbers.to_s[1..-2].delete(' ')
+				f.puts frameNumbers.to_s[1..-2].delete(' ').gsub(',', ' ')
 			end
 
 			fileNameMap = {}
