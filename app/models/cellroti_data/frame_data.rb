@@ -13,25 +13,4 @@ class CellrotiData::FrameData
     end
     frameNumbersMap
   end
-
-  def self.sendFrameData(cellViFnMap)
-    paramHash = {}
-    paramHash['files'] = {}
-    # filetypes in app/data_exporters/save_for_cellroti_export.rb
-    cellViFnMap.each do |cellrotiVideoId, gzipFileName|
-      paramHash['files'][cellrotiVideoId] = Faraday::UploadIO.new(
-        gzipFileName, 'application/octet-stream')
-    end
-
-    response = self.create(paramHash)
-
-    success = true
-    message = "Sent Frame data to cellroti"
-    begin
-      message = response.error
-      success = false
-    rescue
-    end
-    return success, message
-  end
 end

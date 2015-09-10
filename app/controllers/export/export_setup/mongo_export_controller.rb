@@ -189,8 +189,8 @@ module Export::ExportSetup
         frameNumbersMap = CellrotiData::FrameData.getFrameNumbers(cellrotiVideoIds)
 
         # save frame numbers to file
-        saveFrame = DataExporters::SaveFrameForCellrotiExport.new(@cellroti_export)
-        newVideoIdFileNameMap = saveFrame.saveFrameNumbers(frameNumbersMap)
+        frameSaver = DataExporters::SaveFrameForCellrotiExport.new(@cellroti_export)
+        newVideoIdFileNameMap = frameSaver.saveFrameNumbers(frameNumbersMap)
 
         # update filename map
         existigVideoIdFileNameMap = @cellroti_export.video_id_filename_map
@@ -205,24 +205,6 @@ module Export::ExportSetup
         @cellrotiVideoIdMap = @cellroti_export.cellroti_video_id_map
       end
       def handleSendFrames
-        @cState.setSendingFrames
-        # gzip frames
-        saveFrame = DataExporters::SaveFrameForCellrotiExport.new(@cellroti_export)
-        viFnMap, cellViFnMap = saveFrame.gzipExtractedFrames
-
-        # update filename map
-        existigVideoIdFileNameMap = @cellroti_export.video_id_filename_map
-        existigVideoIdFileNameMap.each do |videoId, fileNameMap|
-          fileNameMap.merge!(viFnMap[videoId.to_i])
-        end
-        @cellroti_export.update(video_id_filename_map: existigVideoIdFileNameMap)
-
-        # send data to cellroti
-        success, message = CellrotiData::FrameData.sendFrameData(cellViFnMap)
-
-        if not success
-          raise "#{message}"
-        end
         @cState.setSentFrames
       end
 

@@ -8,35 +8,6 @@ module DataExporters
 			@cellrotiExport = cellrotiExport
 		end
 
-		def gzipExtractedFrames
-			videoIdFileNameMap = {}
-			cellrotiVideoIdFileNameMap = {}
-			@cellrotiExport.cellroti_video_id_map.each do |videoId, cellrotiVideoId|
-				video = ::Video.find(videoId.to_i)
-				outputFolder = Managers::MVideo.new(video).get_export_folder(@cellrotiExport.id)
-
-				fileNameMap = gzipExtractedFramesSingleVideo(outputFolder)
-
-				videoIdFileNameMap[videoId.to_i] = fileNameMap
-				cellrotiVideoIdFileNameMap[cellrotiVideoId] = fileNameMap[:gzip_extracted_frames]
-			end
-			return videoIdFileNameMap, cellrotiVideoIdFileNameMap
-		end
-
-		def gzipExtractedFramesSingleVideo(outputFolder)
-			outputFile = "#{outputFolder}/extracted_frames.tar.gz"
-			FileUtils::rm_rf(outputFile)
-			inputFolder = "#{outputFolder}/extracted_frames"
-
-			Dir.chdir(inputFolder) do
-				%x{tar -zcvf "#{outputFile}" *}
-			end
-
-			fileNameMap = {}
-			fileNameMap[:gzip_extracted_frames] = outputFile
-			fileNameMap
-		end
-
 		def saveFrameNumbers(frameNumbersMap)
 			videoIdFileNameMap = {}
 			frameNumbersMap.each do |cellrotiVideoId, frameNumbers|

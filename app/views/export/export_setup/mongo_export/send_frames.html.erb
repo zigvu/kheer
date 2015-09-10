@@ -13,9 +13,10 @@
 
 <div class="row">
   <div class="small-12 columns">
-    <p>Please extract all frames and thumbnails for each video and save to export folder specified below. The extracted frames are expected to be in "extracted_frames" folder which has two subfolders: "frames" and "thumbnails". These should contain all images to send to cellroti. Do <b>NOT</b> click next until all frames have been put in their respective folders.</p>
-    <p>The frames to extract are specified in <b>frames_to_extract.txt</b> file in export folder specified below.</p>
-    <p>TODO: Use RabbitMq to send frame extraction details to khajuri and notify user in this page once that is complete.</p>
+    <p>Please extract all frames and thumbnails for each video and save to cellroti folder specified below. The cellroti folder is expected to have two subfolders: "frames" and "thumbnails". Do <b>NOT</b> click next until all frames have been put in their respective folders in cellroti.</p>
+    <p>The frames to extract are specified in <b>frames_to_extract.txt</b> file in kheer export folder specified below.</p>
+    <p>Note: Cellroti expects frame/thumbnail files as [frame_number.jpg]</p>
+    <p>TODO: Use RabbitMq to send frame extraction details to khajuri and notify user in this page once frames are put in cellroti.</p>
   </div>
 </div>
 
@@ -27,8 +28,8 @@
         <tr>
           <th>Video Id</th>
           <th>Title</th>
-          <th>Cellroti Video Id</th>
-          <th width="50%">Export Folder</th>
+          <th width="30%">Kheer Export Folder</th>
+          <th width="30%">Cellroti Folder</th>
         </tr>
       </thead>
 
@@ -39,8 +40,8 @@
           <tr>
             <td><%= video.id %></td>
             <td><%= video.title %></td>
-            <td><%= cellrotiVideoId %></td>
             <td><%= outputFolder %></td>
+            <td><%= "/sftp/sftpuser/uploads/#{cellrotiVideoId}" %></td>
           </tr>
         <% end %>
       </tbody>
