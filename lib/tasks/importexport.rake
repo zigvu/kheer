@@ -81,9 +81,9 @@ namespace :importexport do
   desc "Import patch bucket folder"
   task import_patch_bucket_folder: :environment do
     iterationId = ENV['iteration_id']
-    inputFolder = ENV['combined_input_folder']
+    inputFolder = ENV['patch_bucket_folder']
     if (iterationId == nil) or (inputFolder == nil)
-      puts "Usage: rake importexport:import_patch_bucket_folder iteration_id=<id> combined_input_folder=<folder>"
+      puts "Usage: rake importexport:import_patch_bucket_folder iteration_id=<id> patch_bucket_folder=<folder>"
       puts "Exiting"
     else
       puts "Start importing patch bucket folder"
