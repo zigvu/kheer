@@ -37,6 +37,12 @@ module Metrics
 				@kheerJob.summary_counts
 			end
 
+			def computeAndSaveSummaryCounts
+				# delete any old summary counts in database
+				@kheerJob.update(summary_counts: nil)
+				getSummaryCounts
+			end
+
 		end
 	end
 end

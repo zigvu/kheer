@@ -4,7 +4,7 @@ class KheerJobCacheCreation < Struct.new(:kheerJobCacheCreationHash)
     kheerJob = KheerJob.find(kheerJobId)
 
     # update summaries
-    Metrics::Analysis::SummaryCounts.new(kheerJob).getSummaryCounts
+    Metrics::Analysis::SummaryCounts.new(kheerJob).computeAndSaveSummaryCounts
     # create confusion matrices
     Metrics::Analysis::ConfusionFinderMatrix.new(kheerJob).computeAndSaveConfusions
     Metrics::Analysis::ZdistDifferencerMatrix.new(kheerJob).computeAndSaveConfusions

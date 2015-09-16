@@ -52,7 +52,7 @@ module Retraining
       def serveChiaVersion
         @annotationChiaVersionIds = @iteration.annotation_chia_version_ids || []
         majorChiaVersion = @iteration.major_chia_version
-        @chiaVersions = ::ChiaVersion.where(ctype: majorChiaVersion.ctype).to_a - [majorChiaVersion]
+        @chiaVersions = ::ChiaVersion.where(ctype: majorChiaVersion.ctype)
       end
       def handleChiaVersion
         chiaVersionIds = params[:chia_version_ids].map{ |c| c.to_i }

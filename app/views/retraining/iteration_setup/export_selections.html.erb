@@ -15,8 +15,20 @@
 <div class="row">
   <div class="small-12 columns">
     <h3>If you are satisfied with the patch selection, please use rake task to export names of patches. When export rake task is complete, click next to clean up database items no longer in use.</h3>
-    <br></br>
-    <h4>Iteration Id: <%= @iteration.id %></h4>
+    <table>
+      <tr><td>
+        cd /var/www/kheer/
+      </td></tr>
+      <tr><td>
+        ENV=<%= Rails.env %> rake importexport:export_patch_list_for_retraining iteration_id='<%= @iteration.id %>' output_file=/tmp/iteration/patch_list_file.json
+      </td></tr>
+      <tr><td>
+        scp /tmp/iteration/patch_list_file.json ubuntu@gpu1:/disk1/model_retraining/staging_area/.
+      </td></tr>
+      <tr><td>
+        rm -rf /tmp/iteration && mkdir -p /tmp/iteration
+      </td></tr>
+    </table>
   </div>
 </div>  
 
