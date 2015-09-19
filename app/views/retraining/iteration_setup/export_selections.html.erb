@@ -20,7 +20,7 @@
         cd /var/www/kheer/
       </td></tr>
       <tr><td>
-        ENV=<%= Rails.env %> rake importexport:export_patch_list_for_retraining iteration_id='<%= @iteration.id %>' output_file=/tmp/iteration/patch_list_file.json
+        RAILS_ENV=<%= Rails.env %> rake importexport:export_patch_list_for_retraining iteration_id='<%= @iteration.id %>' output_file=/tmp/iteration/patch_list_file.json
       </td></tr>
       <tr><td>
         scp /tmp/iteration/patch_list_file.json ubuntu@gpu1:/disk1/model_retraining/staging_area/.

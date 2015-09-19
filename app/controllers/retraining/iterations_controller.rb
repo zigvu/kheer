@@ -9,12 +9,12 @@ module Retraining
 
     # GET /iterations/1
     def show
-      @iState = States::IterationState.new(@iteration)
-      @isNewIteration = @iState.isNew?
-      session[:iteration_id] = nil if @isNewIteration
+      iState = States::IterationState.new(@iteration)
+      isNewIteration = iState.isNew?
+      session[:iteration_id] = nil if isNewIteration
 
-      @isExportComplete = @iState.isExportComplete?
-      if @isExportComplete
+      @isExportCompleted = iState.isExportCompleted?
+      if @isExportCompleted
         @summaryCounts = @iteration.summary_counts
         @summaryConsidered = @iteration.summary_considered
       end
@@ -26,7 +26,7 @@ module Retraining
 
       @possibleChiaVersions = ::ChiaVersion.all
       iState = States::IterationState.new(@iteration)
-      parentStates = [iState.exportComplete]
+      parentStates = [iState.exportCompleted]
       @possibleParents = ::Iteration.in(state: parentStates)
     end
 
@@ -34,7 +34,7 @@ module Retraining
     def edit
       @possibleChiaVersions = ::ChiaVersion.all
       iState = States::IterationState.new(@iteration)
-      parentStates = [iState.exportComplete]
+      parentStates = [iState.exportCompleted]
       @possibleParents = ::Iteration.in(state: parentStates)
     end
 

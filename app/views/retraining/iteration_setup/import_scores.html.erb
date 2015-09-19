@@ -48,7 +48,7 @@
         cd /var/www/kheer/
       </td></tr>
       <tr><td>
-        ENV=<%= Rails.env %> rake importexport:import_patch_bucket_folder iteration_id='<%= @iteration.id %>' patch_bucket_folder=/tmp/iteration/combined_patch_buckets
+        RAILS_ENV=<%= Rails.env %> rake importexport:import_patch_bucket_folder iteration_id='<%= @iteration.id %>' patch_bucket_folder=/tmp/iteration/combined_patch_buckets
       </td></tr>
     </table>
   </div>

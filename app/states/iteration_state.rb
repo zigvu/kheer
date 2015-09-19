@@ -1,11 +1,16 @@
 module States
 	# States:
 	# new - brand new iteration
-	# exportComplete - export of patches has been complete
+	# chiaVersionSet - chia version has been decided
+	# scoresImported - scores have been imported
+	# patchesSelected - patches selected for export
+	# selecteionsConfirmed - patch selection confirmed
+	# exportCompleted - export of patches has been complete
 	# deleted - all secondary data for this session can be reclaimed
 	class IterationState < States::StateCommon
 
-		@@possibleStates = [:new, :exportComplete, :deleted]
+		@@possibleStates = [:new, :chiaVersionSet, :scoresImported, :patchesSelected,
+			:selectionsConfirmed, :exportCompleted, :deleted]
 
 		def initialize(iteration)
 			super(iteration, :state) if iteration != nil
@@ -27,6 +32,20 @@ module States
 			# State strings - instance methods
 			define_method("#{ss}") do
 				return ss.to_s
+			end
+			# Comparator method: Example: isBeforeDownloadQueue?
+			define_method("isBefore#{methodName}?") do
+				currentStateSym = getX.to_sym
+				methodNameIdx = @@possibleStates.find_index(ss)
+				currentStateSymIdx = @@possibleStates.find_index(currentStateSym)
+				return methodNameIdx > currentStateSymIdx
+			end
+			# Comparator method: Example: isAfterDownloadQueue?
+			define_method("isAfter#{methodName}?") do
+				currentStateSym = getX.to_sym
+				methodNameIdx = @@possibleStates.find_index(ss)
+				currentStateSymIdx = @@possibleStates.find_index(currentStateSym)
+				return methodNameIdx < currentStateSymIdx
 			end
 		end
 

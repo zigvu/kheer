@@ -9,12 +9,20 @@ module Retraining
     def show
       case step
       when :chia_version
+        skip_step if @iState.isChiaVersionSet? || @iState.isAfterChiaVersionSet?
+
         serveChiaVersion
       when :import_scores
+        skip_step if @iState.isScoresImported? || @iState.isAfterScoresImported?
+
         serveImportScores
       when :select_patches
+        skip_step if @iState.isPatchesSelected? || @iState.isAfterPatchesSelected?
+
         serveSelectPatches
       when :confirm_selections
+        skip_step if @iState.isSelectionsConfirmed? || @iState.isAfterSelectionsConfirmed?
+
         serveConfirmSelections
       when :export_selections
         serveExportSelections
@@ -57,6 +65,7 @@ module Retraining
       def handleChiaVersion
         chiaVersionIds = params[:chia_version_ids].map{ |c| c.to_i }
         @iteration.update(annotation_chia_version_ids: chiaVersionIds)
+        @iState.setChiaVersionSet
      end
 
       def serveImportScores
@@ -64,6 +73,7 @@ module Retraining
         @chiaVersions = ::ChiaVersion.where(id: annotationChiaVersionIds)
       end
       def handleImportScores
+        @iState.setScoresImported
       end
 
       def serveSelectPatches
@@ -73,6 +83,7 @@ module Retraining
         numPatches = params["numberOfPatches"].to_i
         sc = Metrics::Retraining::RoundRobiner.new(@iteration).roundRobinAll(numPatches)
         @iteration.update(summary_considered: sc)
+        @iState.setPatchesSelected
       end
 
       def serveConfirmSelections
@@ -80,20 +91,21 @@ module Retraining
         @summaryConsidered = @iteration.summary_considered
       end
       def handleConfirmSelections
+        @iState.setSelectionsConfirmed
       end
 
       def serveExportSelections
       end
       def handleExportSelections
         @iteration.patch_buckets.destroy_all
-        States::IterationState.new(@iteration).setExportComplete
+        @iState.setExportCompleted
       end
 
       # Use callbacks to share common setup or constraints between actions.
       def set_steps
         session[:iteration_id] ||= params[:iteration_id]
         @iteration = ::Iteration.find(session[:iteration_id])
-        @cState = States::IterationState.new(@iteration)
+        @iState = States::IterationState.new(@iteration)
         
         self.steps = [:chia_version, :import_scores, :select_patches,
           :confirm_selections, :export_selections]
