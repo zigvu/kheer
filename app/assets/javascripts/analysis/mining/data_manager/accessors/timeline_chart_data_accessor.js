@@ -162,6 +162,12 @@ Mining.DataManager.Accessors.TimelineChartDataAccessor = function() {
     return counter;
   };
 
+  this.isValidClipIdClipFn = function(clipId, clipFN){
+    if(self.dataStore.toCounterMap[clipId] !== undefined && 
+      self.dataStore.toCounterMap[clipId][clipFN] !== undefined){ return true; }
+    return false;
+  };
+
   this.getClipIdClipFN = function(counter){
     return self.dataStore.fromCounterMap[counter];
   };

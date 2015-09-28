@@ -1,11 +1,18 @@
 module Analysis
   class MiningsController < ApplicationController
-    before_action :set_mining, only: [:mine, :show, :edit, :update, :destroy]
+    before_action :set_mining, only: [:mine, :progress, :show, :edit, :update, :destroy]
+    before_action :set_setId, only: [:mine, :progress]
 
     # GET /minings/:id/mine/:set_id
     def mine
       @miningId = @mining.id
-      @setId = params['set_id'].to_i
+    end
+
+    def progress
+      clipSetsProgress = @mining.clip_sets_progress
+      clipSetsProgress[@setId.to_s] = true
+      @mining.update(clip_sets_progress: clipSetsProgress)
+      redirect_to analysis_mining_url(@mining), notice: "Set #{@setId} marked as done."
     end
 
     # GET /minings
@@ -20,6 +27,7 @@ module Analysis
         session[:mining_id] = nil
       else
         @clipSets = @mining.clip_sets
+        @clipSetsProgress = @mining.clip_sets_progress
       end
     end
 
@@ -36,6 +44,7 @@ module Analysis
     def create
       @mining = ::Mining.new(mining_params)
       @mining.user_id = current_user.id
+      @mining.clip_sets_progress = {}
       if @mining.save
         States::MiningState.new(@mining).setNew
         redirect_to analysis_mining_url(@mining), notice: 'Mine was successfully created.'
@@ -63,6 +72,10 @@ module Analysis
       # Use callbacks to share common setup or constraints between actions.
       def set_mining
         @mining = ::Mining.find(params[:id])
+      end
+
+      def set_setId
+        @setId = params['set_id'].to_i
       end
 
       # Never trust parameters from the scary internet, only allow the white list through.

@@ -56,6 +56,7 @@ Kheer::Application.routes.draw do
     resources :minings do
       member do
         get 'set/:set_id' => 'minings#mine', as: :mine
+        get 'progress/:set_id' => 'minings#progress', as: :progress
       end
     end
     get 'metrics/video_details'

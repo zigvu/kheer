@@ -1,5 +1,7 @@
 class Mining
   include Mongoid::Document
+  include Mongoid::Timestamps
+  
   after_create :createMiningData
   
   # meta data
@@ -18,6 +20,9 @@ class Mining
   # format
   # {setId: [{video_id:, :clip_id, :loc_count, fn_count:, fn_visited_count:}, ]}
   field :cs, as: :clip_sets, type: Hash
+  # format
+  # {setId: boolean, }  -> true if done, else false
+  field :csp, as: :clip_sets_progress, type: Hash
 
 
   # index for faster traversal during ordering
@@ -56,6 +61,8 @@ class Mining
     return ChiaVersion.find(self.chia_version_id_anno)
   end
 
+  # default scoping to order documents by updated at field
+  default_scope ->{ order_by(:updated_at => :desc) }
 
   # data for mining is embedded in one of the sub documents
   embeds_one :md_zdist_finder

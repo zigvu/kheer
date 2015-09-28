@@ -48,6 +48,8 @@ $(".analysis_mining_setup_confusion_finder.show").ready(function() {
     disableButtons();
     dataManager.setZeroDiagonal();
     enableButtons();
+    // once diagonals is removed, disable
+    $("#heatmap-hide-diagonal").addClass('disabled');
   });
 
 

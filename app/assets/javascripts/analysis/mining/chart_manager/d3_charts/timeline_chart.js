@@ -86,6 +86,16 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
     if(self.seekDisabled){ return; }
 
     var brushExtent = contextBrush.extent();
+
+    // start from click position - ignore for video player driven positioning
+    if(d3.event && d3.event.sourceEvent) { // not a programmatic event
+      brushExtent[0] = brushExtent[0] - brushNumOfCounters/2;
+      if(brushExtent[0] < contextX.domain()[0]){
+        brushExtent[0] = contextX.domain()[0];
+      }
+    }
+
+    // go up to brushNumOfCounters
     brushExtent[1] = brushExtent[0] + brushNumOfCounters;
     if(brushExtent[1] > contextX.domain()[1]){
       var diff = brushExtent[1] - contextX.domain()[1];
@@ -345,18 +355,6 @@ Mining.ChartManager.D3Charts.TimelineChart = function() {
     self.reDrawAnno();
   };
 
-  // change background color
-  var isBackgroundColorWhite = true;
-  $("#d3-video-timeline-chart-background-color-button").click(function(){
-    if(isBackgroundColorWhite){
-      $('#d3-video-timeline-chart .timeline-context-chart rect.bg-rect').css('fill', 'black');
-      $('#d3-video-timeline-chart .timeline-focus-chart rect.bg-rect').css('fill', 'black');
-    } else {
-      $('#d3-video-timeline-chart .timeline-context-chart rect.bg-rect').css('fill', 'white');
-      $('#d3-video-timeline-chart .timeline-focus-chart rect.bg-rect').css('fill', 'white');
-    }
-    isBackgroundColorWhite = !isBackgroundColorWhite;
-  });
 
   //------------------------------------------------
   // set relations

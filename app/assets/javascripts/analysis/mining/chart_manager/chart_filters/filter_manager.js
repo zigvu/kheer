@@ -18,6 +18,7 @@ Mining.ChartManager.ChartFilters.FilterManager = function() {
 
   this.filterStatusVideo = new Mining.ChartManager.ChartFilters.FilterStatusVideo(self.htmlGenerator);
   this.filterStatusFrame = new Mining.ChartManager.ChartFilters.FilterStatusFrame(self.htmlGenerator);
+  this.filterFrame = new Mining.ChartManager.ChartFilters.FilterFrame(self.htmlGenerator);
 
   //------------------------------------------------
   // set relations
@@ -25,6 +26,7 @@ Mining.ChartManager.ChartFilters.FilterManager = function() {
     self.eventManager = em;
     self.filterStatusVideo.setEventManager(self.eventManager);
     self.filterStatusFrame.setEventManager(self.eventManager);
+    self.filterFrame.setEventManager(self.eventManager);
     return self;
   };
 
@@ -32,6 +34,7 @@ Mining.ChartManager.ChartFilters.FilterManager = function() {
     self.dataManager = dm;
     self.filterStatusVideo.setDataManager(self.dataManager);
     self.filterStatusFrame.setDataManager(self.dataManager);
+    self.filterFrame.setDataManager(self.dataManager);
     return self;
   };
 

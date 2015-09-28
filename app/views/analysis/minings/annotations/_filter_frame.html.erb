@@ -13,3 +13,34 @@
     </div>
   </div>
 </div>
+
+
+<div id="filter-frame-timeline-jump-container">
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="filter-panel">
+        <div class="filter-title clearfix">
+          <div class="text left">Jump to frame</div>
+        </div>
+        <div class="filter-content">
+<table>
+  <thead>
+    <tr>
+      <td>Clip Id</td>
+      <td>Clip Frame Number</td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= text_field_tag 'jump_clip_id' %></td>
+      <td><%= text_field_tag 'jump_clip_frame_number' %></td>
+      <td><div class="button success" id="d3-video-jump-to-frame-button">Jump</div></td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

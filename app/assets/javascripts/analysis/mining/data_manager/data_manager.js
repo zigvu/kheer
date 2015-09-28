@@ -186,6 +186,10 @@ Mining.DataManager.DataManager = function() {
     return self.timelineChartDataAccessor.getCounter(clipId, clipFN);
   };
 
+  this.tChart_isValidClipIdClipFn = function(clipId, clipFN){
+    return self.timelineChartDataAccessor.isValidClipIdClipFn(clipId, clipFN);
+  };
+
   this.tChart_getClipIdClipFN = function(counter){
     return self.timelineChartDataAccessor.getClipIdClipFN(counter);
   };

@@ -7,6 +7,7 @@
       <th>User</th>
       <th>Type</th>
       <th>State</th>
+      <th>Updated</th>
       <th></th>
       <th></th>
       <th></th>
@@ -20,6 +21,7 @@
         <td><%= mining.user.email %></td>
         <td><%= mining.mtype %></td>
         <td><%= mining.state %></td>
+        <td><%= mining.updated_at %></td>
         <td><%= link_to 'Show', analysis_mining_path(mining) %></td>
         <td><%= link_to 'Edit', edit_analysis_mining_path(mining) %></td>
         <td><%= link_to 'Destroy', [:analysis, mining], method: :delete, data: { confirm: 'Are you sure?' } %></td>
