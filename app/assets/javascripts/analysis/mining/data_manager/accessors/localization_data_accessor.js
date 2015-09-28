@@ -97,7 +97,7 @@ Mining.DataManager.Accessors.LocalizationDataAccessor = function() {
       var detDetails = self.dataStore.dataFullLocalizations[videoId][videoFN][detId];
       spInterScore = _.max(detDetails, 
         function(dd){ return dd.spatial_intersection; }).spatial_intersection;
-      if (spInterScore > spatIntThresh){ score = 1.0; }
+      if (spInterScore >= spatIntThresh){ score = 1.0; }
     }
     return score;
   };

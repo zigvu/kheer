@@ -32,9 +32,9 @@
         <td><%= clipSet.map{ |c| c[:fn_count] }.sum %></td>
         <td>
           <% if @clipSetsProgress[idx] == nil || @clipSetsProgress[idx] == false %>
-            <%= link_to 'Mark as done', progress_analysis_mining_path(id: @mining.id, set_id: idx), class: "button small" %>
+            <%= link_to 'Mark as done', progress_analysis_mining_path(id: @mining.id, set_id: idx, done: true), class: "button small" %>
           <% else %>
-            <div class="button small disabled">Done</div>
+            <%= link_to 'Undo done', progress_analysis_mining_path(id: @mining.id, set_id: idx, done: false), class: "button small secondary" %>
           <% end %>
         </td>
         <td><%= link_to 'Load', mine_analysis_mining_path(id: @mining.id, set_id: idx), target: "_blank" %></td>

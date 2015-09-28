@@ -9,10 +9,12 @@ module Analysis
     end
 
     def progress
+      done = params['done'] == "true"
+
       clipSetsProgress = @mining.clip_sets_progress
-      clipSetsProgress[@setId.to_s] = true
+      clipSetsProgress[@setId.to_s] = done
       @mining.update(clip_sets_progress: clipSetsProgress)
-      redirect_to analysis_mining_url(@mining), notice: "Set #{@setId} marked as done."
+      redirect_to analysis_mining_url(@mining), notice: "Set #{@setId}: done marked as #{done}."
     end
 
     # GET /minings
