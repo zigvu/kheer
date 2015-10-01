@@ -6,7 +6,7 @@ module Metrics
 				@bboxIntersector = Metrics::Analysis::BboxIntersector.new
 			end
 
-			def computeIntersections(localizations, intThreshs)
+			def computeIntersections(localizations, priDetId, secDetId, intThreshs)
 				# format {loclId: true/false, }
 				intersections = {}
 				localizations.each do |pri|
@@ -15,6 +15,11 @@ module Metrics
 						intersections[sec.id] = false if intersections[sec.id] == nil
 						# don't compare to self - this would be 100%
 						next if pri.id == sec.id
+
+						# skip if primary and secondary det ids don't match
+						next if pri.id != priDetId
+						next if sec.id != secDetId
+
 						interArea = @bboxIntersector.intersectArea(pri, sec)
 						interArea = 1 if interArea > 1
 						intThresh = interArea.round(1)

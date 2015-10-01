@@ -26,15 +26,14 @@ module Jsonifiers::Mining::ConfusionFinder
     end
 
     def generateQueries
-      # format [[query, intThreshs], ]
+      # format [[query, filter], ]
       queries = []
       # since each clip will have a unique frame number, we can iterate
       # over clipIds rather than videoIds
       @clipIds.each do |clipId|
         @filters.each do |filter|
-          intThreshs = filter[:selected_filters][:int_threshs]
           q = generateSingleQuery(filter).where(clip_id: clipId).where(chia_version_id: @chiaVersionId)
-          queries << [q, intThreshs]
+          queries << [q, filter]
         end
       end
       queries
@@ -47,9 +46,14 @@ module Jsonifiers::Mining::ConfusionFinder
       #   scale: , x:, y:, w:, h:}
       @allFormattedLocs = {}
       queries = generateQueries()
-      queries.each do |q, intThreshs|
+      queries.each do |q, filter|
+        priDetId = filter[:pri_det_id]
+        secDetId = filter[:sec_det_id]
+        intThreshs = filter[:selected_filters][:int_threshs]
+
         q.group_by(&:frame_number).each do |fn, localizations|
-          intersections = @locIntersector.computeIntersections(localizations, intThreshs)
+          intersections = @locIntersector.computeIntersections(
+            localizations, priDetId, secDetId, intThreshs)
           localizations.each do |loclz|
             if intersections[loclz.id]
               addLoclzToFormatted(intersections, loclz)

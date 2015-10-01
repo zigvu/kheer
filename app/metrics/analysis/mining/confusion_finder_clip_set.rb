@@ -38,15 +38,14 @@ module Metrics
       end
 
       def generateQueries
-        # format [[query, intThreshs], ]
+        # format [[query, filter], ]
         queries = []
         # since frame numbers are not uniq across videos, we have to partition
         # by video id first
         @videoIds.each do |videoId|
           @filters.each do |filter|
-            intThreshs = filter[:selected_filters][:int_threshs]
             q = generateSingleQuery(filter).where(video_id: videoId).where(chia_version_id: @chiaVersionId)
-            queries << [q, intThreshs]
+            queries << [q, filter]
           end
         end
         queries
@@ -55,9 +54,14 @@ module Metrics
       def getClipIdLocCount
         locCount = {}
         queries = generateQueries()
-        queries.each do |q, intThreshs|
+        queries.each do |q, filter|
+          priDetId = filter[:pri_det_id]
+          secDetId = filter[:sec_det_id]
+          intThreshs = filter[:selected_filters][:int_threshs]
+
           q.group_by(&:frame_number).each do |fn, localizations|
-            intersections = @locIntersector.computeIntersections(localizations, intThreshs)
+            intersections = @locIntersector.computeIntersections(
+              localizations, priDetId, secDetId, intThreshs)
             localizations.each do |loclz|
               if intersections[loclz.id]
                 locCount[loclz.video_id] ||= {}
