@@ -43,6 +43,6 @@ class KheerJob
     [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
   end
 
-  has_many :summary_confusion_finders
-  has_many :summary_zdist_differencers
+  has_many :summary_confusion_finders, dependent: :destroy
+  has_many :summary_zdist_differencers, dependent: :destroy
 end

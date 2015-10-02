@@ -17,8 +17,8 @@ module Metrics
 						next if pri.id == sec.id
 
 						# skip if primary and secondary det ids don't match
-						next if pri.id != priDetId
-						next if sec.id != secDetId
+						next if pri.detectable_id != priDetId
+						next if sec.detectable_id != secDetId
 
 						interArea = @bboxIntersector.intersectArea(pri, sec)
 						interArea = 1 if interArea > 1

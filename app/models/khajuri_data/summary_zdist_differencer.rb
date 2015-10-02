@@ -14,5 +14,5 @@ class SummaryZdistDifferencer
   # {priDetId: count, }
   field :cmat, as: :confusion_matrix, type: Hash
 
-  belongs_to :kheer_job
+  belongs_to :kheer_job, index: true
 end
