@@ -4,10 +4,12 @@ module States
 	# chiaVersionComparer - compare performance of two chia versions in same frame
 	# zdistDifferencer - find detectables that have localizations in one zdist but not in another
 	# confusionFinder - find confusion based on localization intersection
+	# sequenceViewer - view clips of a video sequentially
+	# detFinder - find detectables in clips that have detectable in specified zdist
 	class MiningType < States::StateCommon
 
 		@@possibleStates = [:zdistFinder, :chiaVersionComparer, 
-			:zdistDifferencer, :confusionFinder, :sequenceViewer]
+			:zdistDifferencer, :confusionFinder, :sequenceViewer, :detFinder]
 
 		def initialize(mining)
 			super(mining, :mtype) if mining != nil

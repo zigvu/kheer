@@ -11,6 +11,8 @@
     <%= link_to 'Setup mining', analysis_mining_setup_confusion_finder_path(Wicked::FIRST_STEP, mining_id: @mining.id), class: "button" %>
   <% elsif States::MiningType.new(@mining).isSequenceViewer? %>
     <%= link_to 'Setup mining', analysis_mining_setup_sequence_viewer_path(Wicked::FIRST_STEP, mining_id: @mining.id), class: "button" %>
+  <% elsif States::MiningType.new(@mining).isDetFinder? %>
+    <%= link_to 'Setup mining', analysis_mining_setup_det_finder_path(Wicked::FIRST_STEP, mining_id: @mining.id), class: "button" %>
   <% end %>
 <% else %>
   <%= render 'mine_tracking' %>

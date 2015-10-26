@@ -22,7 +22,7 @@
     </tr>
       <td>zdistDifferencer</td>
       <td>
-        See all localizations for a detectable that appears in one zdist but not in another (higher) zdist. This is useful for FN mining since a detectable that is seen at zdist 0 but not in zdist 4 for example, is a good FN example. However, at present, due to presence of large cross-class confusion, this modality is not very effective for FN mining.
+        See all localizations for a detectable that appears in one zdist but not in another (higher) zdist. This is useful for FN mining since a detectable that is seen at zdist 0 but not in zdist 4 for example, is a good FN example. However, at present, due to presence of large cross-class confusion, this modality is not very effective for FN mining. Use detFinder for FN mining instead.
       </td>
     <tr>
     </tr>
@@ -35,6 +35,12 @@
       <td>sequenceViewer</td>
       <td>
         See clips in a video sequentially. This tool is useful when only looking at annotations (for example to correct annotations of a peer or to input annotations for a new class that doesn't yet have localizations).
+      </td>
+    </tr>
+    </tr>
+      <td>detFinder</td>
+      <td>
+        See clips that have at least one localization of the class at some zdist. This tool is useful for false negative mining.
       </td>
     </tr>
   </tbody>

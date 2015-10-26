@@ -1,0 +1,23 @@
+<!-- BEGIN: Mine det_finder -->
+<table>
+  <thead>
+    <tr>
+      <td>Detectable Id</td>
+      <td>Detectable Name</td>
+      <td>Primary Zdist</td>
+      <td>Secondary Zdist</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% ::Detectable.where(id: @mining.md_det_finder.detectable_ids).each do |det| %>
+      <tr>
+        <td><%= det.id %></td>
+        <td><%= det.name %></td>
+        <td><%= @mining.md_det_finder.pri_zdist %></td>
+        <td><%= @mining.md_det_finder.sec_zdist %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<!-- END: Mine det_finder -->

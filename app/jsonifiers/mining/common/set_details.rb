@@ -29,6 +29,9 @@ module Jsonifiers::Mining::Common
         detectableIds = ::ChiaVersionDetectable.where(chia_version_id: @chiaVersionIdAnno).pluck(:detectable_id)
         @selectedDetIds = [detectableIds.first]
         @smartFilter = {spatial_intersection_thresh: 1.0}
+      elsif States::MiningType.new(@mining).isDetFinder?
+        @selectedDetIds = @mining.md_det_finder.detectable_ids
+        @smartFilter = {spatial_intersection_thresh: 1.0}
       end
     end
 

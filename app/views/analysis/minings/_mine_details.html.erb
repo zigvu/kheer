@@ -47,5 +47,7 @@
   <%= render 'mine_details_confusion_finder' %>
 <% elsif States::MiningType.new(@mining).isSequenceViewer? %>
   <!-- nothing for now -->
+<% elsif States::MiningType.new(@mining).isDetFinder? %>
+  <%= render 'mine_details_det_finder' %>
 <% end %>
 <!-- END: Mine details -->

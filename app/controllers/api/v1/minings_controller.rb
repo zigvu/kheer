@@ -105,6 +105,8 @@ module Api
 						@mTypeModule = Jsonifiers::Mining::ConfusionFinder
 					elsif States::MiningType.new(@mining).isSequenceViewer?
 						@mTypeModule = Jsonifiers::Mining::SequenceViewer
+					elsif States::MiningType.new(@mining).isDetFinder?
+						@mTypeModule = Jsonifiers::Mining::DetFinder
 					end
 				end
 

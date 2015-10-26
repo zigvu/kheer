@@ -51,6 +51,7 @@ Kheer::Application.routes.draw do
       resources :zdist_differencer
       resources :confusion_finder
       resources :sequence_viewer
+      resources :det_finder
     end
 
     resources :minings do

@@ -43,6 +43,8 @@ class Mining
       self.create_md_confusion_finder
     elsif States::MiningType.new(self).isSequenceViewer?
       # don't need extra data
+    elsif States::MiningType.new(self).isDetFinder?
+      self.create_md_det_finder
     end
   end
 
@@ -69,4 +71,5 @@ class Mining
   embeds_one :md_chia_version_comparer
   embeds_one :md_zdist_differencer
   embeds_one :md_confusion_finder
+  embeds_one :md_det_finder
 end
