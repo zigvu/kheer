@@ -39,16 +39,67 @@
     <h3>Please use rake task to import scores of patches from all included chia versions. When all scores are imported, press next to select patches for this iteration of training.</h3>
     <table>
       <tr><td>
-        mkdir -p /tmp/iteration && cd /tmp/iteration
+        [VM2] rm -rf /tmp/iteration && mkdir -p /tmp/iteration
       </td></tr>
       <tr><td>
-        tar -zxvf combined_patch_buckets.tar.gz
+        [VM2] cd /var/www/kheer
+      </td></tr>
+      <% if @iteration.minor_chia_version_id == 1 %>
+        <!-- Major chia version only -->
+        <tr><td>
+          [GPU1] rm -rf /disk1/model_retraining/staging_area && mkdir -p /disk1/model_retraining/staging_area
+        </td></tr>
+        <tr><td>
+          [VM2] rake importexport:export_annotation_for_chia chia_version_id='<%= @iteration.major_chia_version_id + 1 %>' output_folder=/tmp/iteration avoid_label=__AVOID__
+        </td></tr>
+        <tr><td>
+          [VM2] cd /tmp
+        </td></tr>
+        <tr><td>
+          [VM2] tar -zcvf iteration.tar.gz iteration
+        </td></tr>
+        <tr><td>
+          [VM2] scp iteration.tar.gz ubuntu@gpu1:/disk1/model_retraining/staging_area
+        </td></tr>
+        <tr><td>
+          [GPU1] cd /disk1/model_retraining/staging_area
+        </td></tr>
+        <tr><td>
+          [GPU1] tar -zxvf iteration.tar.gz
+        </td></tr>
+        <tr><td>
+          [GPU1] mkdir -p /disk1/model_retraining/annotations/production/<%= @iteration.major_chia_version_id + 1 %>
+        </td></tr>
+        <tr><td>
+          [GPU1] mv iteration/* /disk1/model_retraining/annotations/production/<%= @iteration.major_chia_version_id + 1 %>
+        </td></tr>
+        <tr><td>
+          [GPU1] [ ensure that video ids are present in /mnt/data/video_analysis/videos/kheer_idied/production ]
+        </td></tr>
+        <tr><td>
+          [GPU1] cd /disk1/model_retraining
+        </td></tr>
+        <tr><td>
+          [GPU1] ~/chia/ruby/retraining_create_patches_for_major_chia_version.rb <%= @iteration.major_chia_version_id + 1 %>.0
+        </td></tr>
+        <tr><td>
+          [GPU1] ~/chia/ruby/retraining_evaluate_all_patches_with_chia_version.rb <%= @iteration.major_chia_version_id %>.0
+        </td></tr>
+      <% end %>
+      <tr><td>
+        [GPU1] scp /disk1/model_retraining/combined_patch_buckets.tar.gz ubuntu@vm2:/tmp/iteration
       </td></tr>
       <tr><td>
-        cd /var/www/kheer/
+        [VM2] cd /tmp/iteration
       </td></tr>
       <tr><td>
-        RAILS_ENV=<%= Rails.env %> rake importexport:import_patch_bucket_folder iteration_id='<%= @iteration.id %>' patch_bucket_folder=/tmp/iteration/combined_patch_buckets
+        [VM2] tar -zxvf combined_patch_buckets.tar.gz
+      </td></tr>
+      <tr><td>
+        [VM2] cd /var/www/kheer/
+      </td></tr>
+      <tr><td>
+        [VM2] RAILS_ENV=<%= Rails.env %> rake importexport:import_patch_bucket_folder iteration_id='<%= @iteration.id %>' patch_bucket_folder=/tmp/iteration/combined_patch_buckets
       </td></tr>
     </table>
   </div>

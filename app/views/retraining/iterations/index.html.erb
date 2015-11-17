@@ -6,7 +6,7 @@
       <th>Name</th>
       <th>Parent</th>
       <th>Major ChiaVersion</th>
-      <th>Minor ChiaVersion</th>
+      <th>ChiaVersion Id</th>
       <th>State</th>
       <th></th>
       <th></th>
@@ -26,7 +26,7 @@
           <% end %>
         </td>
         <td><%= iteration.major_chia_version.name %></td>
-        <td><%= iteration.minor_chia_version_id %></td>
+        <td><%= "#{iteration.major_chia_version_id}.#{iteration.minor_chia_version_id}" %></td>
         <td><%= iteration.state %></td>
         <td><%= link_to 'Show', retraining_iteration_path(iteration) %></td>
         <td><%= link_to 'Edit', edit_retraining_iteration_path(iteration) %></td>

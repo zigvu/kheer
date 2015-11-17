@@ -72,6 +72,11 @@ module Retraining
 
     # DELETE /iterations/1
     def destroy
+      # update so that parent is not dangling
+      ::Iteration.where(parent_iteration: @iteration.id).each do |i|
+        i.update(parent_iteration: nil)
+      end
+
       @iteration.destroy
       redirect_to retraining_iterations_url
     end

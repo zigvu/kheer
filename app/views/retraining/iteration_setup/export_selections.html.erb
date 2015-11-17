@@ -17,16 +17,28 @@
     <h3>If you are satisfied with the patch selection, please use rake task to export names of patches. When export rake task is complete, click next to clean up database items no longer in use.</h3>
     <table>
       <tr><td>
-        cd /var/www/kheer/
+        [VM2] cd /var/www/kheer/
       </td></tr>
       <tr><td>
-        RAILS_ENV=<%= Rails.env %> rake importexport:export_patch_list_for_retraining iteration_id='<%= @iteration.id %>' output_file=/tmp/iteration/patch_list_file.json
+        [VM2] RAILS_ENV=<%= Rails.env %> rake importexport:export_patch_list_for_retraining iteration_id='<%= @iteration.id %>' output_file=/tmp/iteration/patch_list_file.json
       </td></tr>
       <tr><td>
-        scp /tmp/iteration/patch_list_file.json ubuntu@gpu1:/disk1/model_retraining/staging_area/.
+        [VM2] scp /tmp/iteration/patch_list_file.json ubuntu@gpu1:/disk1/model_retraining/staging_area/.
       </td></tr>
       <tr><td>
-        rm -rf /tmp/iteration && mkdir -p /tmp/iteration
+        [GPU1] cd /disk1/model_retraining
+      </td></tr>
+      <tr><td>
+        [GPU1] ~/chia/ruby/retraining_run_mini_iteration.rb /disk1/model_retraining/staging_area/patch_list_file.json <%= "#{@iteration.major_chia_version_id}.#{@iteration.minor_chia_version_id}" %>
+      </td></tr>
+      <tr><td>
+        [GPU1] ~/chia/ruby/retraining_evaluate_all_patches_with_chia_version.rb <%= "#{@iteration.major_chia_version_id}.#{@iteration.minor_chia_version_id}" %>
+      </td></tr>
+      <tr><td>
+        [VM2] rm -rf /tmp/iteration && mkdir -p /tmp/iteration
+      </td></tr>
+      <tr><td>
+        [GPU1] [Follow prompt]
       </td></tr>
     </table>
   </div>
