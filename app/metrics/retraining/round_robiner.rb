@@ -152,6 +152,7 @@ module Metrics::Retraining
 				end
 
 				unUsedPatchesCount = patchBuckets.map{ |pb| pb.patches.lte(included: 0).count }.sum
+				lowestScore = patchBuckets.map{ |pb| pb.patches.pluck(:score).min }.min
 
 				summaryCounts[det.id] = {
 					det_id: det.id,
@@ -160,7 +161,8 @@ module Metrics::Retraining
 					num_patch_buckets: patchBuckets.count,
 					num_parent_patches: numParentPatches,
 					num_parent_duplicates: numDuplicateParentPatches,
-					num_patches_unused: unUsedPatchesCount
+					num_patches_unused: unUsedPatchesCount,
+					lowest_score: lowestScore
 				}
 			end
 			summaryCounts

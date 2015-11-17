@@ -23,6 +23,9 @@
         [VM2] RAILS_ENV=<%= Rails.env %> rake importexport:export_patch_list_for_retraining iteration_id='<%= @iteration.id %>' output_file=/tmp/iteration/patch_list_file.json
       </td></tr>
       <tr><td>
+        [GPU1] rm -rf /disk1/model_retraining/staging_area && mkdir -p /disk1/model_retraining/staging_area
+      </td></tr>
+      <tr><td>
         [VM2] scp /tmp/iteration/patch_list_file.json ubuntu@gpu1:/disk1/model_retraining/staging_area/.
       </td></tr>
       <tr><td>
@@ -38,7 +41,7 @@
         [VM2] rm -rf /tmp/iteration && mkdir -p /tmp/iteration
       </td></tr>
       <tr><td>
-        [GPU1] [Follow prompt]
+        [VM2] [Start new mini iteration]
       </td></tr>
     </table>
   </div>

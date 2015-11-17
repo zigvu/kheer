@@ -23,6 +23,7 @@
       <th># Parent Patches</th>
       <th># Parent Duplicates</th>
       <th># Available Patches</th>
+      <th>Lowest score</th>
     </tr>
   </thead>
 
@@ -36,6 +37,7 @@
         <td><%= s[:num_parent_patches] %></td>
         <td><%= s[:num_parent_duplicates] %></td>
         <td><%= s[:num_patches_unused] %></td>
+        <td><%= s[:lowest_score] %></td>
       </tr>
     <% end %>
   </tbody>
