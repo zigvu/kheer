@@ -8,6 +8,8 @@
       <th># Patch Buckets</th>
       <th># Parent Patches</th>
       <th># Parent Duplicates</th>
+      <th>Lowest score</th>
+      <th># Patches below 0.8</th>
       <th># Parent Duplicates Removed</th>
       <th># New Patches</th>
       <th># New Patches Duplicates</th>
@@ -23,6 +25,8 @@
         <td><%= s[:num_patch_buckets] %></td>
         <td><%= s[:num_parent_patches] %></td>
         <td><%= s[:num_parent_duplicates] %></td>
+        <td><%= s[:lowest_score] %></td>
+        <td><%= s[:num_patches_below_thresh] %></td>
         <td><%= @summaryConsidered[detId][:num_parent_duplicate_removed] %></td>
         <td><%= @summaryConsidered[detId][:num_new_patches_considered] %></td>
         <td><%= @summaryConsidered[detId][:num_new_patches_duplicate] %></td>

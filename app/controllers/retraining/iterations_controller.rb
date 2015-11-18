@@ -5,6 +5,8 @@ module Retraining
     # GET /iterations
     def index
       @iterations = ::Iteration.all
+
+      session[:iteration_id] = nil
     end
 
     # GET /iterations/1

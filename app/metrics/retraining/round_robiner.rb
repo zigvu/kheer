@@ -7,6 +7,8 @@ module Metrics::Retraining
 			@anCvIds = @iteration.annotation_chia_version_ids
 			@chiaVersion = ::ChiaVersion.find(@iteration.major_chia_version)
 			@detectables = ::Detectable.where(id: @chiaVersion.chia_version_detectables.pluck(:detectable_id))
+
+			@scoreThreshold = 0.8
 		end
 
 		def roundRobinAll(numPatches)
@@ -151,8 +153,15 @@ module Metrics::Retraining
 					numDuplicateParentPatches = parentPatchCounts.sum - parentPatchCounts.count
 				end
 
-				unUsedPatchesCount = patchBuckets.map{ |pb| pb.patches.lte(included: 0).count }.sum
-				lowestScore = patchBuckets.map{ |pb| pb.patches.pluck(:score).min }.min
+				unUsedPatchesCount = 0
+				lowestScore = 1.0
+				numPatchesBelowThresh = 0
+
+				patchBuckets.each do |pb|
+					unUsedPatchesCount += pb.patches.lte(included: 0).count
+					lowestScore = [lowestScore, pb.patches.pluck(:score).min].min
+					numPatchesBelowThresh += pb.patches.lte(score: @scoreThreshold).count
+				end
 
 				summaryCounts[det.id] = {
 					det_id: det.id,
@@ -162,7 +171,8 @@ module Metrics::Retraining
 					num_parent_patches: numParentPatches,
 					num_parent_duplicates: numDuplicateParentPatches,
 					num_patches_unused: unUsedPatchesCount,
-					lowest_score: lowestScore
+					lowest_score: lowestScore,
+					num_patches_below_thresh: numPatchesBelowThresh
 				}
 			end
 			summaryCounts

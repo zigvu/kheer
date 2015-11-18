@@ -41,16 +41,16 @@
       <tr><td>
         [VM2] rm -rf /tmp/iteration && mkdir -p /tmp/iteration
       </td></tr>
-      <tr><td>
-        [VM2] cd /var/www/kheer
-      </td></tr>
       <% if @iteration.minor_chia_version_id == 1 %>
         <!-- Major chia version only -->
         <tr><td>
           [GPU1] rm -rf /disk1/model_retraining/staging_area && mkdir -p /disk1/model_retraining/staging_area
         </td></tr>
         <tr><td>
-          [VM2] rake importexport:export_annotation_for_chia chia_version_id='<%= @iteration.major_chia_version_id + 1 %>' output_folder=/tmp/iteration avoid_label=__AVOID__
+          [VM2] cd /var/www/kheer
+        </td></tr>
+        <tr><td>
+          [VM2] RAILS_ENV=<%= Rails.env %> rake importexport:export_annotation_for_chia chia_version_id='<%= @iteration.major_chia_version_id + 1 %>' output_folder=/tmp/iteration avoid_label=__AVOID__
         </td></tr>
         <tr><td>
           [VM2] cd /tmp
