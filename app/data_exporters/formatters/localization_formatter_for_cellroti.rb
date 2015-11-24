@@ -5,17 +5,21 @@ module DataExporters::Formatters
 			@cellrotiDetIdMapper = {}
 		end
 
-		def getFormatted(frameLocs)
+		def getFormatted(combinedBboxes)
 			# Note: this is tied to JSON expectation of cellroti import handlers
 			formatted = {}
-			frameLocs.each do |fLoc|
-				cellDetId = getCellDetId(fLoc.detectable_id)
+			combinedBboxes.each do |detId, bboxes|
+				cellDetId = getCellDetId(detId)
 				formatted[cellDetId] ||= []
-				formatted[cellDetId] << {
-					bbox: { x: fLoc.x, y: fLoc.y, width: fLoc.w, height: fLoc.h },
-					score: fLoc.prob_score
-				}
+
+				bboxes.each do |bbox|
+					formatted[cellDetId] << {
+						bbox: bbox.except(:score),
+						score: bbox[:score]
+					}
+				end
 			end
+
 			formatted
 		end
 

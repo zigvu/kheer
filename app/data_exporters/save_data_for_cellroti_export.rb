@@ -6,6 +6,7 @@ module DataExporters
 
 		def initialize(cellrotiExport)
 			@cellrotiExport = cellrotiExport
+			@locCombiner = Metrics::Export::BboxCombiner.new
 			@locFormatter = DataExporters::Formatters::LocalizationFormatterForCellroti.new
 			@eventFormatter = DataExporters::Formatters::EventFormatterForCellroti.new
 		end
@@ -133,7 +134,8 @@ module DataExporters
 			File.open(outputFile, 'w') do |f|
 				f.puts "{\"localizations\": ["
 				locs.group_by{|l| l.frame_number}.each do |frameNumber, frameLocs|
-					formattedLoc = @locFormatter.getFormatted(frameLocs)
+					combinedBboxes = @locCombiner.combine(frameLocs)
+					formattedLoc = @locFormatter.getFormatted(combinedBboxes)
 					formattedLine = {:"#{frameNumber}" => formattedLoc}.to_json
 					if firstLine
 						formattedLine = "  #{formattedLine}"
