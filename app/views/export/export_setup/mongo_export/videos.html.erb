@@ -17,7 +17,6 @@
         <th>Title</th>
         <th>Game</th>
         <th>Channel</th>
-        <th># Locs</th>
         <th>Select</th>
       </tr>
     </thead>
@@ -32,9 +31,6 @@
           <td><%= video.title %></td>
           <td><%= game.name %></td>
           <td><%= channel.name %></td>
-          <td>
-            <%= ::Localization.where(video_id: video.id, chia_version_id: @chiaVersionIdLoc).count %>
-          </td>
           <% isButChecked = @videoIds.include?(video.id) %>
           <td><%= check_box_tag 'video_ids[]', video.id, checked = isButChecked %></td>
         </tr>

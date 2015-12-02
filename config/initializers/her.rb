@@ -15,20 +15,29 @@ class CellrotiTokenAuthentication < Faraday::Middleware
   end
 end
 
-# ssl_options = { ca_path: $cellroti_ssl_cert_path }
-# Her::API.setup url: $cellroti_URL, ssl: ssl_options do |c|
-
-Her::API.setup url: $cellroti_URL do |c|
+def setupConnection(connection)
   # Authentication
-  c.use CellrotiTokenAuthentication
+  connection.use CellrotiTokenAuthentication
 
   # Request
-  c.use Faraday::Request::Multipart
-  c.use Faraday::Request::UrlEncoded
+  connection.use Faraday::Request::Multipart
+  connection.use Faraday::Request::UrlEncoded
 
   # Response
-  c.use Her::Middleware::DefaultParseJSON
+  connection.use Her::Middleware::DefaultParseJSON
 
   # Adapter
-  c.use Faraday::Adapter::NetHttp
+  connection.use Faraday::Adapter::NetHttp
+end
+
+if Rails.env == 'production'
+  # use ssl in production
+  ssl_options = { ca_path: $cellroti_ssl_cert_path }
+  Her::API.setup url: $cellroti_URL, ssl: ssl_options do |connection|
+    setupConnection(connection)
+  end
+else
+  Her::API.setup url: $cellroti_URL do |connection|
+    setupConnection(connection)
+  end
 end

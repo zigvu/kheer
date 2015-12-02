@@ -28,6 +28,10 @@ module Export::ExportSetup
         skip_step if settingsHaveBeenConfirmed
 
         serveConfirmSettings
+      when :send_data
+        skip_step if dataHasBeenSent
+
+        serveSendData
       when :wait_for_frames
         skip_step if frameIdsHaveBeenReceived
 
@@ -54,6 +58,8 @@ module Export::ExportSetup
         handleEventSelection
       when :confirm_settings
         handleConfirmSettings
+      when :send_data
+        handleSendData
       when :wait_for_frames
         handleWaitForFrames
       when :send_frames
@@ -154,11 +160,19 @@ module Export::ExportSetup
         @eventDetectables = ::Detectable.where(id: @cellroti_export.event_detectable_ids)
       end
       def handleConfirmSettings
-        @cState.setCompleteSetup
-
         saveData = DataExporters::SaveDataForCellrotiExport.new(@cellroti_export)
         videoIdFileNameMap = saveData.save
         @cellroti_export.update(video_id_filename_map: videoIdFileNameMap)
+
+        @cState.setCompleteSetup
+      end
+
+      def serveSendData
+        # get all games as a test of API for cellroti
+        CellrotiData::Game.all.first
+      end
+      def handleSendData
+        videoIdFileNameMap = @cellroti_export.video_id_filename_map
 
         cellrotiVideoIdMap = {}
         videoIdFileNameMap.each do |videoId, videoFileNames|
@@ -198,6 +212,11 @@ module Export::ExportSetup
           fileNameMap.merge!(newVideoIdFileNameMap[videoId.to_i])
         end
         @cellroti_export.update(video_id_filename_map: existigVideoIdFileNameMap)
+
+        # export to tmp - need to reload frameSaver
+        frameSaver = DataExporters::SaveFrameForCellrotiExport.new(@cellroti_export)
+        frameSaver.exportToTmp
+
         @cState.setReceivedFrameIds
       end
 
@@ -221,6 +240,9 @@ module Export::ExportSetup
       def settingsHaveBeenConfirmed
         @cState.isCompleteSetup? || @cState.isAfterCompleteSetup?
       end
+      def dataHasBeenSent
+        @cState.isSentData? || @cState.isAfterSentData?
+      end
       def frameIdsHaveBeenReceived
         @cState.isReceivedFrameIds? || @cState.isAfterReceivedFrameIds?
       end
@@ -236,7 +258,7 @@ module Export::ExportSetup
         @cState = States::CellrotiExportState.new(@cellroti_export)
         
         self.steps = [:chia_version, :videos, :zdist_threshs, :event_selection, 
-          :confirm_settings, :wait_for_frames, :send_frames, :cleanup]
+          :confirm_settings, :send_data, :wait_for_frames, :send_frames, :cleanup]
       end
 
       def set_steps_ll

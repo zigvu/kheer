@@ -45,5 +45,34 @@ module DataExporters
 			videoId
 		end
 
+		def exportToTmp
+			tmpExportFolder = "/tmp/#{@cellrotiExport.id}"
+			tmpFramesToExtractFolder = "/tmp/#{@cellrotiExport.id}/extract"
+			tmpFramesToExtractMapFile = "/tmp/#{@cellrotiExport.id}/filemap.json"
+			FileUtils::rm_rf(tmpExportFolder)
+			FileUtils::mkdir_p(tmpFramesToExtractFolder)
+
+			cellrotiVideoIdMap = @cellrotiExport.cellroti_video_id_map
+			videoIdFileNameMap = @cellrotiExport.video_id_filename_map
+			# format
+			# {video_id: {cellroti_video_id:, frames_to_extract:}}
+			outputMap = {}
+
+			cellrotiVideoIdMap.each do |videoId, cellVideoId|
+				framesToExtractFile = videoIdFileNameMap[videoId][:frames_to_extract]
+				cpFramesToExtractFile = "#{tmpFramesToExtractFolder}/#{videoId}.txt"
+				FileUtils.cp(framesToExtractFile, cpFramesToExtractFile)
+
+				outputMap[videoId.to_i] = {
+					cellroti_video_id: cellVideoId,
+					frames_to_extract: "extract/#{videoId}.txt"
+				}
+			end
+
+			File.open(tmpFramesToExtractMapFile, 'w') do |f|
+				f.puts outputMap.to_json
+			end
+		end
+
 	end
 end
